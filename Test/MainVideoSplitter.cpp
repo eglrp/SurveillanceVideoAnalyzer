@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iomanip>
 #include <string>
+#include <exception>
 #include "ProcVideo.h"
 
 using namespace std;
@@ -15,8 +16,17 @@ int main(int argc, char* argv[])
     double videoLengthInSecond;	
 	vector<double> segmentLengthInSecond;
 	vector<pair<int, int> > splitBegAndEnd;
-    findSplitPositions(string(videoPath), expectSegmentLengthInSecond, 
-        videoLengthInSecond, segmentLengthInSecond, splitBegAndEnd);
+    try
+    {
+        findSplitPositions(string(videoPath), expectSegmentLengthInSecond, 
+            videoLengthInSecond, segmentLengthInSecond, splitBegAndEnd);
+    }
+    catch (const exception& e)
+    {
+        cout << e.what() << "\n";
+        system("pause");
+        return 0;
+    }
 	cout << "In main :" << "\n";
 	cout << "Split beginning and end in frame count:" << "\n";
 	cout << fixed;

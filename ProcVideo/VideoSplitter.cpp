@@ -9,6 +9,7 @@
 #include "ShowData.h"
 #include "Segment.h"
 #include "CreateDirectory.h"
+#include "Exception.h"
 
 using namespace std;
 using namespace cv;
@@ -253,10 +254,24 @@ void VideoAnalyzer::release(void)
 
 }
 
+static string getIntString(int val)
+{
+    stringstream strm;
+    strm << val;
+    return strm.str();
+}
+
+static string getDoubleString(double val)
+{
+    stringstream strm;
+    strm << val;
+    return strm.str();
+}
+
 namespace zpv
 {
 
-bool findSplitPositions(const string& videoPath, double splitUnitInSecond,
+void findSplitPositions(const string& videoPath, double splitUnitInSecond,
     double& videoLengthInSecond, vector<double>& segmentLengthInSecond,
     vector<pair<int, int> >& splitBegAndEnd)
 {
@@ -288,7 +303,7 @@ bool findSplitPositions(const string& videoPath, double splitUnitInSecond,
 		logFile.close();
 		cerr << message.str() << "\n";
 #endif
-		return false;
+		THROW_EXCEPT("cannot open file " + videoPath);
 	}
 	double videoFrameCount = videoCap.get(CV_CAP_PROP_FRAME_COUNT);
 	double videoFrameRate = videoCap.get(CV_CAP_PROP_FPS);
@@ -302,7 +317,7 @@ bool findSplitPositions(const string& videoPath, double splitUnitInSecond,
 		logFile.close();
 		cerr << message << "\n";
 #endif
-		return false;
+		THROW_EXCEPT("video frame count is " + getIntString(videoFrameCount) + ", invalid");
 	}
 	if (videoFrameRate < 1.0)
 	{
@@ -314,7 +329,7 @@ bool findSplitPositions(const string& videoPath, double splitUnitInSecond,
 		logFile.close();
 		cerr << message << "\n";
 #endif
-		return false;
+		THROW_EXCEPT("video frame rate is " + getDoubleString(videoFrameRate) + ", invalid");
 	}
 	videoLengthInSecond = videoFrameCount / videoFrameRate;
 #if VIDEO_SPLIT_CMPL_LOG
@@ -369,7 +384,7 @@ bool findSplitPositions(const string& videoPath, double splitUnitInSecond,
 		logFile << "Log ends" << "\n";
 		logFile.close();
 #endif
-		return true;
+		return;
 	}
 #if VIDEO_SPLIT_CMPL_LOG
 	cout << "num of segments = " << numOfSeg << "\n";
@@ -395,7 +410,7 @@ bool findSplitPositions(const string& videoPath, double splitUnitInSecond,
 			logFile.close();
 			cerr << message << "\n";
 #endif
-			return false;
+			THROW_EXCEPT("cannot seek designated frame, frame count " + getIntString(begInc));
 		}
 		if (!videoCap.read(frame))
 		{
@@ -406,7 +421,7 @@ bool findSplitPositions(const string& videoPath, double splitUnitInSecond,
 			logFile.close();
 			cerr << message << "\n";
 #endif
-			return false;
+			THROW_EXCEPT("cannot read designated frame, frame count " + getIntString(begInc));
 		}
 		resize(frame, image, Size(width, height), INTER_LINEAR);
 
@@ -426,7 +441,7 @@ bool findSplitPositions(const string& videoPath, double splitUnitInSecond,
 					logFile.close();
 					cerr << message << "\n";
 #endif
-					return false;
+					THROW_EXCEPT("cannot read designated frame, frame count " + getIntString(begInc + i));
 				}
 				resize(frame, image, Size(width, height), INTER_LINEAR);
 				analyzer.proc(image);
@@ -461,7 +476,7 @@ bool findSplitPositions(const string& videoPath, double splitUnitInSecond,
 			logFile.close();
             cerr << s.what() << "\n";
 #endif
-			return false;
+            THROW_EXCEPT(s.what());
 		}
 	}
 	videoCap.release();
@@ -493,7 +508,7 @@ bool findSplitPositions(const string& videoPath, double splitUnitInSecond,
 	logFile.close();
 #endif
 
-	return true;
+	return;
 }
 
 }
