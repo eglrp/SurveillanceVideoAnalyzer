@@ -30,7 +30,7 @@ public:
         //! 获取处理梯度图的参数
         static Config getGradientConfig(void)
         {
-            return Config("[gradient]", 20, 10, 2, 16);
+            return Config("[gradient]", 20, 40, 2, 16);
         }
         //! 构造函数
         Config(const std::string& label_, int numOfSamples_, int minMatchDist_, int minNumOfMatchCount_, int subSampleInterval_)

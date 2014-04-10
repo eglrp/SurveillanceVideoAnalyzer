@@ -177,6 +177,7 @@ void VideoAnalyzer::proc(Mat& image)
 		imshow("blur image", blurImage);
 		imshow("grad image", gradImage);
 		imshow("grad fore image", gradForeImage);
+        //waitKey(0);
 #endif
 }
 
@@ -197,6 +198,7 @@ int VideoAnalyzer::findSplitPosition(int expectCount)
 #if VIDEO_SPLIT_CMPL_SHOW
 		showArrayByVertBar("Ratio Fore To Full", ratioForeToFull, false, true, true, 0, 1, true, 200);
 		showArrayByVertBar("Is Sparse", isSparse, false, true, true, 0, 1, true, 100);
+        //waitKey(0);
 #endif
 
 	vector<Segment<unsigned char> > isSparseSeg;
