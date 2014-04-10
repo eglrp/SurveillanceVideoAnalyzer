@@ -3,7 +3,7 @@
 #include <sstream>
 #include <iomanip>
 #include <string>
-#include "VideoSplitter.h"
+#include "ProcVideo.h"
 
 using namespace std;
 using namespace zpv;
