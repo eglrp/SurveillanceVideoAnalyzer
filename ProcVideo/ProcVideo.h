@@ -13,7 +13,7 @@ struct TaskInfo
     std::string taskID;            ///< 任务编号
     std::string videoPath;         ///< 视频全路径
     std::string videoSegmentID;    ///< 视频分段号
-    std::pair<int, int> frameCountBegAndEnd; ///< 视频分段的起始帧号和结束帧号
+    std::pair<int, int> frameCountBegAndEnd; ///< 视频分段的起始帧号(包含)和结束帧号(包含)
     std::string saveImagePath;     ///< 保存图片的路径
     std::string saveHistoryPath;   ///< 保存历史轨迹文件的路径
     std::string historyFileName;   ///< 历史轨迹文件名, 最终历史轨迹文件是 saveHistoryPath\historyFileName
@@ -93,20 +93,28 @@ typedef void (*procVideoCallBack)(float progressPercentage,
 
 namespace zpv
 {
-
+//! 分割视频函数
+/*!
+    \param[in] videoPath 视频文件全路径
+    \param[in] splitUnitInSecond 期望的每个视频分段长度, 以秒计算
+    \param[out] videoLengthInSecond 视频的实际时长, 以秒计算
+    \param[out] segmentLengthInSecond 每个视频分段的时长, 以秒计算
+    \param[out] splitBegAndEnd 每个视频分段的起始帧号(包含)和结束帧号(包含), 帧号从 0 计数
+    \return 分割成功则返回 true, 否则返回 false
+ */
 Z_LIB_EXPORT bool findSplitPositions(const std::string& videoPath, double splitUnitInSecond,
 	double& videoLengthInSecond, std::vector<double>& segmentLengthInSecond,
 	std::vector<std::pair<int, int> >& splitBegAndEnd);
 
 //! 处理视频片段函数
 /*!
-    可能会抛出 std::string 和 std::exception 类型的异常
+    可能会抛出 std::exception 类型的异常
     \param[in] task 分析任务信息
 	\param[in] config 配置信息
 	\param[in] ptrCallBackFunc 回调函数指针
 	\param[in,out] ptrUserData 用户数据
  */
-void Z_LIB_EXPORT procVideo(const TaskInfo& task, const ConfigInfo& config, 
+Z_LIB_EXPORT void procVideo(const TaskInfo& task, const ConfigInfo& config, 
     procVideoCallBack ptrCallBackFunc, void* ptrUserData);
 
 }
