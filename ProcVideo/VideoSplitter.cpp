@@ -3,8 +3,8 @@
 #include <sstream>
 #include <iomanip>
 #include <opencv2/imgproc/imgproc.hpp>
+#include "ProcVideo.h"
 #include "VideoSplitter.h"
-#include "VideoSplitterInternal.h"
 #include "OperateData.h"
 #include "ShowData.h"
 #include "Segment.h"

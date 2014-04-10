@@ -94,6 +94,10 @@ typedef void (*procVideoCallBack)(float progressPercentage,
 namespace zpv
 {
 
+Z_LIB_EXPORT bool findSplitPositions(const std::string& videoPath, double splitUnitInSecond,
+	double& videoLengthInSecond, std::vector<double>& segmentLengthInSecond,
+	std::vector<std::pair<int, int> >& splitBegAndEnd);
+
 //! 处理视频片段函数
 /*!
     可能会抛出 std::string 和 std::exception 类型的异常
