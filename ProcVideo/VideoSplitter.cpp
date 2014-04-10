@@ -15,7 +15,7 @@ using namespace cv;
 using namespace zsfo;
 using namespace ztool;
 
-namespace zpv
+namespace zvs
 {
 
 VideoAnalyzer::VideoAnalyzer()
@@ -251,9 +251,14 @@ void VideoAnalyzer::release(void)
 
 }
 
+}
+
+namespace zpv
+{
+
 bool findSplitPositions(const string& videoPath, double splitUnitInSecond,
-		double& videoLengthInSecond, vector<double>& segmentLengthInSecond,
-		vector<pair<int, int> >& splitBegAndEnd)
+    double& videoLengthInSecond, vector<double>& segmentLengthInSecond,
+    vector<pair<int, int> >& splitBegAndEnd)
 {
 	videoLengthInSecond = 0;
     segmentLengthInSecond.clear();
@@ -407,7 +412,7 @@ bool findSplitPositions(const string& videoPath, double splitUnitInSecond,
 
 		try
 		{
-			VideoAnalyzer analyzer;
+			zvs::VideoAnalyzer analyzer;
 			analyzer.init(image);		
 
 			for (int i = 1; i < endExc - begInc; i++)

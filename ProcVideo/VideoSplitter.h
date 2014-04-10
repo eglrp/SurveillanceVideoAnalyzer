@@ -7,7 +7,7 @@
 #define VIDEO_SPLIT_CMPL_LOG 0
 #define VIDEO_SPLIT_CMPL_SHOW 0
 
-namespace zpv
+namespace zvs
 {
 
 struct RectInfo

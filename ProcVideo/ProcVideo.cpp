@@ -238,18 +238,11 @@ namespace zpv
 void procVideo(const TaskInfo& task, const ConfigInfo& config, 
     procVideoCallBack ptrCallBackFunc, void* ptrUserData)
 {
-    VideoCapture cap;       
-    Mutex mtx;
-    mtx.lock();
+    VideoCapture cap; 
     cap.open(task.videoPath);
-    mtx.unlock();
 
     if (!cap.isOpened())
     {
-        mtx.lock();
-        cap.release();
-        mtx.unlock();
-        //throw string("ERROR in") + __FUNCTION__ + ", cannot open " + task.videoPath;
         THROW_EXCEPT("cannot open " + task.videoPath);
     }
 
@@ -269,10 +262,6 @@ void procVideo(const TaskInfo& task, const ConfigInfo& config,
         
     if (!cap.set(CV_CAP_PROP_POS_FRAMES, begIncCount))
     {
-        mtx.lock();
-        cap.release();
-        mtx.unlock();
-        //throw string("ERROR in function ") + __FUNCTION__ + "(), cannot locate frame count " + getString(begIncCount);
         THROW_EXCEPT("cannot locate frame count " + getString(begIncCount));
     }
 
@@ -317,19 +306,8 @@ void procVideo(const TaskInfo& task, const ConfigInfo& config,
             &checkTurnAround, &maxDistRectAndBlob, &minRatioIntersectToSelf, &minRatioIntersectToBlob);
 		infoParser.init(task.saveImagePath, "", "", "", task.saveHistoryPath, task.historyFileName);
 	}
-	/*catch (const string& e)
-	{
-		mtx.lock();
-        cap.release();
-        mtx.unlock();
-        throw string("ERROR in function ") + __FUNCTION__ + "(), " + e;
-	}*/
 	catch (const exception& e)
     {
-        mtx.lock();
-        cap.release();
-        mtx.unlock();
-        //throw string("ERROR in function ") + __FUNCTION__ + "(), " + e.what();
         THROW_EXCEPT(e.what());
     }
 
@@ -357,19 +335,8 @@ void procVideo(const TaskInfo& task, const ConfigInfo& config,
                     infoParser.parse(output.objects, objects);
                 }
             }
-            /*catch (const string& e)
-		    {
-			    mtx.lock();
-                cap.release();
-                mtx.unlock();
-                throw string("ERROR in function ") + __FUNCTION__ + "(), " + e;
-		    }*/
             catch (const exception& e)
             {
-                mtx.lock();
-                cap.release();
-                mtx.unlock();
-                //throw string("ERROR in function ") + __FUNCTION__ + "(), " + e.what();
                 THROW_EXCEPT(e.what());
             }
         }
@@ -379,9 +346,6 @@ void procVideo(const TaskInfo& task, const ConfigInfo& config,
 		waitKey(output.objects.empty() ? 5 : 0);
 #endif
     }
-    mtx.lock();
-    cap.release();
-    mtx.unlock();
 
     zsfo::ObjectDetails output;
     vector<ObjectInfo> objects;
