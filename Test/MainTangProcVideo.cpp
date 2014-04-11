@@ -74,8 +74,8 @@ int main(int argc, char** argv)
     task.saveHistoryPath = "result/temp";
     task.historyFileName = "history.txt";
     task.frameCountBegAndEnd = make_pair(0, totalFrameCount - 1);
-	config.tiltType = TiltType::SMALL;
-	config.zoomType = ZoomType::NEAR;
+    config.tiltType = TiltType::MIDDLE_ANGLE;
+    config.zoomType = ZoomType::MIDDLE_SCENE;
 	config.environmentType = EnvironmentType::SUNNY;
     Timer timer;
     timer.start();

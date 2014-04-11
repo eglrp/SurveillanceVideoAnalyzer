@@ -24,9 +24,9 @@ struct ZoomType
 {
     enum 
     {
-        FAR, 
-        INTERMEDIATE, 
-        NEAR
+        SMALL_SCENE, 
+        MIDDLE_SCENE, 
+        LARGE_SCENE
     };
 };
 
@@ -35,9 +35,9 @@ struct TiltType
 {
     enum 
     {
-        SMALL, 
-        INTERMEDIATE, 
-        LARGE
+        SMALL_ANGLE, 
+        MIDDLE_ANGLE, 
+        LARGE_ANGLE
     };
 };
 
