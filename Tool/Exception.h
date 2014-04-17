@@ -7,9 +7,10 @@ class Exception : public std::exception
 {
 public:
     Exception(const std::string& info, const char* function, const char* file, const int line);
-    virtual ~Exception(void);
-    virtual const char* what(void) const;
+    virtual ~Exception(void) throw ();
+    virtual const char* what(void) const throw ();
 private:
+    Exception& operator=(const Exception&) throw ();
     std::string message;
 };
 

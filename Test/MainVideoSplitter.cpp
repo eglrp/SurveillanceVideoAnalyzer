@@ -11,8 +11,9 @@ using namespace zpv;
 
 int main(int argc, char* argv[])
 {
-	const char* videoPath = "D:/SHARED/TaicangVideo/1/70.flv";
-    double expectSegmentLengthInSecond = 600;
+	const char* videoPath = /*"D:/SHARED/MiscellaneousVideo/E1-1_齐家园公寓（10）_20130816112945_20130816113000_23478187.mp4"*/
+        "D:/SHARED/TaicangVideo/1/70.flv";
+    double expectSegmentLengthInSecond = 300;
     double videoLengthInSecond;	
 	vector<double> segmentLengthInSecond;
 	vector<pair<int, int> > splitBegAndEnd;

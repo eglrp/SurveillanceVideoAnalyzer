@@ -25,12 +25,12 @@ Exception::Exception(const std::string& info, const char* function, const char* 
         .append(info);
 };
 
-Exception::~Exception(void) 
+Exception::~Exception(void) throw ()
 {
 
 }
 
-const char* Exception::what(void) const
+const char* Exception::what(void) const throw ()
 {
     return message.c_str();
 };
