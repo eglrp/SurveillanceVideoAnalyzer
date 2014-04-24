@@ -6,6 +6,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include "ProcVideo.h"
+#include "StringProcessor.h"
 #include "Timer.h"
 
 using namespace std;
@@ -42,36 +43,43 @@ int main(int argc, char** argv)
     /*"D:\\SHARED\\TrimpsVideo\\20140320\\Video06_2014_03_20_13_00_15_type1.avi"*/
     /*"D:\\SHARED\\TrimpsVideo\\20140316\\01\\Video01_2014_03_16_14_57_28_type1.avi"*/
     /*"D:/SHARED/GuilinVideo/DVR1_灵川八里街川东一路八里一路路口20130909070538.avi"*/
-	"D:/SHARED/TaicangVideo/1/70.flv";
+    /*"D:\\SHARED\\MiscellaneousVideo\\DCS-7010L_20140416160622.avi"*/
+    "D:\\SHARED\\MiscellaneousVideo\\案发前20秒(2).avi"
+	/*"D:/SHARED/TaicangVideo/1/70.flv"*/
+    /*"D:\\SHARED\\MiscellaneousVideo\\video\\4M2D12-21-2C.avi"*/
+    /*"D:\\SHARED\\MiscellaneousVideo\\video\\test1030.avi"*/
+    /*"D:\\SHARED\\MiscellaneousVideo\\video\\古北-头顶1.avi"*/
+    /*"D:\\SHARED\\MiscellaneousVideo\\video\\顾戴2.avi"*/
+    ;
 	VideoCapture cap;
 	cap.open(videoPath);
 	int totalFrameCount = cap.get(CV_CAP_PROP_FRAME_COUNT);
-	//printf("frame count %d\n", totalFrameCount);
-	//Timer timer;
-	//while (true)
-	//{
-	//	int frame = cap.get(CV_CAP_PROP_POS_FRAMES);
-	//	Mat img;
-	//	if (!cap.read(img))
-	//	{
-	//		printf("cannot read frame %d\n", frame);
-	//		break;
-	//	}
-	//}
-	//timer.end();
-	//cap.release();
-	//printf("time = %.4f\n", timer.elapse());
-	//system("pause");
-	//return 0;
-	//system("pause");
+	/*printf("frame count %d\n", totalFrameCount);
+    system("pause");
+	while (true)
+	{
+		int frame = cap.get(CV_CAP_PROP_POS_FRAMES);
+        printf("frame = %d\n", frame);
+		Mat img;
+		if (!cap.read(img))
+		{
+			printf("cannot read frame %d\n", frame);
+			break;
+		}
+	}
+	cap.release();
+	system("pause");
+	system("pause");*/
 
+    string validVideoName;
+    cvtPathToFileName(videoPath, validVideoName);
 	TaskInfo task;
     ConfigInfo config;
 	task.taskID = "0XFFFF";
 	task.videoSegmentID = "0XABCD";
     task.videoPath = videoPath;
-    task.saveImagePath = "result/temp";
-    task.saveHistoryPath = "result/temp";
+    task.saveImagePath = "result/" + validVideoName;
+    task.saveHistoryPath = "result/" + validVideoName;
     task.historyFileName = "history.txt";
     task.frameCountBegAndEnd = make_pair(0, totalFrameCount - 1);
     config.tiltType = TiltType::MIDDLE_ANGLE;

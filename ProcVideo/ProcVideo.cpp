@@ -251,13 +251,8 @@ void procVideo(const TaskInfo& task, const ConfigInfo& config,
 	int totalFrameCount = cap.get(CV_CAP_PROP_FRAME_COUNT);
 
     int buildFrameCount = 50 * procEveryNFrame;
-    int begIncCount = (task.frameCountBegAndEnd.first < buildFrameCount) ? 0 : task.frameCountBegAndEnd.first - buildFrameCount;
-    /*int begIncCount = task.frameCountBegAndEnd.first - buildFrameCount;
-    if (begIncCount < 0) 
-    {
-        begIncCount = 0;
-        buildFrameCount = task.frameCountBegAndEnd.first;
-    }*/
+    int begIncCount = (task.frameCountBegAndEnd.first < buildFrameCount) ? 
+        0 : task.frameCountBegAndEnd.first - buildFrameCount;
     int endIncCount = task.frameCountBegAndEnd.second;
         
     if (!cap.set(CV_CAP_PROP_POS_FRAMES, begIncCount))
