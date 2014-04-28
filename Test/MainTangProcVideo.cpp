@@ -44,10 +44,10 @@ int main(int argc, char** argv)
     /*"D:\\SHARED\\TrimpsVideo\\20140316\\01\\Video01_2014_03_16_14_57_28_type1.avi"*/
     /*"D:/SHARED/GuilinVideo/DVR1_灵川八里街川东一路八里一路路口20130909070538.avi"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\DCS-7010L_20140416160622.avi"*/
-    "D:\\SHARED\\MiscellaneousVideo\\案发前20秒(2).avi"
+    /*"D:\\SHARED\\MiscellaneousVideo\\案发前20秒(2).avi"*/
 	/*"D:/SHARED/TaicangVideo/1/70.flv"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\video\\4M2D12-21-2C.avi"*/
-    /*"D:\\SHARED\\MiscellaneousVideo\\video\\test1030.avi"*/
+    "D:\\SHARED\\MiscellaneousVideo\\video\\test1030.avi"
     /*"D:\\SHARED\\MiscellaneousVideo\\video\\古北-头顶1.avi"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\video\\顾戴2.avi"*/
     ;

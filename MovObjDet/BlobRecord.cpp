@@ -476,7 +476,7 @@ bool BlobQuanHistory::checkYDirection(int legalDirection) const
         return true;
 }
 
-Mat OrigSceneProxy::getDeepCopy(void)
+const Mat& OrigSceneProxy::getDeepCopy(void)
 {
     if (!done) 
     {    
@@ -484,6 +484,16 @@ Mat OrigSceneProxy::getDeepCopy(void)
         shallowCopy.copyTo(deepCopy);
     }
     return deepCopy;
+}
+
+const Mat&  OrigMaskProxy::getDeepCopy(void)
+{
+    if (!done)
+    {
+        done = true;
+        resize(normMask, origMask, origSize, 0, 0, INTER_NEAREST);
+    }
+    return origMask;
 }
 
 }

@@ -111,10 +111,24 @@ class OrigSceneProxy
 {
 public:
     OrigSceneProxy(const cv::Mat& frame) : done(false), shallowCopy(frame) {};
-    cv::Mat getDeepCopy(void);
+    const cv::Mat& getDeepCopy(void);
 private:    
-    cv::Mat shallowCopy;
+    const cv::Mat& shallowCopy;
     cv::Mat deepCopy;
+    bool done;
+};
+
+//! 前景图延迟处理类
+class OrigMaskProxy
+{
+public:
+    OrigMaskProxy(const cv::Mat& normMaskImage, const cv::Size& origImageSize)
+        : done(false), normMask(normMaskImage), origSize(origImageSize) {};
+    const cv::Mat& getDeepCopy(void);
+private:
+    const cv::Mat& normMask;
+    cv::Size origSize;
+    cv::Mat origMask;
     bool done;
 };
 
