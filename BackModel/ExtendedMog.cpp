@@ -32,7 +32,6 @@ void zsfo::Mog::init(const Mat& image)
 {
 	if (image.rows <= 0 || image.cols <= 0 || image.type() != CV_8UC1 && image.type() != CV_8UC3)
         THROW_EXCEPT("input image format not supported");
-		//throw string("ERROR in Mog::init(), input image format not supported");
 
     frameSize = image.size();
 	frameRect = Rect(0, 0, frameSize.width, frameSize.height);
@@ -428,7 +427,6 @@ void zsfo::Mog::update(const Mat& image, Mat& foreImage, Mat& backImage, const v
 {
 	if (image.size() != frameSize && image.type() != frameType)
         THROW_EXCEPT("input image size or format not supported");
-		//throw string("ERROR in Mog::update(), input image size or format not supported");
     
     if (frameCount < maxCount)
 		frameCount++;
@@ -774,7 +772,6 @@ void zsfo::Mog::update(const Mat& image, Mat& foreImage, const vector<Rect>& noU
 {
 	if (image.size() != frameSize && image.type() != frameType)
         THROW_EXCEPT("input image size or format not supported");
-		//throw string("ERROR in Mog::update(), input image size or format not supported");
     
     if (frameCount < maxCount)
 		frameCount++;
@@ -1109,7 +1106,6 @@ void zsfo::Mog::update(const Mat& image, const vector<Rect>& noUpdate)
 {
 	if (image.size() != frameSize && image.type() != frameType)
         THROW_EXCEPT("input image size or format not supported");
-		//throw string("ERROR in Mog::update(), input image size or format not supported");
     
     if (frameCount < maxCount)
 		frameCount++;

@@ -96,9 +96,6 @@ void Blob::initConfigParam(const string& path)
         initFileStream.open(path.c_str());
 	    if (!initFileStream.is_open())
 	    {
-		    //stringstream message;
-		    //message << "ERROR in Blob::init(), cannot open file " << path;
-		    //throw message.str();
             THROW_EXCEPT("cannot open file " + path);
 	    }
         char stringNotUsed[1024];
@@ -107,7 +104,6 @@ void Blob::initConfigParam(const string& path)
 		    initFileStream >> stringNotUsed;
 		    if (initFileStream.eof())
 		    {
-			    //throw string("ERROR in Blob::init(), cannot find config params label [Blob] for Blob");
                 THROW_EXCEPT("cannot find config params label [Blob] for Blob");
 		    }
 	    }
@@ -151,7 +147,7 @@ void Blob::updateState(void)
     rectHistory->pushRecord(matchRect, 0.0);
 }
 
-void Blob::updateState(const Mat& origFrame, const Mat& foreImage)
+void Blob::updateState(OrigSceneProxy& origFrame, OrigForeProxy& foreImage)
 {
     if (isToBeDeleted)
         return;
@@ -159,7 +155,7 @@ void Blob::updateState(const Mat& origFrame, const Mat& foreImage)
     if (visualHistory) visualHistory->updateHistory(origFrame, foreImage, matchRect);
 }
 
-void Blob::updateState(const Mat& origFrame, const Mat& foreImage, 
+void Blob::updateState(OrigSceneProxy& origFrame, OrigForeProxy& foreImage,
     const Mat& gradDiffImage, const Mat& lastGradDiffImage)
 {
     if (isToBeDeleted)

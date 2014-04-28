@@ -92,9 +92,6 @@ void BlobTracker::BlobTrackerImpl::initConfigParam(const string& path)
         initFileStream.open(path.c_str());
 	    if (!initFileStream.is_open())
 	    {
-		    //stringstream message;
-		    //message << "ERROR in BlobTracker::init(), cannot open file " << path;
-		    //throw message.str();
             THROW_EXCEPT("cannot open file " + path);
 	    }
 	    char stringNotUsed[500];
@@ -103,8 +100,6 @@ void BlobTracker::BlobTrackerImpl::initConfigParam(const string& path)
 		    initFileStream >> stringNotUsed;
 		    if (initFileStream.eof())
 		    {
-			    //throw string("ERROR in BlobTracker::init(), cannot find config params "
-				//             "for label [BlobTracker] BlobTracker\n");
                 THROW_EXCEPT("cannot find config params for label [BlobTracker] BlobTracker");
 		    }
 	    }
@@ -858,18 +853,22 @@ void BlobTracker::BlobTrackerImpl::updateState(void)
 
 void BlobTracker::BlobTrackerImpl::updateState(const Mat& origFrame, const Mat& foreImage)
 {
-	for (list<Ptr<Blob> >::iterator ptrBlob = blobList.begin(); ptrBlob != blobList.end(); ptrBlob++)
+	OrigSceneProxy scene(origFrame);
+    OrigForeProxy fore(foreImage, Size(sizeInfo->origWidth, sizeInfo->origHeight));
+    for (list<Ptr<Blob> >::iterator ptrBlob = blobList.begin(); ptrBlob != blobList.end(); ptrBlob++)
 	{
-	    (*ptrBlob)->updateState(origFrame, foreImage);
+	    (*ptrBlob)->updateState(scene, fore);
 	}
 }
 
 void BlobTracker::BlobTrackerImpl::updateState(const Mat& origFrame, const Mat& foreImage, 
     const Mat& gradDiffImage, const Mat& lastGradDiffImage)
 {
-	for (list<Ptr<Blob> >::iterator ptrBlob = blobList.begin(); ptrBlob != blobList.end(); ptrBlob++)
+	OrigSceneProxy scene(origFrame);
+    OrigForeProxy fore(foreImage, Size(sizeInfo->origWidth, sizeInfo->origHeight));
+    for (list<Ptr<Blob> >::iterator ptrBlob = blobList.begin(); ptrBlob != blobList.end(); ptrBlob++)
 	{
-	    (*ptrBlob)->updateState(origFrame, foreImage, gradDiffImage, lastGradDiffImage);
+	    (*ptrBlob)->updateState(scene, fore, gradDiffImage, lastGradDiffImage);
 	}
 }
 

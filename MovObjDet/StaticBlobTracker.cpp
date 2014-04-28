@@ -25,9 +25,6 @@ void StaticBlob::init(const string& path)
         initFileStream.open(path.c_str());
 	    if (!initFileStream.is_open())
 	    {
-		    //stringstream message;
-		    //message << "ERROR in StaticBlob::init(), cannot open file " << path;
-		    //throw message.str();
             THROW_EXCEPT("cannot open file " + path);
 	    }
 	    char stringNotUsed[500];
@@ -36,7 +33,6 @@ void StaticBlob::init(const string& path)
 		    initFileStream >> stringNotUsed;
 		    if (initFileStream.eof())
 		    {
-			    //throw string("ERROR in StaticBlob::init(), cannot find config params label [StaticBlob] for StaticBlob");
                 THROW_EXCEPT("cannot find config params label [StaticBlob] for StaticBlob");
 		    }
 	    }
@@ -161,9 +157,6 @@ void StaticBlobTracker::Impl::init(const RegionOfInterest& observedRegion, const
         initFileStream.open(path.c_str());
 	    if (!initFileStream.is_open())
 	    {
-		    //stringstream message;
-		    //message << "ERROR in StaticBlobTracker::init(), cannot open file " << path;
-		    //throw message.str();
             THROW_EXCEPT("cannot open file " + path);
 	    }
 	    char stringNotUsed[500];
@@ -172,8 +165,6 @@ void StaticBlobTracker::Impl::init(const RegionOfInterest& observedRegion, const
 		    initFileStream >> stringNotUsed;
 		    if (initFileStream.eof())
 		    {
-			    //throw string("ERROR in StaticBlobTracker::init(), "
-				//             "cannot find config params label [StaticBlobTracker] for StaticBlobTracker");
                 THROW_EXCEPT("cannot find config params label [StaticBlobTracker] for StaticBlobTracker");
 		    }
 	    }

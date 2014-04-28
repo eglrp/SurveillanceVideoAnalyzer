@@ -14,11 +14,11 @@ using namespace zsfo;
 
 int main(void)
 {
-	const char* const path = "D:\\SHARED\\TrimpsVideo\\20140316\\01\\Video01_2014_03_16_14_57_28_type1.avi"
+	const char* const path = /*"D:\\SHARED\\TrimpsVideo\\20140316\\01\\Video01_2014_03_16_14_57_28_type1.avi"*/
         /*"D:\\SHARED\\GuilinVideo\\DVR1_灵川八里街川东一路八里一路路口_20130826170046_20130826171424_63094171_0001.avi"*/
         /*"D:/SHARED/GuilinVideo/DVR1_灵川八里街川东一路八里一路路口_20130825150550_20130825151929_60634656_0001.avi"*/
         /*"D:/SHARED/GuilinVideo/DVR1_灵川八里街川东一路八里一路路口20130909070538.avi"*/
-		/*"D:/SHARED/TaicangVideo/1/70.flv"*/;
+		"D:/SHARED/TaicangVideo/1/70.flv";
 	VideoCapture cap;
 	cap.open(path);
 	VisualInfo visualInfo;
@@ -69,9 +69,9 @@ int main(void)
 			SizeInfo sizeInfo;
 			sizeInfo.create(origSize, normSize);
 
-			blobTracker.init(roi, sizeInfo);  // 只保存矩形历史记录, 无图片记录
+			//blobTracker.init(roi, sizeInfo);  // 只保存矩形历史记录, 无图片记录
 			//blobTracker.initLineSegment(roi, lineSeg, sizeInfo, SaveImageMode::SaveScene | SaveImageMode::SaveSlice);
-			//blobTracker.initMultiRecord(roi, sizeInfo, SaveImageMode::SaveScene | SaveImageMode::SaveSlice, 4, 4);
+            blobTracker.initMultiRecord(roi, sizeInfo, SaveImageMode::SaveScene | SaveImageMode::SaveMask, 4, 4);
             //blobTracker.initTriBound(roi, loop, sizeInfo, SaveImageMode::SaveScene | SaveImageMode::SaveSlice);
 			bool checkTurnAround = true;
 			double maxDistRectAndBlob = 15;
@@ -101,7 +101,7 @@ int main(void)
 		blobTracker.drawTrackingState(draw, Scalar(255, 0, 0), Scalar(0, 255, 0), Scalar(0, 0, 255), Scalar(255, 255, 255));
 		imshow("tracking state", draw);
 
-		if (!objects.empty())
+		if (!objects.empty() & 0)
 		{
 			printf("frame count %d:\n", i);
 			int objSize = objects.size();
@@ -125,12 +125,23 @@ int main(void)
 					for (int k = 0; k < visHisSize; k++)
 					{
                         const ObjectVisualRecord& refRec = refObj.visualHistory[k];
-                        Mat image(refRec.scene);
-                        rectangle(image, refRec.rect, Scalar(255, 0, 0));
-                        sprintf(buf, "Scene %d-%d", j, k);
-						imshow(buf, refRec.scene);
-						sprintf(buf, "Slice %d-%d", j, k);
-						imshow(buf, refRec.slice);
+                        if (refRec.scene.data)
+                        {
+                            Mat image(refRec.scene);
+                            rectangle(image, refRec.rect, Scalar(255, 0, 0));
+                            sprintf(buf, "Scene %d-%d", j, k);
+						    imshow(buf, refRec.scene);
+                        }
+                        if (refRec.mask.data)
+                        {
+                            sprintf(buf, "Mask %d-%d", j, k);
+                            imshow(buf, refRec.mask);
+                        }
+                        if (refRec.slice.data)
+                        {
+						    sprintf(buf, "Slice %d-%d", j, k);
+						    imshow(buf, refRec.slice);
+                        }
 					}
 				}
 				if (refObj.isFinal && refObj.hasHistory)
@@ -159,8 +170,17 @@ int main(void)
 					int visHisSize = refObj.visualHistory.size();
 					for (int k = 0; k < visHisSize; k++)
 					{
-						sprintf(buf, "Scene %d-%d", j, k);
-						destroyWindow(buf);
+                        const ObjectVisualRecord& refRec = refObj.visualHistory[k];
+						if (refRec.scene.data)
+                        {
+                            sprintf(buf, "Scene %d-%d", j, k);
+                            destroyWindow(buf);
+                        }
+                        if (refRec.mask.data)
+                        {
+                            sprintf(buf, "Mask %d-%d", j, k);
+                            destroyWindow(buf);
+                        }
 						sprintf(buf, "Slice %d-%d", j, k);
 						destroyWindow(buf);
 					}
@@ -168,7 +188,7 @@ int main(void)
 			}
 		}
 
-		waitKey(objects.empty() ? 1 : 0);
+		waitKey(objects.empty() ? 1 : 1);
 	}
 	return 0;
 }

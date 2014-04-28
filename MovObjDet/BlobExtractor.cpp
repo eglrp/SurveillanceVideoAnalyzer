@@ -264,7 +264,6 @@ void BlobExtractor::Impl::init(const Size& imageSize, const string& path, const 
         ConfigFileReader reader(path);
         bool success;
         if (!reader.canBeOpened())
-            //throw string("ERROR in BlobExtractor::init(), cannot open file ") + path;
             THROW_EXCEPT("cannot open file " + path);
         try
         {
@@ -272,11 +271,9 @@ void BlobExtractor::Impl::init(const Size& imageSize, const string& path, const 
         }
         catch (const exception& e)
         {
-            //throw string("ERROR in BlobExtractor::init(), ") + e;
             THROW_EXCEPT(e.what());
         }
         if (!success)
-            //throw string("ERROR in BlobExtractor::init(), cannot file label ") + label;
             THROW_EXCEPT("cannot file label " + label);
 
         reader.seek("(proc)");

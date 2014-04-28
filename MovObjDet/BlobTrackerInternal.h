@@ -119,10 +119,10 @@ private:
 };
 
 //! 前景图延迟处理类
-class OrigMaskProxy
+class OrigForeProxy
 {
 public:
-    OrigMaskProxy(const cv::Mat& normMaskImage, const cv::Size& origImageSize)
+    OrigForeProxy(const cv::Mat& normMaskImage, const cv::Size& origImageSize)
         : done(false), normMask(normMaskImage), origSize(origImageSize) {};
     const cv::Mat& getDeepCopy(void);
 private:
@@ -139,8 +139,8 @@ struct BlobVisualRecord
     BlobVisualRecord(void) : bound(-1), crossIn(-1), direction(-1), time(0), count(0) {};
     //! 根据输入信息创建记录结构体
     /*!
-        \param[in] origFrame 原始尺寸的输入图片, 即全景图
-        \param[in] normForeImage 归一化尺寸的全景图
+        \param[in] scene 全景图代理
+        \param[in] fore 前景图代理
         \param[in] sizeInfo 原始尺寸和归一化尺寸
         \param[in] baseRect 归一化尺寸的截图矩形区域, 该矩形以外的区域不截图
         \param[in] blobRect 归一化尺寸的运动目标的矩形
@@ -148,13 +148,13 @@ struct BlobVisualRecord
         \param[in] currCount 帧编号
         \param[in] saveMode 存图模式, 选择是否保存全景图, 目标截图和目标前景图
      */
-    void makeRecord(const cv::Mat& origFrame, const cv::Mat& normForeImage, 
+    void makeRecord(OrigSceneProxy& scene, OrigForeProxy& fore, 
 		const SizeInfo& sizeInfo, const cv::Rect& baseRect, const cv::Rect& blobRect, 
         long long int currTime, int currCount, int saveMode);
     //! 根据输入信息创建记录结构体
     /*!
-        \param[in] origFrame 原始尺寸的输入图片, 即全景图
-        \param[in] normForeImage 归一化尺寸的全景图
+        \param[in] scene 全景图代理
+        \param[in] fore 前景图代理
         \param[in] sizeInfo 原始尺寸和归一化尺寸
         \param[in] baseRect 归一化尺寸的截图矩形区域, 该矩形以外的区域不截图
         \param[in] blobRect 归一化尺寸的运动目标的矩形
@@ -164,7 +164,7 @@ struct BlobVisualRecord
         \param[in] currCount 帧编号
         \param[in] saveMode 存图模式, 选择是否保存全景图, 目标截图和目标前景图
      */
-    void makeRecord(const cv::Mat& origFrame, const cv::Mat& normForeImage, 
+    void makeRecord(OrigSceneProxy& scene, OrigForeProxy& fore, 
 		const SizeInfo& sizeInfo, const cv::Rect& baseRect, const cv::Rect& blobRect, 
         int loopBound, int crossMode, long long int currTime, int currCount, int saveMode);
     //! 深拷贝复制 record 得到新的实例
@@ -180,7 +180,7 @@ struct BlobVisualRecord
     long long int time;          ///< 时间戳
 	int count;                   ///< 帧编号
     cv::Mat blobImage;           ///< 原始尺寸的运动目标图片, 大小等于 origRect 的大小
-    cv::Mat foreImage;           ///< 原始尺寸的运动目标前景图, 大小等于 origRect 的大小
+    cv::Mat foreImage;           ///< 原始尺寸的前景图
     cv::Mat fullFrame;           ///< 原始尺寸的全景图
 };
 
@@ -193,11 +193,11 @@ struct BlobVisualHistory
     virtual BlobVisualHistory* createNew(int blobID) const = 0;
     //! 更新图像记录历史
     /*!
-        \param[in] origFrame 原始尺寸的输入图片
-        \param[in] foreImage 归一化尺寸的全景图
+        \param[in] scene 全景图代理
+        \param[in] fore 前景图代理
         \param[in] currRect 归一化尺寸下运动目标的矩形
      */
-    virtual void updateHistory(const cv::Mat& origFrame, const cv::Mat& foreImage, const cv::Rect& currRect) = 0;
+    virtual void updateHistory(OrigSceneProxy& scene, OrigForeProxy& fore, const cv::Rect& currRect) = 0;
     //! 输出图片历史到 objectInfo 中
     virtual bool outputHistory(ObjectInfo& objectInfo) const = 0;
 };
@@ -226,7 +226,7 @@ struct BlobTriBoundVisualHistory : public BlobVisualHistory
     //! 根据现有实例拷贝构造新的实例 使用新的 ID 共享变量只增加引用计数 
     virtual BlobTriBoundVisualHistory* createNew(int blobID) const;      
 	//! 更新记录历史
-	virtual void updateHistory(const cv::Mat& origFrame, const cv::Mat& foreImage, const cv::Rect& currRect);
+	virtual void updateHistory(OrigSceneProxy& scene, OrigForeProxy& fore, const cv::Rect& currRect);
 	//! 输出图片记录
 	virtual bool outputHistory(ObjectInfo& objectInfo) const;
 
@@ -282,7 +282,7 @@ struct BlobBottomBoundVisualHistory : public BlobVisualHistory
     // 根据现有实例拷贝构造新的实例, 使用新的 ID, 共享变量只增加引用计数 
     virtual BlobBottomBoundVisualHistory* createNew(int blobID) const;
 	// 更新记录历史
-	virtual void updateHistory(const cv::Mat& origFrame, const cv::Mat& foreImage, const cv::Rect& currRect);
+	virtual void updateHistory(OrigSceneProxy& scene, OrigForeProxy& fore, const cv::Rect& currRect);
 	// 输出图片记录
 	virtual bool outputHistory(ObjectInfo& objectInfo) const;
 
@@ -334,7 +334,7 @@ struct BlobCrossLineVisualHistory : public BlobVisualHistory
     //! 根据现有实例拷贝构造新的实例 使用新的 ID 共享变量只增加引用计数 
     virtual BlobCrossLineVisualHistory* createNew(int blobID) const;
 	//! 更新记录历史
-	virtual void updateHistory(const cv::Mat& origFrame, const cv::Mat& foreImage, const cv::Rect& currRect);
+	virtual void updateHistory(OrigSceneProxy& scene, OrigForeProxy& fore, const cv::Rect& currRect);
 	//! 输出图片记录
 	virtual bool outputHistory(ObjectInfo& objectInfo) const;
 
@@ -387,7 +387,7 @@ struct BlobMultiRecordVisualHistory : public BlobVisualHistory
     //! 根据现有实例拷贝构造新的实例 使用新的 ID 共享变量只增加引用计数 
     virtual BlobMultiRecordVisualHistory* createNew(int blobID) const;
 	//! 更新记录历史
-	virtual void updateHistory(const cv::Mat& origFrame, const cv::Mat& foreImage, const cv::Rect& currRect);
+	virtual void updateHistory(OrigSceneProxy& scene, OrigForeProxy& fore, const cv::Rect& currRect);
 	//! 输出图片记录
 	virtual bool outputHistory(ObjectInfo& objectInfo) const;
 
@@ -480,10 +480,10 @@ public:
 	void updateState(void);
 	//! 更新运动目标状态, 包括更新历史记录
     /*!
-        \param[in] origFrame 原始尺寸的视频帧
-        \param[in] foreImage 归一化尺寸的前景图
+        \param[in] scene 全景图代理
+        \param[in] fore 前景图代理
      */
-	void updateState(const cv::Mat& origFrame, const cv::Mat& foreImage);
+	void updateState(OrigSceneProxy& scene, OrigForeProxy& fore);
     //! 更新运动目标状态, 包括更新历史记录
     /*!
         \param[in] origFrame 原始尺寸的视频帧
@@ -491,7 +491,7 @@ public:
         \param[in] gradDiffImage 归一化尺寸输入图和背景图的梯度图的差值图
         \param[in] lastGradDiffImage 上一次处理时得到的归一化尺寸输入图和背景图的梯度图的差值图
      */
-    void updateState(const cv::Mat& origFrame, const cv::Mat& foreImage, 
+    void updateState(OrigSceneProxy& scene, OrigForeProxy& fore, 
         const cv::Mat& gradDiffImage, const cv::Mat& lastGradDiffImage);	
 	//! 输出运动目标的图片和属性
     /*!

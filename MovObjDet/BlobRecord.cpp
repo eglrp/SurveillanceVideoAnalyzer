@@ -486,7 +486,7 @@ const Mat& OrigSceneProxy::getDeepCopy(void)
     return deepCopy;
 }
 
-const Mat&  OrigMaskProxy::getDeepCopy(void)
+const Mat& OrigForeProxy::getDeepCopy(void)
 {
     if (!done)
     {
@@ -503,7 +503,7 @@ static const int findDirection[5][3] = {{-1, -1, -1}, {-1, -1, -1}, {-1, 2, 1}, 
 namespace zsfo
 {
 
-void BlobVisualRecord::makeRecord(const cv::Mat& origFrame, const cv::Mat& normForeImage, 
+void BlobVisualRecord::makeRecord(OrigSceneProxy& scene, OrigForeProxy& fore, 
     const SizeInfo& sizeInfo, const cv::Rect& baseRect, const cv::Rect& blobRect, 
     long long int currTime, int currCount, int saveMode)
 {
@@ -515,32 +515,33 @@ void BlobVisualRecord::makeRecord(const cv::Mat& origFrame, const cv::Mat& normF
 
     // 保存全景图
     if (saveMode & SaveImageMode::SaveScene)
-        origFrame.copyTo(fullFrame);
+        fullFrame = scene.getDeepCopy();
 
     // 保存运动目标的截图
     if (saveMode & SaveImageMode::SaveSlice)
     {	    
-        Mat tempImage = Mat(origFrame, origRect);
+        Mat tempImage = Mat(scene.getDeepCopy(), origRect);
         tempImage.copyTo(blobImage);
     }
 
     // 保存运动目标的二值化前景图
     if (saveMode & SaveImageMode::SaveMask)
     {
-        Mat foreImageROI = Mat(normForeImage, normRect);
-        resize(foreImageROI, foreImage, Size(origRect.width, origRect.height));
-        threshold(foreImage, foreImage, 127, 255, THRESH_BINARY);
+        //Mat foreImageROI = Mat(normForeImage, normRect);
+        //resize(foreImageROI, foreImage, Size(origRect.width, origRect.height));
+        //threshold(foreImage, foreImage, 127, 255, THRESH_BINARY);
+        foreImage = fore.getDeepCopy();
     }
 }
 
-void BlobVisualRecord::makeRecord(const Mat& origFrame, const Mat& normForeImage, 
+void BlobVisualRecord::makeRecord(OrigSceneProxy& scene, OrigForeProxy& fore, 
     const SizeInfo& sizeInfo, const Rect& baseRect, const Rect& blobRect, 
     int loopBound, int crossMode, long long int currTime, int currCount, int saveMode)
 {
     bound = loopBound;
     crossIn = crossMode;
     direction = findDirection[bound + 1][crossIn + 1];
-    makeRecord(origFrame, normForeImage, sizeInfo, baseRect, blobRect, currTime, currCount, saveMode);
+    makeRecord(scene, fore, sizeInfo, baseRect, blobRect, currTime, currCount, saveMode);
 }
 
 void BlobVisualRecord::copyTo(BlobVisualRecord& record) const
@@ -605,9 +606,6 @@ BlobTriBoundVisualHistory::BlobTriBoundVisualHistory(const cv::Ptr<VirtualLoop>&
         initFileStream.open(path.c_str());
         if (!initFileStream.is_open())
         {
-            //stringstream message;
-            //message << "ERROR in BlobTriBoundVisualHistory::BlobTriBoundVisualHistory(), cannot open file " << path;
-            //throw message.str();
             THROW_EXCEPT("cannot open file " + path);
         }
         char stringNotUsed[500];
@@ -616,8 +614,6 @@ BlobTriBoundVisualHistory::BlobTriBoundVisualHistory(const cv::Ptr<VirtualLoop>&
             initFileStream >> stringNotUsed;
             if (initFileStream.eof())
             {
-                //throw string("ERROR in BlobTriBoundVisualHistory::BlobTriBoundVisualHistory(), " 
-                //    "cannot find config params label [BlobVisualHistory] for BlobVisualHistory");
                 THROW_EXCEPT("cannot find config params label [BlobVisualHistory] for BlobVisualHistory");
             }
         }
@@ -682,8 +678,8 @@ BlobTriBoundVisualHistory* BlobTriBoundVisualHistory::createNew(int blobID) cons
     return ptr;
 }
 
-void BlobTriBoundVisualHistory::updateHistory(const Mat& origFrame, 
-    const Mat& foreImage, const cv::Rect& currRect)
+void BlobTriBoundVisualHistory::updateHistory(OrigSceneProxy& origFrame, 
+    OrigForeProxy& foreImage, const cv::Rect& currRect)
 {
     if (!hasUpdate)
     {
@@ -1100,9 +1096,6 @@ BlobBottomBoundVisualHistory::BlobBottomBoundVisualHistory(const cv::Ptr<Virtual
         initFileStream.open(path);
         if (!initFileStream.is_open())
         {
-            //stringstream message;
-            //message << "ERROR in BlobBottomBoundVisualHistory::BlobBottomBoundVisualHistory(), cannot open file " << path;
-            //throw message.str();
             THROW_EXCEPT("cannot open file " + path);
         }
         char stringNotUsed[500];
@@ -1111,8 +1104,6 @@ BlobBottomBoundVisualHistory::BlobBottomBoundVisualHistory(const cv::Ptr<Virtual
             initFileStream >> stringNotUsed;
             if (initFileStream.eof())
             {
-                //throw string("ERROR in BlobBottomBoundVisualHistory::BlobBottomBoundVisualHistory(), " 
-                //    "cannot find config params label [BlobVisualHistory] for BlobVisualHistory");
                 THROW_EXCEPT("cannot find config params label [BlobVisualHistory] for BlobVisualHistory");
             }
         }
@@ -1175,8 +1166,8 @@ BlobBottomBoundVisualHistory* BlobBottomBoundVisualHistory::createNew(int blobID
     return ptr;
 }
 
-void BlobBottomBoundVisualHistory::updateHistory(const Mat& origFrame, 
-    const Mat& foreImage, const cv::Rect& currRect)
+void BlobBottomBoundVisualHistory::updateHistory(OrigSceneProxy& origFrame, 
+    OrigForeProxy& foreImage, const cv::Rect& currRect)
 {
     if (!hasUpdate)
     {
@@ -1297,9 +1288,6 @@ BlobCrossLineVisualHistory::BlobCrossLineVisualHistory(const cv::Ptr<LineSegment
         initFileStream.open(path.c_str());
         if (!initFileStream.is_open())
         {
-            //stringstream message;
-            //message << "ERROR in BlobCrossLineVisualHistory::BlobCrossLineVisualHistory(), cannot open file " << path;
-            //throw message.str();
             THROW_EXCEPT("cannot open file " + path);
         }
         char stringNotUsed[500];
@@ -1308,8 +1296,6 @@ BlobCrossLineVisualHistory::BlobCrossLineVisualHistory(const cv::Ptr<LineSegment
             initFileStream >> stringNotUsed;
             if (initFileStream.eof())
             {
-                //throw string("ERROR in BlobCrossLineVisualHistory::BlobCrossLineVisualHistory(), " 
-                //    "cannot find config params label [BlobVisualHistory] for BlobVisualHistory");
                 THROW_EXCEPT("cannot find config params label [BlobVisualHistory] for BlobVisualHistory");
             }
         }
@@ -1373,8 +1359,8 @@ BlobCrossLineVisualHistory* BlobCrossLineVisualHistory::createNew(int blobID) co
     return ptr;
 }
 
-void BlobCrossLineVisualHistory::updateHistory(const Mat& origFrame, 
-    const Mat& foreImage, const cv::Rect& currRect)
+void BlobCrossLineVisualHistory::updateHistory(OrigSceneProxy& origFrame, 
+    OrigForeProxy& foreImage, const cv::Rect& currRect)
 {
     int currDist = recordLine->distTo(Point(currRect.x + currRect.width / 2, currRect.y + currRect.height / 2));
     if (currDist < maxDistToRecord)
@@ -1464,7 +1450,6 @@ BlobMultiRecordVisualHistory::BlobMultiRecordVisualHistory(const cv::Ptr<SizeInf
         initFileStream.open(path.c_str());
         if (!initFileStream.is_open())
         {
-            //throw string("ERROR in ") + __FUNCTION__ + "(), cannot open file " + path;
             THROW_EXCEPT("cannot open file " + path);
         }
         char stringNotUsed[500];
@@ -1473,8 +1458,6 @@ BlobMultiRecordVisualHistory::BlobMultiRecordVisualHistory(const cv::Ptr<SizeInf
             initFileStream >> stringNotUsed;
             if (initFileStream.eof())
             {
-                //throw string("ERROR in ") + __FUNCTION__ + "(), " 
-                //    "cannot find config params label [BlobVisualHistory] for BlobVisualHistory";
                 THROW_EXCEPT("cannot find config params label [BlobVisualHistory] for BlobVisualHistory");
             }
         }
@@ -1590,8 +1573,8 @@ struct Less
 namespace zsfo
 {
 
-void BlobMultiRecordVisualHistory::updateHistory(const Mat& origFrame,
-    const Mat& foreImage, const cv::Rect& currRect)
+void BlobMultiRecordVisualHistory::updateHistory(OrigSceneProxy& origFrame,
+    OrigForeProxy& foreImage, const cv::Rect& currRect)
 {
     if (history.empty())
     {

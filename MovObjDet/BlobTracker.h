@@ -56,9 +56,9 @@ struct ObjectVisualRecord
 
     long long int time;        ///< 抓拍图片的时间戳
 	int number;                ///< 抓拍图片的帧编号
-	cv::Mat scene;             ///< 抓拍图片对应的全景图
-	cv::Mat slice;             ///< 抓拍图片
-	cv::Mat mask;              ///< 抓拍图片对应的前景图
+	cv::Mat scene;             ///< 抓拍图片对应的全景图, 视频帧的尺寸
+	cv::Mat mask;              ///< 抓拍图片对应的前景图, 视频帧的尺寸
+    cv::Mat slice;             ///< 抓拍图片
 	cv::Rect rect;             ///< 运动目标在全景图上的矩形
 	int bound;                 ///< 抓拍时跨越线圈的边界 1 左边界 2 右边界 3 下边界 -1 未知
 	int cross;                 ///< 抓拍时是否进线圈 1 是 0 不是 -1 未知

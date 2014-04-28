@@ -35,8 +35,6 @@ void RegionOfInterest::init(const cv::Size& imageSize, const std::string& path, 
 	initFileStream.open(path.c_str());
 	if (!initFileStream.is_open())
 	{
-		//throw std::string("ERROR in function ") + __FUNCTION__ + "(), " +
-		//	"cannot open file " + path;
         THROW_EXCEPT("cannot open file " + path);
 	}
 	std::string buf;
@@ -45,8 +43,6 @@ void RegionOfInterest::init(const cv::Size& imageSize, const std::string& path, 
 	{
 		if (initFileStream.eof())
 		{
-			//throw std::string("ERROR in function ") + __FUNCTION__ + "(), " +
-			//	"cannot find config params label " + label;
             THROW_EXCEPT("cannot find config params label " + label);
 		}
 		std::getline(initFileStream, buf);
@@ -57,8 +53,6 @@ void RegionOfInterest::init(const cv::Size& imageSize, const std::string& path, 
 	{
 		if (initFileStream.eof())
 		{
-			//throw std::string("ERROR in function ") + __FUNCTION__ + "(), " +
-			//	"cannot find config params label " + "#define_included_region";
             THROW_EXCEPT("cannot find config params label #define_included_region");
 		}
 		std::getline(initFileStream, buf);
@@ -74,8 +68,6 @@ void RegionOfInterest::init(const cv::Size& imageSize, const std::string& path, 
 	{
 		if (initFileStream.eof())
 		{
-			//throw std::string("ERROR in function ") + __FUNCTION__ + "(), " +
-			//	"cannot find config params label " + "#num_of_roi";
             THROW_EXCEPT("cannot find config params label #num_of_roi");
 		}
 		std::getline(initFileStream, buf);
@@ -119,8 +111,6 @@ void RegionOfInterest::init(const cv::Size& imageSize, const std::string& path, 
 		int size = vals.size();
 		if (size == 0 || size % 2 == 1)
 		{
-			//throw std::string("ERROR in function ") + __FUNCTION__ + "(), " +
-			//	"invalid number of values following label #roi";
             THROW_EXCEPT("invalid number of values following label #roi");
 		}
 		size /= 2;
@@ -159,20 +149,12 @@ void RegionOfInterest::init(const std::string& label, const cv::Size& imageSize,
 	}
     else if (imagePoints.size() == 1 && imagePoints[0].size() < 2)
     {
-        //std::stringstream strm;
-		//strm << "ERROR in function " << __FUNCTION__ << "(), "
-		//	 << "imagePoints.size == 1 && imagePoints[0].size() < 2";
-		//throw strm.str();
         THROW_EXCEPT("imagePoints.size == 1 && imagePoints[0].size() < 2");
     }
     else if (imagePoints.size() == 1 && imagePoints[0].size() == 2)
     {
         if (!defIncludedRegion)
         {
-            //std::stringstream strm;
-			//strm << "ERROR in function " << __FUNCTION__ << "(), "
-			//	 << "imagePoints.size == 1 && imagePoints[0].size() == 2 && !defIncludedRegion";
-			//throw strm.str();
             THROW_EXCEPT("imagePoints.size == 1 && imagePoints[0].size() == 2 && !defIncludedRegion");
         }
         width = imageSize.width;
@@ -199,7 +181,6 @@ void RegionOfInterest::init(const std::string& label, const cv::Size& imageSize,
 				std::stringstream strm;
 				strm << "ERROR in function " << __FUNCTION__ << "(), "
 					 << "imagePoints[" << i << "].size() < 3";
-				//throw strm.str();
                 THROW_EXCEPT(strm.str());
 			}
 		}
@@ -443,9 +424,6 @@ void VirtualLoop::init(const std::string& path, const std::string& label)
     initFileStream.open(path.c_str());
 	if (!initFileStream.is_open())
 	{
-		//std::stringstream message;
-		//message << "ERROR in VirtualLoop::init(), cannot open file " << path;
-		//throw message.str();
         THROW_EXCEPT("cannot open file " + path);
 	}
 	char stringNotUsed[500];
@@ -454,9 +432,6 @@ void VirtualLoop::init(const std::string& path, const std::string& label)
 		initFileStream >> stringNotUsed;
 		if (initFileStream.eof())
 		{
-			//std::stringstream message;
-			//message << "ERROR in VirtualLoop::init(), cannot find config params label " << label;
-			//throw message.str();
             THROW_EXCEPT("cannot find config params label " + label);
 		}
 	}
@@ -479,7 +454,6 @@ void VirtualLoop::init(const std::string& label, const std::vector<cv::Point>& p
 {
     if (points.size() != 4)
         THROW_EXCEPT("imagePoints.size() != 4");
-        //throw std::string("ERROR in function ") + __FUNCTION__ + "(), imagePoints.size() != 4";
 
     for (int i = 0; i < 4; i++)
         vertices[i] = points[i];
@@ -547,8 +521,6 @@ void LineSegment::init(const std::string& path, const std::string& label)
 	initFileStream.open(path.c_str());
 	if (!initFileStream.is_open())
 	{
-		//throw std::string("ERROR in function ") + __FUNCTION__ + "(), " +
-		//	"cannot open file " + path;
         THROW_EXCEPT("cannot open file " + path);
 	}
 	std::string buf;
@@ -557,8 +529,6 @@ void LineSegment::init(const std::string& path, const std::string& label)
 	{
 		if (initFileStream.eof())
 		{
-			//throw std::string("ERROR in function ") + __FUNCTION__ + "(), " +
-			//	"cannot find config params label " + label;
             THROW_EXCEPT("cannot find config params label " + label);
 		}
 		std::getline(initFileStream, buf);
@@ -585,7 +555,6 @@ void LineSegment::init(const cv::Point& begPoint, const cv::Point& endPoint,
 {
     if (begPoint == endPoint)
         THROW_EXCEPT("begPoint == endPoint");
-        //throw std::string("ERROR in function ") + __FUNCTION__ + "(), begPoint == endPoint";
     beg = begPoint;
     end = endPoint;
     if (beg.x == end.x)
@@ -622,7 +591,6 @@ void LineSegment::init(const cv::Point& begPoint, const cv::Point& endPoint,
     c = bb / ss;
     double val = begSidePoint.x * a + begSidePoint.y * b + c;
     if (std::abs(val) < 0.01 && begSidePoint.x >= 0 && begSidePoint.y >= 0)
-        //throw std::string("ERROR in function ") + __FUNCTION__ + "(), begSidePoint too close to line";
         THROW_EXCEPT("begSidePoint too close to line");
     signOnBegSide = val > 0 ? 1 : -1;
 }

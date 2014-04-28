@@ -124,9 +124,6 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const string& p
     fileDataSheet.open(pathPath.c_str());
 	if (!fileDataSheet.is_open())
 	{
-		//stringstream message;
-		//message << "ERROR in MovingObjectDetector::init(), cannot open file " << pathPath;
-		//throw message.str();
         THROW_EXCEPT("cannot open file " + pathPath);
 	}
 	fileDataSheet >> stringNotUsed >> pathMOD;
@@ -145,9 +142,6 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const string& p
 	fileDataSheet.open(pathMOD);
 	if (!fileDataSheet.is_open())
 	{
-		//stringstream message;
-		//message << "ERROR in MovingObjectDetector::init(), cannot open file " << pathMOD;
-		//throw message.str();
         THROW_EXCEPT(string("cannot open file ") + pathMOD);
 	}
 	do
@@ -155,8 +149,6 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const string& p
 		fileDataSheet >> stringNotUsed;
 		if (fileDataSheet.eof())
 		{
-			/*throw string("ERROR in MovingObjectDetector::init(), "
-				         "cannot find config params label [MOD] for MOD");*/
             THROW_EXCEPT("cannot find config params label [MOD] for MOD");
 		}
 	}
@@ -179,10 +171,6 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const string& p
         recordMode != RecordMode::MultiVisualRecord &&
         recordMode != RecordMode::NoVisualRecord)
     {
-        //stringstream message;
-        //message << "ERROR in " << __FUNCTION__ << "(), "
-        //    << "recordMode = " << recordMode << ", not valid.";
-        //throw message.str();
         stringstream message;
         message << "recordMode = " << recordMode << ", not valid";
         THROW_EXCEPT(message.str());
@@ -691,7 +679,6 @@ void procVideo(const string& videoName, const string& savePath,
 	}
 	catch (const exception& e)
 	{
-		//throw string("ERROR in function ") + __FUNCTION__ + "(), " + e;
         THROW_EXCEPT(e.what());
 	}
 
@@ -726,14 +713,6 @@ void procVideo(const string& videoName, const string& savePath,
                 movObjDet.proc(input, output);
             accProcTimer.end();
 		}
-		/*catch (const string& e)
-		{
-			throw string("ERROR in function ") + __FUNCTION__ + "(), " + e;
-		}
-        catch (const Exception& e)
-        {
-            throw string("ERROR in function ") + __FUNCTION__ + "(), " + e.what();
-        }*/
         catch (const ztool::Exception& e)
         {
             THROW_EXCEPT(e.what());
