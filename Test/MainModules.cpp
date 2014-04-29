@@ -101,7 +101,7 @@ int main(void)
 		blobTracker.drawTrackingState(draw, Scalar(255, 0, 0), Scalar(0, 255, 0), Scalar(0, 0, 255), Scalar(255, 255, 255));
 		imshow("tracking state", draw);
 
-		if (!objects.empty() & 0)
+		if (!objects.empty())
 		{
 			printf("frame count %d:\n", i);
 			int objSize = objects.size();

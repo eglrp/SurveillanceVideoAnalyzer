@@ -491,9 +491,9 @@ const Mat& OrigForeProxy::getDeepCopy(void)
     if (!done)
     {
         done = true;
-        resize(normMask, origMask, origSize, 0, 0, INTER_NEAREST);
+        resize(normFore, origFore, origSize, 0, 0, INTER_NEAREST);
     }
-    return origMask;
+    return origFore;
 }
 
 }
@@ -520,8 +520,9 @@ void BlobVisualRecord::makeRecord(OrigSceneProxy& scene, OrigForeProxy& fore,
     // 保存运动目标的截图
     if (saveMode & SaveImageMode::SaveSlice)
     {	    
-        Mat tempImage = Mat(scene.getDeepCopy(), origRect);
-        tempImage.copyTo(blobImage);
+        //Mat tempImage = Mat(scene.getDeepCopy(), origRect);
+        //tempImage.copyTo(blobImage);
+        blobImage = Mat(scene.getDeepCopy(), origRect);
     }
 
     // 保存运动目标的二值化前景图

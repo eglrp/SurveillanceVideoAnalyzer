@@ -106,6 +106,12 @@ struct BlobQuanHistory
     cv::Ptr<int> currCount;             ///< 帧编号
 };
 
+// 以下是全景图和前景图的代理类
+// 采用 lazy evaluation 策略, 当 BlobVisualRecord 的实例的 makeRecord 成员函数真正需要到这些图片时, 才制作出深拷贝
+// BlobVisualRecord::makeRecord 函数调用 cv::Mat 的 = 运算符, 保存图片的浅拷贝
+// 如果处理某一帧时恰好有多个 BlobVisualRecord 实例都要保存全景图和前景图, 
+// 那么这些实例可以共享一份全景图和前景图的深拷贝
+
 //! 全景图延迟处理类
 class OrigSceneProxy
 {
@@ -122,13 +128,13 @@ private:
 class OrigForeProxy
 {
 public:
-    OrigForeProxy(const cv::Mat& normMaskImage, const cv::Size& origImageSize)
-        : done(false), normMask(normMaskImage), origSize(origImageSize) {};
+    OrigForeProxy(const cv::Mat& normForeImage, const cv::Size& origImageSize)
+        : done(false), normFore(normForeImage), origSize(origImageSize) {};
     const cv::Mat& getDeepCopy(void);
 private:
-    const cv::Mat& normMask;
+    const cv::Mat& normFore;
     cv::Size origSize;
-    cv::Mat origMask;
+    cv::Mat origFore;
     bool done;
 };
 
@@ -179,9 +185,9 @@ struct BlobVisualRecord
     cv::Rect origRect;           ///< 原始帧上的矩形
     long long int time;          ///< 时间戳
 	int count;                   ///< 帧编号
-    cv::Mat blobImage;           ///< 原始尺寸的运动目标图片, 大小等于 origRect 的大小
-    cv::Mat foreImage;           ///< 原始尺寸的前景图
-    cv::Mat fullFrame;           ///< 原始尺寸的全景图
+    cv::Mat blobImage;           ///< 原始尺寸的运动目标图片, 大小等于 origRect 的大小, 浅拷贝
+    cv::Mat foreImage;           ///< 原始尺寸的前景图, 浅拷贝
+    cv::Mat fullFrame;           ///< 原始尺寸的全景图, 浅拷贝
 };
 
 //! 抓拍图片基类
