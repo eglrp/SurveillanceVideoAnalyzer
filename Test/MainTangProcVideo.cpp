@@ -47,13 +47,15 @@ int main(int argc, char** argv)
     /*"D:\\SHARED\\MiscellaneousVideo\\案发前20秒(2).avi"*/
 	/*"D:/SHARED/TaicangVideo/1/70.flv"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\video\\4M2D12-21-2C.avi"*/
-    "D:\\SHARED\\MiscellaneousVideo\\video\\test1030.avi"
+    /*"D:\\SHARED\\MiscellaneousVideo\\video\\test1030.avi"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\video\\古北-头顶1.avi"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\video\\顾戴2.avi"*/
-    ;
+    /*"D:\\SHARED\\MiscellaneousVideo\\养殖场130万像素.avi"*/
+    "D:\\SHARED\\MiscellaneousVideo\\ch03_20140427105139MP4.avi";
 	VideoCapture cap;
 	cap.open(videoPath);
 	int totalFrameCount = cap.get(CV_CAP_PROP_FRAME_COUNT);
+    cap.release();
 	/*printf("frame count %d\n", totalFrameCount);
     system("pause");
 	while (true)

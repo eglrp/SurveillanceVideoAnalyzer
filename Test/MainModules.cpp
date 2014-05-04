@@ -18,7 +18,9 @@ int main(void)
         /*"D:\\SHARED\\GuilinVideo\\DVR1_灵川八里街川东一路八里一路路口_20130826170046_20130826171424_63094171_0001.avi"*/
         /*"D:/SHARED/GuilinVideo/DVR1_灵川八里街川东一路八里一路路口_20130825150550_20130825151929_60634656_0001.avi"*/
         /*"D:/SHARED/GuilinVideo/DVR1_灵川八里街川东一路八里一路路口20130909070538.avi"*/
-		"D:/SHARED/TaicangVideo/1/70.flv";
+		/*"D:/SHARED/TaicangVideo/1/70.flv"*/
+        "D:\\SHARED\\HongshenVideo\\4M2D12-21-2C.avi"
+        /*"D:\\SHARED\\HongshenVideo\\test1030.avi"*/;
 	VideoCapture cap;
 	cap.open(path);
 	VisualInfo visualInfo;
@@ -69,9 +71,9 @@ int main(void)
 			SizeInfo sizeInfo;
 			sizeInfo.create(origSize, normSize);
 
-			//blobTracker.init(roi, sizeInfo);  // 只保存矩形历史记录, 无图片记录
+			blobTracker.init(roi, sizeInfo);  // 只保存矩形历史记录, 无图片记录
 			//blobTracker.initLineSegment(roi, lineSeg, sizeInfo, SaveImageMode::SaveScene | SaveImageMode::SaveSlice);
-            blobTracker.initMultiRecord(roi, sizeInfo, SaveImageMode::SaveScene | SaveImageMode::SaveMask, 4, 4);
+            //blobTracker.initMultiRecord(roi, sizeInfo, SaveImageMode::SaveScene | SaveImageMode::SaveMask, 4, 4);
             //blobTracker.initTriBound(roi, loop, sizeInfo, SaveImageMode::SaveScene | SaveImageMode::SaveSlice);
 			bool checkTurnAround = true;
 			double maxDistRectAndBlob = 15;
@@ -95,8 +97,8 @@ int main(void)
 		imshow("fore image", foreImage);
 
 		vector<ObjectInfo> objects;
-		//blobTracker.proc(timeStamp, frameCount, currRects, objects); // 只保存矩形历史记录, 无图片记录
-		blobTracker.proc(frame, foreImage, timeStamp, frameCount, currRects, objects);
+		blobTracker.proc(timeStamp, frameCount, currRects, objects); // 只保存矩形历史记录, 无图片记录
+		//blobTracker.proc(frame, foreImage, timeStamp, frameCount, currRects, objects);
 		Mat draw = image.clone();
 		blobTracker.drawTrackingState(draw, Scalar(255, 0, 0), Scalar(0, 255, 0), Scalar(0, 0, 255), Scalar(255, 255, 255));
 		imshow("tracking state", draw);
@@ -188,7 +190,7 @@ int main(void)
 			}
 		}
 
-		waitKey(objects.empty() ? 1 : 1);
+		waitKey(objects.empty() ? 1 : 0);
 	}
 	return 0;
 }
