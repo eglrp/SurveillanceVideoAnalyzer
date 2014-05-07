@@ -1,5 +1,5 @@
 ﻿#include "BlobTrackerInternal.h"
-#include "FilestreamScopeGuard.h"
+#include "FileStreamScopeGuard.h"
 #include "Exception.h"
 #include "CompileControl.h"
 

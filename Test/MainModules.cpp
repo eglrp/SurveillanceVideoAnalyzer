@@ -12,15 +12,15 @@ using namespace std;
 using namespace cv;
 using namespace zsfo;
 
-int main(void)
+int main(int argc, char** argv)
 {
-	const char* const path = /*"D:\\SHARED\\TrimpsVideo\\20140316\\01\\Video01_2014_03_16_14_57_28_type1.avi"*/
+    const char* const path = /*"D:\\SHARED\\TrimpsVideo\\20140316\\01\\Video01_2014_03_16_14_57_28_type1.avi"*/
         /*"D:\\SHARED\\GuilinVideo\\DVR1_灵川八里街川东一路八里一路路口_20130826170046_20130826171424_63094171_0001.avi"*/
         /*"D:/SHARED/GuilinVideo/DVR1_灵川八里街川东一路八里一路路口_20130825150550_20130825151929_60634656_0001.avi"*/
         /*"D:/SHARED/GuilinVideo/DVR1_灵川八里街川东一路八里一路路口20130909070538.avi"*/
 		/*"D:/SHARED/TaicangVideo/1/70.flv"*/
-        "D:\\SHARED\\HongshenVideo\\4M2D12-21-2C.avi"
-        /*"D:\\SHARED\\HongshenVideo\\test1030.avi"*/;
+        /*"D:\\SHARED\\HongshenVideo\\顾戴2.avi"*/
+        "D:\\SHARED\\HongshenVideo\\test1030.avi";
 	VideoCapture cap;
 	cap.open(path);
 	VisualInfo visualInfo;
@@ -29,6 +29,9 @@ int main(void)
 	Size normSize(320, 240);	
 	bool init = false;
 	vector<Rect> stableRects;
+
+    try
+    {
 	
 	for (int i = 0; i < 200000000; i++)
 	{
@@ -36,7 +39,8 @@ int main(void)
 		long long int timeStamp = cap.get(CV_CAP_PROP_POS_MSEC);
 		int frameCount = cap.get(CV_CAP_PROP_POS_FRAMES);
 		if (!cap.read(frame)) break;
-		resize(frame, image, normSize);
+        resize(frame, image, normSize);
+        printf("frame count = %d\n", i);
 
 		if (!init)
 		{
@@ -86,6 +90,8 @@ int main(void)
 
 		Mat foreImage;
 		visualInfo.update(image, foreImage, true, stableRects);
+        imshow("image", image);
+        imshow("orig fore image", foreImage);
 		
 		vector<Rect> currRects;
 		blobExtractor.proc(foreImage, Mat(), Mat(), currRects, stableRects);
@@ -93,8 +99,7 @@ int main(void)
 			rectangle(image, currRects[j], Scalar(0, 0, 255), 2);
         for (int j = 0; j < stableRects.size(); j++)
             rectangle(image, stableRects[j], Scalar(0, 0, 0), 2);
-		imshow("image", image);
-		imshow("fore image", foreImage);
+		imshow("proc fore image", foreImage);
 
 		vector<ObjectInfo> objects;
 		blobTracker.proc(timeStamp, frameCount, currRects, objects); // 只保存矩形历史记录, 无图片记录
@@ -103,7 +108,7 @@ int main(void)
 		blobTracker.drawTrackingState(draw, Scalar(255, 0, 0), Scalar(0, 255, 0), Scalar(0, 0, 255), Scalar(255, 255, 255));
 		imshow("tracking state", draw);
 
-		if (!objects.empty())
+		if (0 & !objects.empty())
 		{
 			printf("frame count %d:\n", i);
 			int objSize = objects.size();
@@ -190,7 +195,27 @@ int main(void)
 			}
 		}
 
-		waitKey(objects.empty() ? 1 : 0);
+		//waitKey(objects.empty() ? 1 : 0);
+        //waitKey(i == 33260 ? 0 : 1);
+        while (true)
+        {
+            char key = waitKey(25);
+            if (key == ' ')
+            {
+                key = waitKey(0);
+                if (key == ' ')
+                    break;
+            }
+            else
+                break;
+        }
+
 	}
+
+    }
+    catch (const std::exception& e)
+    {
+        printf("%s\n", e.what());
+    }
 	return 0;
 }

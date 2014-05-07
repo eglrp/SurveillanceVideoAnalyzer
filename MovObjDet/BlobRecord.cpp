@@ -1094,7 +1094,7 @@ BlobBottomBoundVisualHistory::BlobBottomBoundVisualHistory(const cv::Ptr<Virtual
     {
         fstream initFileStream;
         ztool::FileStreamScopeGuard<fstream> guard(initFileStream);
-        initFileStream.open(path);
+        initFileStream.open(path.c_str());
         if (!initFileStream.is_open())
         {
             THROW_EXCEPT("cannot open file " + path);

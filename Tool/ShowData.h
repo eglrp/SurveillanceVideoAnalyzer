@@ -283,12 +283,12 @@ void showArrayByVertBar(const std::string& name, const std::vector<Type>& arr, b
 				cv::Point begin = cv::Point(i + margin, barLength + 2 * margin);
 				cv::Point end = cv::Point(i + margin, barLength + margin - scale * (arr[i] - minVal));
 				if (arr[i] < avg)
-					cv::line(image, begin, end, Scalar(255, 255, 0));
+					cv::line(image, begin, end, cv::Scalar(255, 255, 0));
 				else
-					cv::line(image, begin, end, Scalar(0, 255, 255));
+					cv::line(image, begin, end, cv::Scalar(0, 255, 255));
 			}
 			int meanPosition = barLength + margin - scale * (avg - minVal);
-			cv::line(image, Point(margin, meanPosition), Point(arrLength + margin, meanPosition), Scalar(0, 0, 255));
+			cv::line(image, cv::Point(margin, meanPosition), cv::Point(arrLength + margin, meanPosition), cv::Scalar(0, 0, 255));
 		}
 	}
 	else
@@ -311,9 +311,9 @@ void showArrayByVertBar(const std::string& name, const std::vector<Type>& arr, b
 				cv::Point begin = cv::Point(i + margin, zeroPosition);
 				cv::Point end = cv::Point(i + margin, barLength + margin - scale * (arr[i] - minVal));
 				if (arr[i] < avg)
-					cv::line(image, begin, end, Scalar(255, 255, 0));
+					cv::line(image, begin, end, cv::Scalar(255, 255, 0));
 				else
-					cv::line(image, begin, end, Scalar(0, 255, 255));
+					cv::line(image, begin, end, cv::Scalar(0, 255, 255));
 			}
 			int meanPosition = barLength + margin - scale * (avg - minVal);
 			cv::line(image, cv::Point(margin, zeroPosition), cv::Point(arrLength + margin, zeroPosition), cv::Scalar(255, 255, 255));
