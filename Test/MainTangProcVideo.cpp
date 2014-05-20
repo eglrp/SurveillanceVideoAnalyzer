@@ -23,7 +23,7 @@ void callBack(float progressPercentage, const vector<zpv::ObjectInfo>& infos, vo
 	}
 
 	printf("process: %.4f%%, has object(s)\n", progressPercentage);
-	int size = infos.size();
+	/*int size = infos.size();
 	for (int i = 0; i < size; i++)
 	{
 		printf("  Obj ID = %d\n", infos[i].objectID);
@@ -34,7 +34,7 @@ void callBack(float progressPercentage, const vector<zpv::ObjectInfo>& infos, vo
 			infos[i].sliceLocation.x, infos[i].sliceLocation.y,
 			infos[i].sliceLocation.width, infos[i].sliceLocation.height);
 		printf("\n");
-	}
+	}*/
 }
 
 int main(int argc, char** argv)
@@ -98,8 +98,8 @@ int main(int argc, char** argv)
         printf("%s\n", e.what());
     }
     timer.end();
-    printf("time used is %.4f\n", timer.elapse());
-    system("pause");
+    printf("time used is %.4f\n END\n", timer.elapse());
+    //system("pause");
 
     return 0;
 }

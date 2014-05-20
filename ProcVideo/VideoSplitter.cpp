@@ -271,7 +271,7 @@ static string getDoubleString(double val)
 namespace zpv
 {
 
-void findSplitPositions(const string& videoPath, double splitUnitInSecond,
+bool findSplitPositions(const string& videoPath, const double expectLengthInSecond,
     double& videoLengthInSecond, vector<double>& segmentLengthInSecond,
     vector<pair<int, int> >& splitBegAndEnd)
 {
@@ -346,7 +346,8 @@ void findSplitPositions(const string& videoPath, double splitUnitInSecond,
 	int width = 320;
 	int height = 240;
 
-	if (splitUnitInSecond < 300)
+	double splitUnitInSecond = expectLengthInSecond;
+    if (splitUnitInSecond < 300)
 	{
 		splitUnitInSecond = 300;
 #if VIDEO_SPLIT_CMPL_LOG
@@ -384,7 +385,7 @@ void findSplitPositions(const string& videoPath, double splitUnitInSecond,
 		logFile << "Log ends" << "\n";
 		logFile.close();
 #endif
-		return;
+		return true;
 	}
 #if VIDEO_SPLIT_CMPL_LOG
 	cout << "num of segments = " << numOfSeg << "\n";
@@ -508,7 +509,248 @@ void findSplitPositions(const string& videoPath, double splitUnitInSecond,
 	logFile.close();
 #endif
 
-	return;
+	return true;
+}
+
+bool findSplitPositions(const string& videoPath, const int expectSegNum,
+    double& videoLengthInSecond, vector<double>& segmentLengthInSecond,
+    vector<pair<int, int> >& splitBegAndEnd)
+{
+	videoLengthInSecond = 0;
+    segmentLengthInSecond.clear();
+    splitBegAndEnd.clear();
+
+    VideoCapture videoCap;
+	Mat frame, image;
+
+#if VIDEO_SPLIT_CMPL_LOG
+	string videoName = videoPath;
+	int posSlash = videoName.find_last_of("\\/");
+	if (posSlash != string::npos) 
+		videoName = videoName.substr(posSlash + 1);
+	createDirectory("result");
+	stringstream logFileName;
+	logFileName << "result/LogForVideoSplitter[" << videoName << "].txt";
+	fstream logFile;
+	logFile.open(logFileName.str().c_str(), ios::out);
+#endif
+	if (!videoCap.open(videoPath))
+	{
+#if VIDEO_SPLIT_CMPL_LOG
+		stringstream message;
+		message << "ERROR in function findSplitPositions(), "
+			    << "cannot open file " << videoPath;
+		logFile << message.str() << "\n";
+		logFile.close();
+		cerr << message.str() << "\n";
+#endif
+		THROW_EXCEPT("cannot open file " + videoPath);
+	}
+	double videoFrameCount = videoCap.get(CV_CAP_PROP_FRAME_COUNT);
+	double videoFrameRate = videoCap.get(CV_CAP_PROP_FPS);
+	if (videoFrameCount < 1.0)
+	{
+#if VIDEO_SPLIT_CMPL_LOG
+		string message;
+		message = "ERROR in function findSplitPositions(), "
+				  "video frame count is invalid";
+		logFile << message << "\n";
+		logFile.close();
+		cerr << message << "\n";
+#endif
+		THROW_EXCEPT("video frame count is " + getIntString(videoFrameCount) + ", invalid");
+	}
+	if (videoFrameRate < 1.0)
+	{
+#if VIDEO_SPLIT_CMPL_LOG
+		string message;
+		message = "ERROR in function findSplitPositions(), "
+				  "video frame rate is invalid";
+		logFile << message << "\n";
+		logFile.close();
+		cerr << message << "\n";
+#endif
+		THROW_EXCEPT("video frame rate is " + getDoubleString(videoFrameRate) + ", invalid");
+	}
+	videoLengthInSecond = videoFrameCount / videoFrameRate;
+#if VIDEO_SPLIT_CMPL_LOG
+	stringstream infoStr;
+	infoStr << "Display video information:" << "\n";
+	infoStr << fixed;
+	infoStr << "frame count = " << setprecision(2) << videoFrameCount << ", "
+		    << "frame rate = " << setprecision(2) << videoFrameRate << ", "
+		    << "length in second = " << setprecision(2) << videoLengthInSecond << "\n";
+	cout << infoStr.str();
+	logFile << infoStr.str();
+#endif
+	double marginInSecond = 15;
+	int width = 320;
+	int height = 240;
+
+    double splitUnitInSecond = videoLengthInSecond / expectSegNum;
+    if (splitUnitInSecond < 300)
+	{
+		splitUnitInSecond = 300;
+#if VIDEO_SPLIT_CMPL_LOG
+	    cout << "WARNING in function findSplitPositions(), splitUnitInSecond is set to 300" << "\n";
+	    logFile << "WARNING in function findSplitPositions(), splitUnitInSecond is set to 300" << "\n";
+#endif
+	}
+	int initNumOfSeg = int(videoLengthInSecond) / int(splitUnitInSecond);
+	int numOfSeg;
+	if (initNumOfSeg == 0)
+		numOfSeg = 1;
+	else if (videoLengthInSecond - initNumOfSeg * splitUnitInSecond > 0.65 * splitUnitInSecond)
+		numOfSeg = initNumOfSeg + 1;
+	else
+		numOfSeg = initNumOfSeg;
+	if (numOfSeg < 2)
+	{
+		segmentLengthInSecond.clear();
+		segmentLengthInSecond.push_back(videoLengthInSecond);
+		splitBegAndEnd.clear();
+		splitBegAndEnd.push_back(make_pair(0, videoFrameCount - 1));
+#if VIDEO_SPLIT_CMPL_LOG
+		cout << fixed;
+		cout << "WARINING in function findSplitPositions(), can only get one segment" << "\n";
+		cout << "begin frame count = " << setw(10) << 0 << ", "
+			 << "end frame count = " << setw(10) << int(videoFrameCount - 1) << ", "
+			 << "time = " << setw(10) << setprecision(4) << videoFrameCount / videoFrameRate
+			 << " sec" << "\n";
+		logFile << fixed;
+		logFile << "WARINING in function findSplitPositions(), can only get one segment" << "\n";
+		logFile << "begin frame count = " << setw(10) << 0 << ", "
+			    << "end frame count = " << setw(10) << int(videoFrameCount - 1) << ", "
+				<< "time = " << setw(10) << setprecision(4) << videoFrameCount / videoFrameRate
+				<< " sec"<< "\n";
+		logFile << "Log ends" << "\n";
+		logFile.close();
+#endif
+		return true;
+	}
+#if VIDEO_SPLIT_CMPL_LOG
+	cout << "num of segments = " << numOfSeg << "\n";
+#endif
+
+	segmentLengthInSecond.clear();
+	splitBegAndEnd.clear();
+	vector<int> splitFramePos;
+	splitFramePos.push_back(0);
+	for (int j = 1; j < numOfSeg; j++)
+	{
+		int center, begInc, endExc;
+		center = splitUnitInSecond * j * videoFrameRate;
+		begInc = (splitUnitInSecond * j - marginInSecond) * videoFrameRate;
+		endExc = (splitUnitInSecond * j + marginInSecond) * videoFrameRate;
+
+		if (!videoCap.set(CV_CAP_PROP_POS_FRAMES, begInc))
+		{
+#if VIDEO_SPLIT_CMPL_LOG
+			string message = "ERROR in function findSplitPositions(), "
+					         "cannot seek designated frame";
+			logFile << message << "\n";
+			logFile.close();
+			cerr << message << "\n";
+#endif
+			THROW_EXCEPT("cannot seek designated frame, frame count " + getIntString(begInc));
+		}
+		if (!videoCap.read(frame))
+		{
+#if VIDEO_SPLIT_CMPL_LOG
+			string message = "ERROR in function findSplitPositions(), "
+					         "cannot read designated frame";
+			logFile << message << "\n";
+			logFile.close();
+			cerr << message << "\n";
+#endif
+			THROW_EXCEPT("cannot read designated frame, frame count " + getIntString(begInc));
+		}
+		resize(frame, image, Size(width, height), INTER_LINEAR);
+
+		try
+		{
+			zvs::VideoAnalyzer analyzer;
+			analyzer.init(image);		
+
+			for (int i = 1; i < endExc - begInc; i++)
+			{
+				if (!videoCap.read(frame))
+				{
+#if VIDEO_SPLIT_CMPL_LOG
+					string message = "ERROR in function findSplitPositions(), "
+							         "cannot read designated frame";
+					logFile << message << "\n";
+					logFile.close();
+					cerr << message << "\n";
+#endif
+					THROW_EXCEPT("cannot read designated frame, frame count " + getIntString(begInc + i));
+				}
+				resize(frame, image, Size(width, height), INTER_LINEAR);
+				analyzer.proc(image);
+			}
+			int cutPosition = analyzer.findSplitPosition((endExc - begInc) / 2);
+#if VIDEO_SPLIT_CMPL_LOG
+			cout << "split segment " << j - 1 << " and segment " << j << ": ";
+			cout << "expected center frame count = " << center << ", "
+				 << "allowed begInc frame count = " << begInc << ", "
+				 << "allowed endExc frame count = " << endExc << ", "
+				 << "real cut position = " << begInc + cutPosition << "\n";
+#endif
+			splitFramePos.push_back(begInc + cutPosition);
+
+#if VIDEO_SPLIT_CMPL_SHOW
+				VideoCapture frameExtractor;
+				Mat extractFrame;
+				frameExtractor.open(videoPath);
+				frameExtractor.set(CV_CAP_PROP_POS_FRAMES, begInc + cutPosition);
+				frameExtractor.read(extractFrame);	
+				stringstream imageName;
+				imageName << "split frame " << begInc + cutPosition;
+				imshow(imageName.str(), extractFrame);
+				waitKey(0);
+				frameExtractor.release();
+#endif	
+		}
+		catch (const exception& s)
+		{
+#if VIDEO_SPLIT_CMPL_LOG
+            logFile << s.what() << "\n";
+			logFile.close();
+            cerr << s.what() << "\n";
+#endif
+            THROW_EXCEPT(s.what());
+		}
+	}
+	videoCap.release();
+
+	for (int i = 1; i < splitFramePos.size(); i++)
+	{
+		segmentLengthInSecond.push_back(double(splitFramePos[i] - splitFramePos[i - 1]) / videoFrameRate);
+		splitBegAndEnd.push_back(make_pair(splitFramePos[i - 1], splitFramePos[i] - 1));
+	}
+	segmentLengthInSecond.push_back(double(videoFrameCount - splitFramePos[splitFramePos.size() - 1]) / videoFrameRate);
+	splitBegAndEnd.push_back(make_pair(splitFramePos[splitFramePos.size() - 1], videoFrameCount - 1));
+
+#if VIDEO_SPLIT_CMPL_LOG
+	stringstream logStream;
+	logStream << fixed;
+	logStream << "Function findSplitPosition() successfully run, "
+		      << splitFramePos.size() << " video segment(s) obtained" << "\n";
+	for (int i = 0; i < segmentLengthInSecond.size(); i++)
+	{
+		logStream << "segment = " << setw(5) << i << ": "
+				  << "begin frame count = " << setw(10) << splitBegAndEnd[i].first << ", "
+				  << "end frame count = "   << setw(10) << splitBegAndEnd[i].second << ", "
+				  << "time = "  << setw(10) << setprecision(4) << segmentLengthInSecond[i]
+				  << " sec" << "\n";
+	}
+	cout << logStream.str();
+	logFile << logStream.str();
+	logFile << "Log ends" << "\n";
+	logFile.close();
+#endif
+
+	return true;
 }
 
 }

@@ -101,8 +101,23 @@ namespace zpv
     \param[out] videoLengthInSecond 视频的实际时长, 以秒计算
     \param[out] segmentLengthInSecond 每个视频分段的时长, 以秒计算
     \param[out] splitBegAndEnd 每个视频分段的起始帧号(包含)和结束帧号(包含), 帧号从 0 计数
+    \return 函数成功执行, 返回 true, 否则返回 false
  */
-Z_LIB_EXPORT void findSplitPositions(const std::string& videoPath, double splitUnitInSecond,
+Z_LIB_EXPORT bool findSplitPositions(const std::string& videoPath, const double splitUnitInSecond,
+	double& videoLengthInSecond, std::vector<double>& segmentLengthInSecond,
+	std::vector<std::pair<int, int> >& splitBegAndEnd);
+
+//! 分割视频函数
+/*!
+    可能会抛出 std::exception 类型的异常
+    \param[in] videoPath 视频文件全路径
+    \param[in] expectSegNum 期望的视频分段
+    \param[out] videoLengthInSecond 视频的实际时长, 以秒计算
+    \param[out] segmentLengthInSecond 每个视频分段的时长, 以秒计算
+    \param[out] splitBegAndEnd 每个视频分段的起始帧号(包含)和结束帧号(包含), 帧号从 0 计数
+    \return 函数成功执行, 返回 true, 否则返回 false
+ */
+Z_LIB_EXPORT bool findSplitPositions(const std::string& videoPath, const int expectSegNum,
 	double& videoLengthInSecond, std::vector<double>& segmentLengthInSecond,
 	std::vector<std::pair<int, int> >& splitBegAndEnd);
 
