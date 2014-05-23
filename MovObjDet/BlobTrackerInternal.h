@@ -129,8 +129,8 @@ class OrigForeProxy
 {
 public:
     OrigForeProxy(const cv::Mat& normForeImage, const cv::Size& origImageSize)
-        : done(false), normFore(normForeImage), origSize(origImageSize) {};
-    const cv::Mat& getDeepCopy(void);
+        : done(false), normFore(normForeImage), origSize(origImageSize) {}
+    const cv::Mat& getDeepCopy(const cv::Rect& normRect, const cv::Rect& origRect);
 private:
     const cv::Mat& normFore;
     cv::Size origSize;

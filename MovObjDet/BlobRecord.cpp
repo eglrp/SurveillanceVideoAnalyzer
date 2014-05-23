@@ -486,13 +486,16 @@ const Mat& OrigSceneProxy::getDeepCopy(void)
     return deepCopy;
 }
 
-const Mat& OrigForeProxy::getDeepCopy(void)
+const Mat& OrigForeProxy::getDeepCopy(const Rect& normRect, const Rect& origRect)
 {
     if (!done)
     {
         done = true;
-        resize(normFore, origFore, origSize, 0, 0, INTER_NEAREST);
+        origFore = Mat::zeros(origSize, CV_8UC1);
     }
+    Mat normForeROI = normFore(normRect);
+    Mat origForeROI = origFore(origRect);
+    resize(normForeROI, origForeROI, Size(origRect.width, origRect.height), 0, 0, INTER_NEAREST);
     return origFore;
 }
 
@@ -531,7 +534,7 @@ void BlobVisualRecord::makeRecord(OrigSceneProxy& scene, OrigForeProxy& fore,
         //Mat foreImageROI = Mat(normForeImage, normRect);
         //resize(foreImageROI, foreImage, Size(origRect.width, origRect.height));
         //threshold(foreImage, foreImage, 127, 255, THRESH_BINARY);
-        foreImage = fore.getDeepCopy();
+        foreImage = fore.getDeepCopy(normRect, origRect);
     }
 }
 
