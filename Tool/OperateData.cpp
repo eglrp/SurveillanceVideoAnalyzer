@@ -404,7 +404,7 @@ void calcThresholdedGradient(const Mat& src, Mat& dst, double thres)
     //dst.row(dst.rows - 1) = 0;
     //dst.col(0) = 0;
     //dst.col(dst.cols - 1) = 0;
-    unsigned char* ptrDstData = (unsigned char*)dst.data;
+    /*unsigned char* ptrDstData = (unsigned char*)dst.data;
     for (int i = 0; i < dst.rows; i++)
     {
         ptrDstData = dst.ptr<unsigned char>(i);
@@ -420,10 +420,10 @@ void calcThresholdedGradient(const Mat& src, Mat& dst, double thres)
     for (int i = 0; i < dst.cols; i++)
     {
         ptrDstData[i] = 0;
-    }
+    }*/
     for (int i = 0; i < dst.rows; i++)
     {
-        ptrDstData = dst.ptr<unsigned char>(i);
+        unsigned char* ptrDstData = dst.ptr<unsigned char>(i);
         for (int j = 0; j < dst.cols; j++)
         {
             if (ptrDstData[j] > thres)
@@ -456,7 +456,7 @@ void calcGradient(const Mat& src, Mat& dst, double scale)
     //dst.row(dst.rows - 1) = 0;
     //dst.col(0) = 0;
     //dst.col(dst.cols - 1) = 0;
-    unsigned char* ptrDstData = (unsigned char*)dst.data;
+    /*unsigned char* ptrDstData = (unsigned char*)dst.data;
     for (int i = 0; i < dst.rows; i++)
     {
         ptrDstData = dst.ptr<unsigned char>(i);
@@ -472,7 +472,7 @@ void calcGradient(const Mat& src, Mat& dst, double scale)
     for (int i = 0; i < dst.cols; i++)
     {
         ptrDstData[i] = 0;
-    }
+    }*/
 }
 
 }

@@ -51,7 +51,8 @@ int main(int argc, char** argv)
     /*"D:\\SHARED\\MiscellaneousVideo\\video\\古北-头顶1.avi"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\video\\顾戴2.avi"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\养殖场130万像素.avi"*/
-    "D:\\SHARED\\MiscellaneousVideo\\ch03_20140427105139MP4.avi";
+    /*"D:\\SHARED\\MiscellaneousVideo\\ch03_20140427105139MP4.avi"*/
+    "D:\\SHARED\\MiscellaneousVideo\\12_90s.flv";
 	VideoCapture cap;
 	cap.open(videoPath);
 	int totalFrameCount = cap.get(CV_CAP_PROP_FRAME_COUNT);
@@ -98,7 +99,7 @@ int main(int argc, char** argv)
         printf("%s\n", e.what());
     }
     timer.end();
-    printf("time used is %.4f\n END\n", timer.elapse());
+    printf("time used is %.4f\nEND\n", timer.elapse());
     //system("pause");
 
     return 0;
