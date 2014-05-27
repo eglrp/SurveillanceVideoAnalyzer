@@ -108,7 +108,7 @@ int main(int argc, char** argv)
 		blobTracker.drawTrackingState(draw, Scalar(255, 0, 0), Scalar(0, 255, 0), Scalar(0, 0, 255), Scalar(255, 255, 255));
 		imshow("tracking state", draw);
 
-		if (!objects.empty())
+		if (0 & !objects.empty())
 		{
 			printf("frame count %d:\n", i);
 			int objSize = objects.size();
@@ -161,6 +161,12 @@ int main(int argc, char** argv)
 						const ObjectRecord& refRec = refObj.history[k];
 						printf("%10lld%10d%5d%5d%5d%5d\n", refRec.time, refRec.number, 
 							refRec.origRect.x, refRec.origRect.y, refRec.origRect.width, refRec.origRect.height);
+                        if (refRec.image.data)
+                        {
+                            char buf[1024];
+                            sprintf(buf, "history-ID-%d-count-%d", refObj.ID, k);
+                            imshow(buf, refRec.image);
+                        }
 					}
 					printf("\n");
 				}
@@ -190,6 +196,20 @@ int main(int argc, char** argv)
                         }
 						sprintf(buf, "Slice %d-%d", j, k);
 						destroyWindow(buf);
+					}
+				}
+                if (refObj.isFinal && refObj.hasHistory)
+				{
+					int hisSize = refObj.history.size();
+					for (int k = 0; k < hisSize; k++)
+					{
+						const ObjectRecord& refRec = refObj.history[k];
+                        if (refRec.image.data)
+                        {
+                            char buf[1024];
+                            sprintf(buf, "history-ID-%d-count-%d", refObj.ID, k);
+                            destroyWindow(buf);
+                        }
 					}
 				}
 			}

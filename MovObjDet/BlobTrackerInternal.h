@@ -7,6 +7,39 @@
 
 namespace zsfo
 {
+// 以下是全景图和前景图的代理类
+// 采用 lazy evaluation 策略, 当 BlobVisualRecord 的实例的 makeRecord 成员函数真正需要到这些图片时, 才制作出深拷贝
+// BlobVisualRecord::makeRecord 函数调用 cv::Mat 的 = 运算符, 保存图片的浅拷贝
+// 如果处理某一帧时恰好有多个 BlobVisualRecord 实例都要保存全景图和前景图, 
+// 那么这些实例可以共享一份全景图和前景图的深拷贝
+
+//! 全景图延迟处理类
+class OrigSceneProxy
+{
+public:
+    OrigSceneProxy(const cv::Mat& frame) : done(false), shallowCopy(frame) {};
+    const cv::Mat& getDeepCopy(void);
+    const cv::Mat& getShallowCopy(void) const {return shallowCopy;};
+private:    
+    const cv::Mat& shallowCopy;
+    cv::Mat deepCopy;
+    bool done;
+};
+
+//! 前景图延迟处理类
+class OrigForeProxy
+{
+public:
+    OrigForeProxy(const cv::Mat& normForeImage, const cv::Size& origImageSize)
+        : done(false), normFore(normForeImage), origSize(origImageSize) {}
+    const cv::Mat& getDeepCopy(const cv::Rect& normRect, const cv::Rect& origRect);
+private:
+    const cv::Mat& normFore;
+    cv::Size origSize;
+    cv::Mat origFore;
+    bool done;
+};
+
 
 //! 记录运动目标在一帧中的记录的结构体
 struct BlobQuanRecord
@@ -21,7 +54,19 @@ struct BlobQuanRecord
         \param[in] count 帧编号
         \param[in] sizeInfo 原始尺寸和归一化尺寸
      */
-    void makeRecord(const cv::Rect& rect, double gradDiffMean, long long int time, int count, const SizeInfo& sizeInfo);
+    void makeRecord(const cv::Rect& rect, double gradDiffMean, 
+        long long int time, int count, const SizeInfo& sizeInfo);
+    //! 根据输入信息生成记录
+    /*!
+        \param[in] scene 原始尺寸输入图片
+        \param[in] rect 归一化尺寸的矩形
+        \param[in] gradDiffMean 当前帧和上一帧在 rect 区域中的差值的平均值
+        \param[in] time 时间戳
+        \param[in] count 帧编号
+        \param[in] sizeInfo 原始尺寸和归一化尺寸
+     */
+    void makeRecord(const cv::Mat& scene, const cv::Rect& rect, 
+        double gradDiffMean, long long int time, int count, const SizeInfo& sizeInfo);
 
     cv::Rect rect;             ///< 矩形
     double gradDiffMean;       ///< 矩形区域梯度差的均值
@@ -29,6 +74,7 @@ struct BlobQuanRecord
     cv::Point center;          ///< 矩形中心
     cv::Point bottom;          ///< 矩形底部边界的中心
 	cv::Rect origRect;         ///< 原始帧中的矩形
+    cv::Mat image;             ///< 目标截图
     long long int time;        ///< 时间戳      
     int count;                 ///< 帧编号
 };
@@ -57,6 +103,7 @@ struct BlobQuanHistory
     int size(void) const;
 	//! 根据当前帧得到的 rect 和 gradDiffMean 把记录 push 到向量中
     void pushRecord(const cv::Rect& rect, double gradDiffMean);
+    void pushRecord(const OrigSceneProxy& scene, const cv::Rect& rect, double gradDiffMean);
     //! 打印历史
     void displayHistory(void) const;
 	//! 输出历史
@@ -86,7 +133,7 @@ struct BlobQuanHistory
 	bool checkYDirection(int legalDirection) const;
 	
     std::vector<BlobQuanRecord> history;       ///< 矩形各类信息的历史记录
-	BlobQuanRecord initRecord;                 ///< 初始帧矩形记录
+	//BlobQuanRecord initRecord;                 ///< 初始帧矩形记录
     BlobQuanRecord currRecord;                 ///< 当前帧矩形记录
 
 	// X 轴和 Y 轴运动方向的向量
@@ -104,38 +151,6 @@ struct BlobQuanHistory
 	cv::Ptr<SizeInfo> sizeInfo;         ///< 原始尺寸和归一化尺寸
     cv::Ptr<long long int> currTime;    ///< 时间戳
     cv::Ptr<int> currCount;             ///< 帧编号
-};
-
-// 以下是全景图和前景图的代理类
-// 采用 lazy evaluation 策略, 当 BlobVisualRecord 的实例的 makeRecord 成员函数真正需要到这些图片时, 才制作出深拷贝
-// BlobVisualRecord::makeRecord 函数调用 cv::Mat 的 = 运算符, 保存图片的浅拷贝
-// 如果处理某一帧时恰好有多个 BlobVisualRecord 实例都要保存全景图和前景图, 
-// 那么这些实例可以共享一份全景图和前景图的深拷贝
-
-//! 全景图延迟处理类
-class OrigSceneProxy
-{
-public:
-    OrigSceneProxy(const cv::Mat& frame) : done(false), shallowCopy(frame) {};
-    const cv::Mat& getDeepCopy(void);
-private:    
-    const cv::Mat& shallowCopy;
-    cv::Mat deepCopy;
-    bool done;
-};
-
-//! 前景图延迟处理类
-class OrigForeProxy
-{
-public:
-    OrigForeProxy(const cv::Mat& normForeImage, const cv::Size& origImageSize)
-        : done(false), normFore(normForeImage), origSize(origImageSize) {}
-    const cv::Mat& getDeepCopy(const cv::Rect& normRect, const cv::Rect& origRect);
-private:
-    const cv::Mat& normFore;
-    cv::Size origSize;
-    cv::Mat origFore;
-    bool done;
 };
 
 //! 保存抓拍图片和相关信息的结构体
@@ -423,7 +438,7 @@ struct BlobMultiRecordVisualHistory : public BlobVisualHistory
 class Blob
 {
 public:
-    //! 只保存矩形历史的构造函数
+    //! 只保存历史的构造函数
     /*!
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
         \param[in] time 时间戳
@@ -462,7 +477,7 @@ public:
     Blob(const cv::Ptr<VirtualLoop>& catchLoop, const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
         const cv::Ptr<cv::Rect>& baseRect, const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, 
         int blobID, bool isTriBound, int saveMode, const std::string& path = std::string());
-    //! 保存多幅历史图片的构造函数
+    //! 保存多幅快照的构造函数
     /*!
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
         \param[in] time 时间戳
@@ -482,7 +497,7 @@ public:
 	~Blob(void);
     //! 创建一个新的实例
     Blob* createNew(int blobID, const cv::Rect& rect) const;
-	//! 更新运动目标状态, 包括更新历史记录, 仅适用于不保存图片的跟踪模式
+	//! 更新运动目标状态, 包括更新历史记录, 仅适用于不保存历史图片和快照的跟踪模式
 	void updateState(void);
 	//! 更新运动目标状态, 包括更新历史记录
     /*!

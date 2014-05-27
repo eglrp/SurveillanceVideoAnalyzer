@@ -12,7 +12,7 @@ struct RegionOfInterest;
 struct LineSegment;
 struct VirtualLoop;
 
-//! 记录跟踪内容模式
+//! 记录快照模式
 struct RecordMode
 {
     enum 
@@ -20,12 +20,12 @@ struct RecordMode
         CrossTriBoundVisualRecord = 0,     ///< 给定抓拍线圈, 运动目标跨越左右下边界时抓拍
         CrossBottomBoundVisualRecord = 1,  ///< 给定抓拍线圈, 运动目标跨越下边界时抓拍
         CrossLineSegmentVisualRecord = 2,  ///< 给定线段, 运动目标跨越线段时抓拍
-        MultiVisualRecord = 3,             ///< 存多幅历史图
+        MultiVisualRecord = 3,             ///< 存多幅快照
         NoVisualRecord = 4                 ///< 只记录矩形框历史
     };
 };
 
-//! 保存图片类型
+//! 保存快照图片类型
 struct SaveImageMode
 {
     enum
@@ -46,23 +46,24 @@ struct ObjectRecord
 	int number;                ///< 帧编号
 	cv::Rect normRect;         ///< 归一化帧中的矩形
 	cv::Rect origRect;         ///< 原始尺寸帧中的矩形
+    cv::Mat image;             ///< 目标截图, 从原始帧中的 origRect 中截取
 };
 
-//! 输出运动目标的抓拍记录
+//! 输出运动目标的快照记录
 struct ObjectVisualRecord
 {
     //! 构造函数
     ObjectVisualRecord(void) : time(0), number(0), bound(-1), cross(-1), direction(-1) {};
 
-    long long int time;        ///< 抓拍图片的时间戳
-	int number;                ///< 抓拍图片的帧编号
-	cv::Mat scene;             ///< 抓拍图片对应的全景图, 视频帧的尺寸
-	cv::Mat mask;              ///< 抓拍图片对应的前景图, 视频帧的尺寸
-    cv::Mat slice;             ///< 抓拍图片
+    long long int time;        ///< 快照图片的时间戳
+	int number;                ///< 快照图片的帧编号
+	cv::Mat scene;             ///< 快照图片对应的全景图, 视频帧的尺寸
+	cv::Mat mask;              ///< 快照图片对应的前景图, 视频帧的尺寸
+    cv::Mat slice;             ///< 快照图片
 	cv::Rect rect;             ///< 运动目标在全景图上的矩形
-	int bound;                 ///< 抓拍时跨越线圈的边界 1 左边界 2 右边界 3 下边界 -1 未知
-	int cross;                 ///< 抓拍时是否进线圈 1 是 0 不是 -1 未知
-	int direction;             ///< 抓拍时的行驶方向 1 从左到右 2 从右到左 3 从上到下 4 从下到上 -1 未知
+	int bound;                 ///< 快照时跨越线圈的边界 1 左边界 2 右边界 3 下边界 -1 未知
+	int cross;                 ///< 快照时是否进线圈 1 是 0 不是 -1 未知
+	int direction;             ///< 快照时的行驶方向 1 从左到右 2 从右到左 3 从上到下 4 从下到上 -1 未知
 };
 
 //! 输出的运动目标结构体
@@ -84,9 +85,9 @@ struct ObjectInfo
 	int hasHistory;            ///< 是否有历史轨迹信息
 	std::vector<ObjectRecord> history;     ///< 历史轨迹
 
-    // 抓拍图片历史信息
-    int hasVisualHistory;      ///< 是否有图像历史信息
-    std::vector<ObjectVisualRecord> visualHistory; ///< 图像历史轨迹
+    // 快照信息
+    int hasVisualHistory;      ///< 是否有快照图片
+    std::vector<ObjectVisualRecord> visualHistory; ///< 快照图片
 	
 	double speed;              ///< 速度，标清版中单位为像素/秒
 	double velocity;           ///< 速度，高清版中单位为千米/时

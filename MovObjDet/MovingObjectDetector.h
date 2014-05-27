@@ -171,14 +171,14 @@ private:
 
 //! 调用跟踪和快照类处理视频
 /*!
-    \param[in] videoName 需要处理的视频文件名, 如果为空, 会抛出 std::string 类型的异常
-    \param[in] savePath 保存处理结果的路径, 如果为空, 会抛出 std::string 类型的异常
+    \param[in] videoName 需要处理的视频文件名, 如果为空, 会抛出 std::exception 类型的异常
+    \param[in] savePath 保存处理结果的路径, 如果为空, 会抛出 std::exception 类型的异常
     \param[in] sceneName 保存的全景图的名称, savePath 文件夹中的全景图文件名格式为 sceneName123.jpg, 如果为空字符串, 则不保存全景图
     \param[in] sliceName 保存的目标截图的名称, savePath 文件夹中的目标截图文件名格式为 sliceName123.jpg, 如果为空字符串, 则不保存目标截图
     \param[in] maskName 保存的目标前景图的名称, savePath 文件夹中的目标前景图文件名格式为 maskName123.jpg, 如果为空字符串, 则不保存目标前景图
     \param[in] objectInfoFileName 保存的目标信息文件的名称, 如果为空字符串, 则不保存该文件
     \param[in] objectHistoryFileName 保存的历史轨迹文件的名称, 如果为空字符串, 则不保存该文件
-    \param[in] procEveryNFrame 每这么多帧实际处理一帧, 如果小于 1, 会抛出 std::string 类型的异常
+    \param[in] procEveryNFrame 每这么多帧实际处理一帧, 如果小于 1, 会抛出 std::exception 类型的异常
     \param[in] buildBackModelCount 建立背景模型需要实际处理的帧数, 包含初始化的那一帧
  */
 void Z_LIB_EXPORT procVideo(const std::string& videoName, const std::string& savePath, 

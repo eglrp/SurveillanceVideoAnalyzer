@@ -151,7 +151,7 @@ void Blob::updateState(OrigSceneProxy& origFrame, OrigForeProxy& foreImage)
 {
     if (isToBeDeleted)
         return;
-    rectHistory->pushRecord(matchRect, 0.0);
+    rectHistory->pushRecord(origFrame, matchRect, 0.0);
     if (visualHistory) visualHistory->updateHistory(origFrame, foreImage, matchRect);
 }
 
@@ -165,7 +165,7 @@ void Blob::updateState(OrigSceneProxy& origFrame, OrigForeProxy& foreImage,
 	Mat lastGradDiffRegion = Mat(lastGradDiffImage, unionRect);
 	Mat gradDiffRegion = Mat(gradDiffImage, unionRect);
 	Scalar gradDiffMean = mean(abs(lastGradDiffRegion - gradDiffRegion));
-    rectHistory->pushRecord(matchRect, gradDiffMean[0]);
+    rectHistory->pushRecord(origFrame, matchRect, gradDiffMean[0]);
     if (visualHistory) visualHistory->updateHistory(origFrame, foreImage, matchRect);
 }
 

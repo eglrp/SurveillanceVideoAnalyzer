@@ -96,13 +96,13 @@ public:
     /*!
         读取配置文件中指定标签 label 的内容
         如果读取成功, 返回 true, 如果配置文件不能打开或者 label 不存在, 返回 false
-        如果配置文件格式不合规范, 则会抛出 std::string 类型的异常
+        如果配置文件格式不合规范, 则会抛出 std::exception 类型的异常
      */
     bool read(const std::string& label);
     /*!
         读取配置文件中的所有内容
         如果配置文件不为空, 返回 true, 如果配置文件不能打开或者为空, 返回 false
-        如果配置文件格式不合规范, 则会抛出 std::string 类型的异常
+        如果配置文件格式不合规范, 则会抛出 std::exception 类型的异常
      */
     bool readAll(void);
     /*!
@@ -196,7 +196,7 @@ private:
     /*!
         fileReader 刚刚读出一个标签 currLabel, 从文件中读取出 currLabel 的所有内容, 保存到私有成员变量 labelContent 中
         如果遇到下一个标签, 则赋值给 nextLabel, 如果读到文件末尾, 则 nextLabel 等于空字符串
-        如果标签 currLabel 没有内容, 或者配置文件不和规范, 则抛出 std::string 类型的异常, 抛出异常前会关闭文件 fileReader
+        如果标签 currLabel 没有内容, 或者配置文件不和规范, 则抛出 std::exception 类型的异常, 抛出异常前会关闭文件 fileReader
         如果遇到文件末尾, 返回 false, 如果操作成功, 则返回 true
         本函数被 bool readAll() 调用
      */
@@ -204,7 +204,7 @@ private:
     /*!
         fileReader 刚刚读出一个标签 label, 从文件中读取出 label 的所有内容, 保存到私有成员变量 labelContent 中
         如果遇到文件末尾, 返回 false
-        如果标签 label 没有内容, 或者配置文件不合规范, 则抛出 std::string 类型的异常, 抛出异常前会关闭文件 fileReader
+        如果标签 label 没有内容, 或者配置文件不合规范, 则抛出 std::exception 类型的异常, 抛出异常前会关闭文件 fileReader
         如果操作成功, 则返回 true
         本函数被 bool read(const std::string& label) 调用
      */

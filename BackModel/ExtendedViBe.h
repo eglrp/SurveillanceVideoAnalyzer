@@ -52,7 +52,7 @@ public:
     //! 提取前景, 更新模型
     /*!
         结合现有模型参数, 检测输入图片 image 中的前景, 输出到 foregroundImage 中
-        image 的尺寸和格式必须和 init 函数中进行初始化的图片的尺寸和格式完全相同, 否则会抛出 std::string 类型的异常
+        image 的尺寸和格式必须和 init 函数中进行初始化的图片的尺寸和格式完全相同, 否则会抛出 std::exception 类型的异常
         foregroundImage 的尺寸和 image 相同, 格式为 CV_8UC1, 前景像素值等于 255, 背景像素值等于 0
         rectsNoUpdate 中指定的矩形区域只进行前景检测, 不更新背景模型
      */
@@ -61,7 +61,7 @@ public:
     //! 重置背景模型
     /*!
         使用 image 重置背景模型
-        image 的尺寸和格式必须和 init 函数中进行初始化的图片的尺寸和格式完全相同, 否则会抛出 std::string 类型的异常
+        image 的尺寸和格式必须和 init 函数中进行初始化的图片的尺寸和格式完全相同, 否则会抛出 std::exception 类型的异常
      */
 	void refill(const cv::Mat& image);
     //! 显示每个像素的背景样本值

@@ -26,8 +26,8 @@ const static int stepCheckStability = 5;
 namespace zsfo
 {
 
-void BlobQuanRecord::makeRecord(const Rect& rect, double gradDiffMean, long long int time, int count,
-    const SizeInfo& sizeInfo)
+void BlobQuanRecord::makeRecord(const Rect& rect, double gradDiffMean, 
+    long long int time, int count, const SizeInfo& sizeInfo)
 {
     this->rect = rect;
     this->gradDiffMean = gradDiffMean;
@@ -43,6 +43,26 @@ void BlobQuanRecord::makeRecord(const Rect& rect, double gradDiffMean, long long
     this->origRect.height = this->rect.height * sizeInfo.vertScale;
     this->count = count;
     this->time = time;
+}
+
+void BlobQuanRecord::makeRecord(const Mat& scene, const Rect& rect, 
+    double gradDiffMean, long long int time, int count, const SizeInfo& sizeInfo)
+{
+    this->rect = rect;
+    this->gradDiffMean = gradDiffMean;
+    this->top.x = rect.x + rect.width / 2;
+    this->top.y = rect.y;
+    this->center.x = rect.x + rect.width / 2;
+    this->center.y = rect.y + rect.height / 2;
+    this->bottom.x = rect.x + rect.width / 2;
+    this->bottom.y = rect.y + rect.height;
+    this->origRect.x = this->rect.x * sizeInfo.horiScale;
+    this->origRect.y = this->rect.y * sizeInfo.vertScale;
+    this->origRect.width = this->rect.width * sizeInfo.horiScale;
+    this->origRect.height = this->rect.height * sizeInfo.vertScale;
+    this->count = count;
+    this->time = time;
+    scene(this->origRect).copyTo(this->image);
 }
 
 BlobQuanHistory::BlobQuanHistory(const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
@@ -80,11 +100,32 @@ int BlobQuanHistory::size(void) const
 }
 
 void BlobQuanHistory::pushRecord(const Rect& rect, double gradDiffMean)
-{	
-    if (history.empty())
-        initRecord.makeRecord(rect, gradDiffMean, *currTime, *currCount, *sizeInfo);
-
+{
     currRecord.makeRecord(rect, gradDiffMean, *currTime, *currCount, *sizeInfo);
+    history.push_back(currRecord);
+
+    int index = history.size() - 1;
+    if (index > 0 && index % checkDirStep == 0)
+    {
+        if (history[index].center.x + maxDiffVal < history[index - checkDirStep].center.x)
+            dirCenterX.push_back(-1);
+        else if (history[index].center.x > history[index- checkDirStep].center.x + maxDiffVal)
+            dirCenterX.push_back(1);
+        else
+            dirCenterX.push_back(0);
+
+        if (history[index].center.y + maxDiffVal < history[index - checkDirStep].center.y)
+            dirCenterY.push_back(-1);
+        else if (history[index].center.y > history[index - checkDirStep].center.y + maxDiffVal)
+            dirCenterY.push_back(1);
+        else
+            dirCenterY.push_back(0);
+    }
+}
+
+void BlobQuanHistory::pushRecord(const OrigSceneProxy& scene, const Rect& rect, double gradDiffMean)
+{
+    currRecord.makeRecord(scene.getShallowCopy(), rect, gradDiffMean, *currTime, *currCount, *sizeInfo);
     history.push_back(currRecord);
 
     int index = history.size() - 1;
@@ -131,6 +172,7 @@ void BlobQuanHistory::outputHistory(ObjectInfo& objectInfo) const
         objectInfo.history[i].number = history[i].count;
         objectInfo.history[i].normRect = history[i].rect;
         objectInfo.history[i].origRect = history[i].origRect;
+        objectInfo.history[i].image = history[i].image;
     }
 }
 
