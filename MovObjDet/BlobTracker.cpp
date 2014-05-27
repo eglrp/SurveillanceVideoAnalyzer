@@ -404,7 +404,7 @@ void BlobTracker::BlobTrackerImpl::match(const vector<Rect>& rects)
 	// 如果 blobList 不为空，rects 为空，则现有跟踪对象都要删除
 	if (!blobList.empty() && rects.empty())
 	{
-		for (list<Ptr<Blob> >::iterator ptrBlob = blobList.begin(); ptrBlob != blobList.end(); ptrBlob++)
+		for (list<Ptr<Blob> >::iterator ptrBlob = blobList.begin(); ptrBlob != blobList.end(); ++ptrBlob)
 		{
             (*ptrBlob)->setToBeDeleted();
 		}
@@ -415,7 +415,7 @@ void BlobTracker::BlobTrackerImpl::match(const vector<Rect>& rects)
 	// 检测是否有掉头
 	if (configMatch.runCheckTurnAround)
 	{
-		for (list<Ptr<Blob> >::iterator ptrBlob = blobList.begin(); ptrBlob != blobList.end(); ptrBlob++)
+		for (list<Ptr<Blob> >::iterator ptrBlob = blobList.begin(); ptrBlob != blobList.end(); ++ptrBlob)
 		{
 			Blob* pCurrBlob = *ptrBlob;
             if (pCurrBlob->getHistoryLength() % 5 == 0 &&
@@ -453,7 +453,7 @@ void BlobTracker::BlobTrackerImpl::match(const vector<Rect>& rects)
 
 	// 计算相交比例和距离
 	int i = 0;
-	for (list<Ptr<Blob> >::iterator ptrBlob = blobList.begin(); ptrBlob != blobList.end(); ptrBlob++, i++)
+	for (list<Ptr<Blob> >::iterator ptrBlob = blobList.begin(); ptrBlob != blobList.end(); ++ptrBlob, i++)
 	{
 		Blob* pCurrBlob = *ptrBlob;
         Rect lastRect = pCurrBlob->getCurrRect();
