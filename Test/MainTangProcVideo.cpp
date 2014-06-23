@@ -52,7 +52,7 @@ int main(int argc, char** argv)
     /*"D:\\SHARED\\MiscellaneousVideo\\video\\顾戴2.avi"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\养殖场130万像素.avi"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\ch03_20140427105139MP4.avi"*/
-    "D:\\SHARED\\MiscellaneousVideo\\12_90s.flv";
+    "D:\\SHARED\\MiscellaneousVideo\\05_29_08 06_03_11.avi";
 	VideoCapture cap;
 	cap.open(videoPath);
 	int totalFrameCount = cap.get(CV_CAP_PROP_FRAME_COUNT);

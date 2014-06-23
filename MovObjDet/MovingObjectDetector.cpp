@@ -539,7 +539,7 @@ void MovingObjectDetector::Impl::proc(const StampedImage& input, ObjectDetails& 
 #endif
     // 更新视觉信息
     visualInfo.update(normImage, foreImage, backImage, gradDiffImage,
-        (updateFullVisualInfoInterval == 1) || (procCount++ % updateFullVisualInfoInterval == 0), rectsNoUpdate);
+        (updateFullVisualInfoInterval == 1) || (procCount++ % updateFullVisualInfoInterval == 0)/*, rectsNoUpdate*/);
 #if CMPL_CALC_PROC_TIME
     visualTimer.end();
 #endif

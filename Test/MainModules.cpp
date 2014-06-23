@@ -18,7 +18,7 @@ int main(int argc, char** argv)
         /*"D:\\SHARED\\GuilinVideo\\DVR1_灵川八里街川东一路八里一路路口_20130826170046_20130826171424_63094171_0001.avi"*/
         /*"D:/SHARED/GuilinVideo/DVR1_灵川八里街川东一路八里一路路口_20130825150550_20130825151929_60634656_0001.avi"*/
         /*"D:/SHARED/GuilinVideo/DVR1_灵川八里街川东一路八里一路路口20130909070538.avi"*/
-		"D:/SHARED/TaicangVideo/1/70.flv"
+		"D:/SHARED/MiscellaneousVideo/16s_0.flv"
         /*"D:\\SHARED\\HongshenVideo\\顾戴2.avi"*/
         /*"D:\\SHARED\\HongshenVideo\\test1030.avi"*/;
 	VideoCapture cap;
@@ -75,9 +75,9 @@ int main(int argc, char** argv)
 			SizeInfo sizeInfo;
 			sizeInfo.create(origSize, normSize);
 
-			//blobTracker.init(roi, sizeInfo);  // 只保存矩形历史记录, 无图片记录
+			blobTracker.init(roi, sizeInfo);  // 只保存矩形历史记录, 无图片记录
 			//blobTracker.initLineSegment(roi, lineSeg, sizeInfo, SaveImageMode::SaveScene | SaveImageMode::SaveSlice);
-            blobTracker.initMultiRecord(roi, sizeInfo, SaveImageMode::SaveScene | SaveImageMode::SaveMask, 4, 4);
+            //blobTracker.initMultiRecord(roi, sizeInfo, SaveImageMode::SaveScene | SaveImageMode::SaveMask, 4, 4);
             //blobTracker.initTriBound(roi, loop, sizeInfo, SaveImageMode::SaveScene | SaveImageMode::SaveSlice);
 			bool checkTurnAround = true;
 			double maxDistRectAndBlob = 15;
@@ -108,7 +108,7 @@ int main(int argc, char** argv)
 		blobTracker.drawTrackingState(draw, Scalar(255, 0, 0), Scalar(0, 255, 0), Scalar(0, 0, 255), Scalar(255, 255, 255));
 		imshow("tracking state", draw);
 
-		if (0 & !objects.empty())
+		if (!objects.empty())
 		{
 			printf("frame count %d:\n", i);
 			int objSize = objects.size();
@@ -153,7 +153,8 @@ int main(int argc, char** argv)
 				}
 				if (refObj.isFinal && refObj.hasHistory)
 				{
-					printf("ID: %d\n", refObj.ID);
+					wait = true;
+                    printf("ID: %d\n", refObj.ID);
 					printf("      time     count    x    y    w    h\n");
 					int hisSize = refObj.history.size();
 					for (int k = 0; k < hisSize; k++)
