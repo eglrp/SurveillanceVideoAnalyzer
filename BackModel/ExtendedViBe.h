@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <opencv2/core/core.hpp>
+#include "ExportControl.h"
 
 namespace zsfo
 {
@@ -48,7 +49,7 @@ public:
         传入第一帧画面 image, 给定配置参数 config
         image 必须是 CV_8UC1 或者 CV_8UC3 格式, 否则会抛出 std::string 类型的异常
      */
-	void init(const cv::Mat& image, const Config& config);
+	Z_LIB_EXPORT void init(const cv::Mat& image, const Config& config);
     //! 提取前景, 更新模型
     /*!
         结合现有模型参数, 检测输入图片 image 中的前景, 输出到 foregroundImage 中
@@ -56,20 +57,20 @@ public:
         foregroundImage 的尺寸和 image 相同, 格式为 CV_8UC1, 前景像素值等于 255, 背景像素值等于 0
         rectsNoUpdate 中指定的矩形区域只进行前景检测, 不更新背景模型
      */
-	void update(const cv::Mat& image, cv::Mat& foregroundImage,
+	Z_LIB_EXPORT void update(const cv::Mat& image, cv::Mat& foregroundImage,
 		const std::vector<cv::Rect>& rectsNoUpdate = std::vector<cv::Rect>());
     //! 重置背景模型
     /*!
         使用 image 重置背景模型
         image 的尺寸和格式必须和 init 函数中进行初始化的图片的尺寸和格式完全相同, 否则会抛出 std::exception 类型的异常
      */
-	void refill(const cv::Mat& image);
+	Z_LIB_EXPORT void refill(const cv::Mat& image);
     //! 显示每个像素的背景样本值
     /*!
         函数显示每个像素存储的前 count 个背景样本的值
         如果 count 小于等于 0 或者大于实际背景样本的数量, 则不进行任何操作
      */
-    void showSamples(int count);
+    Z_LIB_EXPORT void showSamples(int count);
 
 protected:
 	int imageWidth;                         ///< 处理图片的宽度
@@ -179,10 +180,10 @@ public:
         {}
         float learnRate;
     };
-	void init(const cv::Mat& image, const ExtendedConfig& config);
-	void update(const cv::Mat& image, cv::Mat& foregroundImage, cv::Mat& backgroundImage, 
+	Z_LIB_EXPORT void init(const cv::Mat& image, const ExtendedConfig& config);
+	Z_LIB_EXPORT void update(const cv::Mat& image, cv::Mat& foregroundImage, cv::Mat& backgroundImage, 
 		const std::vector<cv::Rect>& rectsNoUpdate = std::vector<cv::Rect>());
-	void refill(const cv::Mat& image);
+	Z_LIB_EXPORT void refill(const cv::Mat& image);
 
 private:
     cv::Mat backImage;     ///< 背景图
