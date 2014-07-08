@@ -47,7 +47,7 @@ public:
     //! 初始化模型
     /*!
         传入第一帧画面 image, 给定配置参数 config
-        image 必须是 CV_8UC1 或者 CV_8UC3 格式, 否则会抛出 std::string 类型的异常
+        image 必须是 CV_8UC1 或者 CV_8UC3 格式, 否则会抛出 std::exception 类型的异常
      */
 	Z_LIB_EXPORT void init(const cv::Mat& image, const Config& config);
     //! 提取前景, 更新模型

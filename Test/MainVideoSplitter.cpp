@@ -12,15 +12,16 @@ using namespace zpv;
 int main(int argc, char* argv[])
 {
 	const char* videoPath = /*"D:/SHARED/MiscellaneousVideo/E1-1_齐家园公寓（10）_20130816112945_20130816113000_23478187.mp4"*/
-        "D:/SHARED/TaicangVideo/1/70.flv";
-    double expectSegmentLengthInSecond = 300;
+        /*"D:/SHARED/TaicangVideo/1/70.flv"*/
+        "D:/SHARED/MiscellaneousVideo/浦东机场9.avi";
+    double expectSegmentLengthInSecond = 60 * 7;
     int expectSegmentCount = 100;
     double videoLengthInSecond;	
 	vector<double> segmentLengthInSecond;
 	vector<pair<int, int> > splitBegAndEnd;
     try
     {
-        findSplitPositions(string(videoPath), expectSegmentCount, 
+        findSplitPositions(string(videoPath), expectSegmentLengthInSecond, 
             videoLengthInSecond, segmentLengthInSecond, splitBegAndEnd);
     }
     catch (const exception& e)
