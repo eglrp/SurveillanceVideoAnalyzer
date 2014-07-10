@@ -15,13 +15,13 @@ int main(int argc, char* argv[])
         /*"D:/SHARED/TaicangVideo/1/70.flv"*/
         "D:/SHARED/MiscellaneousVideo/浦东机场9.avi";
     double expectSegmentLengthInSecond = 60 * 7;
-    int expectSegmentCount = 100;
+    int expectSegmentCount = 8;
     double videoLengthInSecond;	
 	vector<double> segmentLengthInSecond;
 	vector<pair<int, int> > splitBegAndEnd;
     try
     {
-        findSplitPositions(string(videoPath), expectSegmentLengthInSecond, 
+        findSplitPositions(string(videoPath), expectSegmentCount, 
             videoLengthInSecond, segmentLengthInSecond, splitBegAndEnd);
     }
     catch (const exception& e)

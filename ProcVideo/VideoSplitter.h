@@ -4,9 +4,6 @@
 #include <opencv2/core/core.hpp>
 #include "ExtendedViBe.h"
 
-#define VIDEO_SPLIT_CMPL_LOG 0
-#define VIDEO_SPLIT_CMPL_SHOW 0
-
 namespace zvs
 {
 

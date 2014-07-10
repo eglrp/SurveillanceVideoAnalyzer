@@ -16,6 +16,10 @@ using namespace cv;
 using namespace zsfo;
 using namespace ztool;
 
+#define VIDEO_SPLIT_CMPL_LOG 0
+#define VIDEO_SPLIT_CMPL_SHOW 0
+#define VIDEO_SPLIT_CMPL_SIMPLE_METHOD 1
+
 namespace zvs
 {
 
@@ -397,6 +401,9 @@ bool findSplitPositions(const string& videoPath, const double expectLengthInSeco
 	splitFramePos.push_back(0);
 	for (int j = 1; j < numOfSeg; j++)
 	{
+#if VIDEO_SPLIT_CMPL_SIMPLE_METHOD
+        splitFramePos.push_back(splitUnitInSecond * j * videoFrameRate);
+#else
 		int center, begInc, endExc;
 		center = splitUnitInSecond * j * videoFrameRate;
 		begInc = (splitUnitInSecond * j - marginInSecond) * videoFrameRate;
@@ -479,6 +486,7 @@ bool findSplitPositions(const string& videoPath, const double expectLengthInSeco
 #endif
             THROW_EXCEPT(s.what());
 		}
+#endif
 	}
 	videoCap.release();
 
@@ -638,6 +646,9 @@ bool findSplitPositions(const string& videoPath, const int expectSegNum,
 	splitFramePos.push_back(0);
 	for (int j = 1; j < numOfSeg; j++)
 	{
+#if VIDEO_SPLIT_CMPL_SIMPLE_METHOD
+        splitFramePos.push_back(splitUnitInSecond * j * videoFrameRate);
+#else
 		int center, begInc, endExc;
 		center = splitUnitInSecond * j * videoFrameRate;
 		begInc = (splitUnitInSecond * j - marginInSecond) * videoFrameRate;
@@ -720,6 +731,7 @@ bool findSplitPositions(const string& videoPath, const int expectSegNum,
 #endif
             THROW_EXCEPT(s.what());
 		}
+#endif
 	}
 	videoCap.release();
 
