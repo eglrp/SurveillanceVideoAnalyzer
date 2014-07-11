@@ -67,6 +67,32 @@ struct ConfigInfo
     int environmentType;         ///< 光照天气背景类型
 };
 
+//! 参数信息
+struct ParamInfo
+{
+    typedef std::pair<int, int> Size;
+    typedef std::pair<int, int> Point;
+    struct Rect
+    {
+        int x;
+        int y;
+        int width;
+        int height;
+    };
+    Size normSize;          ///< 分析视频使用的归一化尺寸
+    bool normScale;         ///< 后面的参数是使用归一化尺寸还是原始尺寸
+    //! 感兴趣区域
+    std::vector<std::vector<Point > > includeRegion;
+	//! 不感兴趣区域, 仅当感兴趣区域为空, 不感兴趣区域非空时才有效
+	std::vector<std::vector<Point > > excludeRegion;
+    //! 过滤区域, 该区域内的物体会被过滤
+    std::vector<Rect> filterRects;
+    double minObjectArea;
+    double minObjectWidth;
+    double minObjectHeight;
+    double maxMatchDist;
+};
+
 //! 跟踪对象信息
 struct ObjectInfo
 {
@@ -132,4 +158,14 @@ Z_LIB_EXPORT bool findSplitPositions(const std::string& videoPath, const int exp
 Z_LIB_EXPORT void procVideo(const TaskInfo& task, const ConfigInfo& config, 
     procVideoCallBack ptrCallBackFunc, void* ptrUserData);
 
+//! 处理视频片段函数
+/*!
+    可能会抛出 std::exception 类型的异常
+    \param[in] task 分析任务信息
+	\param[in] param 参数信息
+	\param[in] ptrCallBackFunc 回调函数指针
+	\param[in,out] ptrUserData 用户数据
+ */
+Z_LIB_EXPORT void procVideo(const TaskInfo& task, const ParamInfo& param,
+    procVideoCallBack ptrCallBackFunc, void* ptrUserData);
 }

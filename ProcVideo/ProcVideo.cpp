@@ -250,13 +250,20 @@ void procVideo(const TaskInfo& task, const ConfigInfo& config,
     int procEveryNFrame = (fps < 16) ? 1 : int(fps / 10 + 0.5);
 	int totalFrameCount = cap.get(CV_CAP_PROP_FRAME_COUNT);
 
-    int buildFrameCount = 50 * procEveryNFrame;
+    int buildFrameCount = 0;
     int begIncCount = 0;
-    if (task.frameCountBegAndEnd.first < buildFrameCount)
-        buildFrameCount = 0;
-    else
-        begIncCount = task.frameCountBegAndEnd.first - buildFrameCount;
-    int endIncCount = task.frameCountBegAndEnd.second;
+    int endIncCount = totalFrameCount - 1;
+    if (task.frameCountBegAndEnd.first > begIncCount &&
+        task.frameCountBegAndEnd.second < endIncCount &&
+        task.frameCountBegAndEnd.first < task.frameCountBegAndEnd.second)
+    {
+        buildFrameCount = 50 * procEveryNFrame;
+        if (task.frameCountBegAndEnd.first < buildFrameCount)
+            buildFrameCount = task.frameCountBegAndEnd.first;
+        else if (task.frameCountBegAndEnd.first < endIncCount)
+            begIncCount = task.frameCountBegAndEnd.first - buildFrameCount;
+        endIncCount = task.frameCountBegAndEnd.second;
+    }
         
     if (!cap.set(CV_CAP_PROP_POS_FRAMES, begIncCount))
     {
@@ -293,6 +300,153 @@ void procVideo(const TaskInfo& task, const ConfigInfo& config,
     vector<Rect> charRegions;
     bool checkTurnAround = true;
     double maxDistRectAndBlob = 20;
+    double minRatioIntersectToSelf = 0.5;
+    double minRatioIntersectToBlob = 0.5;
+    
+    try
+	{
+        movObjDet.init(input, normSize, updateBackInterval, recordMode, saveMode, saveInterval, numOfSaved, 
+            normScale, incPoints, excPoints, vector<Point>(),
+            &minObjectArea, &minObjectWidth, &minObjectHeight, &charRegionCheck, charRegions,
+            &checkTurnAround, &maxDistRectAndBlob, &minRatioIntersectToSelf, &minRatioIntersectToBlob);
+		infoParser.init(task.saveImagePath, "", "", "", task.saveHistoryPath, task.historyFileName);
+	}
+	catch (const exception& e)
+    {
+        THROW_EXCEPT(e.what());
+    }
+
+    int progressInterval = 25;
+    int procTotalCount = endIncCount - begIncCount + 1;
+    for (int count = 1; count < procTotalCount; count++)
+    {
+        input.time = (long long int)cap.get(CV_CAP_PROP_POS_MSEC);
+	    input.number = (int)cap.get(CV_CAP_PROP_POS_FRAMES);
+        if (input.number >= totalFrameCount)
+            break;
+		if (!cap.read(input.image)) 
+			continue;
+        zsfo::ObjectDetails output;
+        vector<ObjectInfo> objects;
+        if (count % procEveryNFrame == 0)
+        {
+            try
+		    {
+                if (count < buildFrameCount)
+                    movObjDet.build(input);
+                else
+                {
+                    movObjDet.proc(input, output);
+                    infoParser.parse(output.objects, objects);
+                }
+            }
+            catch (const exception& e)
+            {
+                THROW_EXCEPT(e.what());
+            }
+        }
+        if (ptrCallBackFunc && (count % progressInterval == 0 || !objects.empty()))
+            ptrCallBackFunc(float(count) / procTotalCount * 100, objects, ptrUserData);
+#if CMPL_SHOW_IMAGE        
+		waitKey(output.objects.empty() ? 5 : 0);
+#endif
+    }
+
+    zsfo::ObjectDetails output;
+    vector<ObjectInfo> objects;
+    movObjDet.final(output);
+    infoParser.final();
+    ptrCallBackFunc(100, objects, ptrUserData);
+}
+
+}
+
+void transformRects(const vector<zpv::ParamInfo::Rect>& src, vector<Rect>& dst)
+{
+    dst.clear();
+    if (src.empty()) return;
+    int size = src.size();
+    dst.resize(size);
+    for (int i = 0; i < size; i++)
+    {
+        dst[i].x = src[i].x;
+        dst[i].y = src[i].y;
+        dst[i].width = src[i].width;
+        dst[i].height = src[i].height;
+    }
+}
+
+namespace zpv
+{
+
+void procVideo(const TaskInfo& task, const ParamInfo& param,
+    procVideoCallBack ptrCallBackFunc, void* ptrUserData)
+{
+    VideoCapture cap; 
+    cap.open(task.videoPath);
+
+    if (!cap.isOpened())
+    {
+        THROW_EXCEPT("cannot open " + task.videoPath);
+    }
+
+    double fps = cap.get(CV_CAP_PROP_FPS);
+    int procEveryNFrame = (fps < 16) ? 1 : int(fps / 10 + 0.5);
+	int totalFrameCount = cap.get(CV_CAP_PROP_FRAME_COUNT);
+
+    int buildFrameCount = 0;
+    int begIncCount = 0;
+    int endIncCount = totalFrameCount - 1;
+    if (task.frameCountBegAndEnd.first > begIncCount &&
+        task.frameCountBegAndEnd.second < endIncCount &&
+        task.frameCountBegAndEnd.first < task.frameCountBegAndEnd.second)
+    {
+        buildFrameCount = 50 * procEveryNFrame;
+        if (task.frameCountBegAndEnd.first < buildFrameCount)
+            buildFrameCount = task.frameCountBegAndEnd.first;
+        else if (task.frameCountBegAndEnd.first < endIncCount)
+            begIncCount = task.frameCountBegAndEnd.first - buildFrameCount;
+        endIncCount = task.frameCountBegAndEnd.second;
+    }
+        
+    if (!cap.set(CV_CAP_PROP_POS_FRAMES, begIncCount))
+    {
+        THROW_EXCEPT("cannot locate frame count " + getString(begIncCount));
+    }
+
+    zsfo::StampedImage input;
+    input.time = (long long int)cap.get(CV_CAP_PROP_POS_MSEC);
+	input.number = (int)cap.get(CV_CAP_PROP_POS_FRAMES);
+    cap.read(input.image);
+
+    zsfo::MovingObjectDetector movObjDet;
+    oip::ObjectInfoParser infoParser;
+
+    Size origSize(input.image.size()), normSize(320, 240);
+    if (param.normSize.first > 320 && param.normSize.second > 240)
+        normSize = Size(param.normSize.first, param.normSize.second);
+    int updateBackInterval = 2;
+    int recordMode = zsfo::RecordMode::MultiVisualRecord;
+    int saveMode = zsfo::SaveImageMode::SaveScene | zsfo::SaveImageMode::SaveSlice;
+    int saveInterval = 2;
+    int numOfSaved = 1;
+    
+    vector<vector<Point> > incPoints, excPoints;
+    pairToPoint(param.includeRegion, incPoints);
+    pairToPoint(param.excludeRegion, excPoints);
+    ztool::Size2d scaleNormToOrig = ztool::div(normSize, origSize); 
+    mul(incPoints, scaleNormToOrig);
+    mul(excPoints, scaleNormToOrig);
+
+    bool normScale = param.normScale;
+    double minObjectArea = param.minObjectArea;
+    double minObjectWidth = param.minObjectWidth;
+    double minObjectHeight = param.minObjectHeight;
+    bool charRegionCheck = !param.filterRects.empty();
+    vector<Rect> charRegions;
+    transformRects(param.filterRects, charRegions);
+    bool checkTurnAround = true;
+    double maxDistRectAndBlob = param.maxMatchDist;
     double minRatioIntersectToSelf = 0.5;
     double minRatioIntersectToBlob = 0.5;
     
