@@ -124,14 +124,14 @@ int main(int argc, char** argv)
 			for (int j = 0; j < objSize; j++)
 			{
 				const ObjectInfo& refObj = objects[j];
-				if (refObj.isFinal && refObj.hasVisualHistory)
+				if (refObj.isFinal && refObj.hasSnapshotHistory)
 				{
 					wait = true;
 					char buf[1024];
-					int visHisSize = refObj.visualHistory.size();
-					for (int k = 0; k < visHisSize; k++)
+					int shotHisSize = refObj.snapshotHistory.size();
+					for (int k = 0; k < shotHisSize; k++)
 					{
-                        const ObjectVisualRecord& refRec = refObj.visualHistory[k];
+                        const ObjectSnapshotRecord& refRec = refObj.snapshotHistory[k];
                         if (refRec.scene.data)
                         {
                             Mat image(refRec.scene);
@@ -177,14 +177,14 @@ int main(int argc, char** argv)
 			for (int j = 0; j < objSize; j++)
 			{
 				const ObjectInfo& refObj = objects[j];
-				if (refObj.isFinal && refObj.hasVisualHistory)
+				if (refObj.isFinal && refObj.hasSnapshotHistory)
 				{
 					wait = true;
 					char buf[1024];
-					int visHisSize = refObj.visualHistory.size();
-					for (int k = 0; k < visHisSize; k++)
+					int shotHisSize = refObj.snapshotHistory.size();
+					for (int k = 0; k < shotHisSize; k++)
 					{
-                        const ObjectVisualRecord& refRec = refObj.visualHistory[k];
+                        const ObjectSnapshotRecord& refRec = refObj.snapshotHistory[k];
 						if (refRec.scene.data)
                         {
                             sprintf(buf, "Scene %d-%d", j, k);

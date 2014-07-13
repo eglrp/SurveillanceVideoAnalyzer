@@ -26,7 +26,8 @@ class MovingObjectDetector::Impl
 public:
     void init(const StampedImage& input, const std::string& pathPath);
     void init(const StampedImage& input, const cv::Size& normSize, int updateBackInterval,
-        int recordMode, int saveMode, int saveInterval, int numOfSaved, bool normScale,
+        int recordSnapshotMode, int saveSnapshotMode, 
+        int saveSnapshotInterval, int numOfSnapshotSaved, bool normScale,
         const std::vector<std::vector<cv::Point> >& includeRegionPoints,
         const std::vector<std::vector<cv::Point> >& excludeRegionPoints,
         const std::vector<cv::Point>& recordLoopOrLineSegmentPoints,
@@ -75,8 +76,8 @@ void MovingObjectDetector::init(const StampedImage& input, const string& pathPat
 }
 
 void MovingObjectDetector::init(const StampedImage& input, const Size& normSize, 
-    int updateBackInterval, int recordMode, int saveMode, 
-    int saveInterval, int numOfSaved, bool normScale, 
+    int updateBackInterval, int recordSnapshotMode, int saveSnapshotMode, 
+    int saveSnapshotInterval, int numOfSnapshotSaved, bool normScale, 
     const vector<vector<Point> >& includeRegionPoints, 
     const vector<vector<Point> >& excludeRegionPoints, 
     const vector<Point>& recordLoopOrLineSegmentPoints, 
@@ -87,7 +88,7 @@ void MovingObjectDetector::init(const StampedImage& input, const Size& normSize,
 {
     ptrImpl = new Impl;
     ptrImpl->init(input, normSize, updateBackInterval,
-        recordMode, saveMode, saveInterval, numOfSaved, normScale,
+        recordSnapshotMode, saveSnapshotMode, saveSnapshotInterval, numOfSnapshotSaved, normScale,
         includeRegionPoints, excludeRegionPoints, recordLoopOrLineSegmentPoints,
         minObjectArea, minObjectWidth, minObjectHeight,
         charRegionCheck, charRegionRects, 
@@ -135,9 +136,9 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const string& p
 	fileDataSheet.clear();
 
 	// 配置文件
-    int recordMode;
+    int recordSnapshotMode;
     int saveScene, saveSlice, saveMask;
-    int saveInterval, numOfSaved;
+    int saveSnapshotInterval, numOfSnapshotSaved;
 	int normWidth, normHeight;
 	fileDataSheet.open(pathMOD);
 	if (!fileDataSheet.is_open())
@@ -153,26 +154,26 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const string& p
 		}
 	}
 	while (string(stringNotUsed) != string("[MOD]"));
-    fileDataSheet >> stringNotUsed >> recordMode;
+    fileDataSheet >> stringNotUsed >> recordSnapshotMode;
     fileDataSheet >> stringNotUsed >> saveScene;
     fileDataSheet >> stringNotUsed >> saveSlice;
     fileDataSheet >> stringNotUsed >> saveMask;
-    fileDataSheet >> stringNotUsed >> saveInterval;
-    fileDataSheet >> stringNotUsed >> numOfSaved;
+    fileDataSheet >> stringNotUsed >> saveSnapshotInterval;
+    fileDataSheet >> stringNotUsed >> numOfSnapshotSaved;
 	fileDataSheet >> stringNotUsed >> normWidth;
 	fileDataSheet >> stringNotUsed >> normHeight;
 	fileDataSheet >> stringNotUsed >> updateFullVisualInfoInterval;
 	fileDataSheet.close();
 	fileDataSheet.clear();
 
-    if (recordMode != RecordMode::CrossLineSegmentVisualRecord &&
-        recordMode != RecordMode::CrossBottomBoundVisualRecord &&
-        recordMode != RecordMode::CrossTriBoundVisualRecord &&
-        recordMode != RecordMode::MultiVisualRecord &&
-        recordMode != RecordMode::NoVisualRecord)
+    if (recordSnapshotMode != RecordSnapshotMode::CrossLineSegment &&
+        recordSnapshotMode != RecordSnapshotMode::CrossBottomBound &&
+        recordSnapshotMode != RecordSnapshotMode::CrossTriBound &&
+        recordSnapshotMode != RecordSnapshotMode::Multi &&
+        recordSnapshotMode != RecordSnapshotMode::No)
     {
         stringstream message;
-        message << "recordMode = " << recordMode << ", not valid";
+        message << "recordSnapshotMode = " << recordSnapshotMode << ", not valid";
         THROW_EXCEPT(message.str());
     }
 
@@ -184,13 +185,13 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const string& p
 	printf("\n");
 #endif
 
-    int saveMode = 0;
+    int saveSnapshotMode = 0;
     if (saveScene)
-        saveMode += SaveImageMode::SaveScene;
+        saveSnapshotMode += SaveSnapshotMode::SaveScene;
     if (saveSlice)
-        saveMode += SaveImageMode::SaveSlice;
+        saveSnapshotMode += SaveSnapshotMode::SaveSlice;
     if (saveMask)
-        saveMode += SaveImageMode::SaveMask;
+        saveSnapshotMode += SaveSnapshotMode::SaveMask;
 
     RegionOfInterest roi;
     VirtualLoop crossLoop;
@@ -211,26 +212,26 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const string& p
     // 初始化观测区域
     roi.init(Size(normWidth, normHeight), pathVirtualLoop, "[RegionOfInterest]");	
     // 初始化抓拍线圈或者线段 初始化跟踪类
-    if (recordMode == RecordMode::NoVisualRecord)
+    if (recordSnapshotMode == RecordSnapshotMode::No)
     {
         blobTracker.init(roi, sizeInfo, pathBlobTracker);
     }
-    else if (recordMode == RecordMode::MultiVisualRecord)
+    else if (recordSnapshotMode == RecordSnapshotMode::Multi)
     {
-        blobTracker.initMultiRecord(roi, sizeInfo, saveMode, saveInterval, numOfSaved, pathBlobTracker);
+        blobTracker.initMultiRecord(roi, sizeInfo, saveSnapshotMode, saveSnapshotInterval, numOfSnapshotSaved, pathBlobTracker);
     }
-    else if (recordMode == RecordMode::CrossLineSegmentVisualRecord)
+    else if (recordSnapshotMode == RecordSnapshotMode::CrossLineSegment)
     {
         crossLine.init(pathVirtualLoop, "[CrossLine]");
-        blobTracker.initLineSegment(roi, crossLine, sizeInfo, saveMode, pathBlobTracker);
+        blobTracker.initLineSegment(roi, crossLine, sizeInfo, saveSnapshotMode, pathBlobTracker);
     }
     else
     {
         crossLoop.init(pathVirtualLoop, "[SpeedLoop]");
-        if (recordMode == RecordMode::CrossBottomBoundVisualRecord)
-            blobTracker.initBottomBound(roi, crossLoop, sizeInfo, saveMode, pathBlobTracker);
-        else if (recordMode == RecordMode::CrossTriBoundVisualRecord)
-            blobTracker.initTriBound(roi, crossLoop, sizeInfo, saveMode, pathBlobTracker);
+        if (recordSnapshotMode == RecordSnapshotMode::CrossBottomBound)
+            blobTracker.initBottomBound(roi, crossLoop, sizeInfo, saveSnapshotMode, pathBlobTracker);
+        else if (recordSnapshotMode == RecordSnapshotMode::CrossTriBound)
+            blobTracker.initTriBound(roi, crossLoop, sizeInfo, saveSnapshotMode, pathBlobTracker);
     }
 	// 静态跟踪
 #if CMPL_RUN_STATIC_OBJECT_TRACKER
@@ -253,8 +254,8 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const string& p
 }
 
 void MovingObjectDetector::Impl::init(const StampedImage& input, const Size& normSize, 
-    int updateBackInterval, int recordMode, int saveMode, 
-    int saveInterval, int numOfSaved, bool normScale,
+    int updateBackInterval, int recordSnapshotMode, int saveSnapshotMode, 
+    int saveSnapshotInterval, int numOfSnapshotSaved, bool normScale,
     const vector<vector<Point> >& includeRegionPoints, 
     const vector<vector<Point> >& excludeRegionPoints, 
     const vector<Point>& recordLoopOrLineSegmentPoints, 
@@ -271,14 +272,14 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const Size& nor
             << "normSize too small";
         THROW_EXCEPT(message.str());
     }
-    if (recordMode != RecordMode::CrossLineSegmentVisualRecord &&
-        recordMode != RecordMode::CrossBottomBoundVisualRecord &&
-        recordMode != RecordMode::CrossTriBoundVisualRecord &&
-        recordMode != RecordMode::MultiVisualRecord &&
-        recordMode != RecordMode::NoVisualRecord)
+    if (recordSnapshotMode != RecordSnapshotMode::CrossLineSegment &&
+        recordSnapshotMode != RecordSnapshotMode::CrossBottomBound &&
+        recordSnapshotMode != RecordSnapshotMode::CrossTriBound &&
+        recordSnapshotMode != RecordSnapshotMode::Multi &&
+        recordSnapshotMode != RecordSnapshotMode::No)
     {
         stringstream message;
-        message << "saveImageMode = " << recordMode << ", not valid";
+        message << "recordSnapshotMode = " << recordSnapshotMode << ", not valid";
         THROW_EXCEPT(message.str());
     }
     updateFullVisualInfoInterval = updateBackInterval;
@@ -334,20 +335,20 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const Size& nor
     roi.init("[RegionOfInterest]", normSize, defineIncludedRegion, externalPoints);
     
     // 初始化抓拍线圈或者线段 初始化跟踪类
-    if (recordMode == RecordMode::NoVisualRecord)
+    if (recordSnapshotMode == RecordSnapshotMode::No)
     {
         blobTracker.init(roi, sizeInfo);
     }
-    else if (recordMode == RecordMode::MultiVisualRecord)
+    else if (recordSnapshotMode == RecordSnapshotMode::Multi)
     {
-        blobTracker.initMultiRecord(roi, sizeInfo, saveMode, saveInterval, numOfSaved);
+        blobTracker.initMultiRecord(roi, sizeInfo, saveSnapshotMode, saveSnapshotInterval, numOfSnapshotSaved);
     }
-    else if (recordMode == RecordMode::CrossLineSegmentVisualRecord)
+    else if (recordSnapshotMode == RecordSnapshotMode::CrossLineSegment)
     {
         if (recordLoopOrLineSegmentPoints.size() != 2)
         {
             stringstream message;
-            message << "recordMode == RecordMode::CrossLineSegmentVisualRecord, "
+            message << "recordSnapshotMode == RecordSnapshotMode::CrossLineSegment, "
                 << "but recordLoopOrLineSegmentPoints.size() != 2";
             THROW_EXCEPT(message.str());
         }
@@ -363,7 +364,7 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const Size& nor
             internalPoints[1] = mul(recordLoopOrLineSegmentPoints[1], scale);
         }
         crossLine.init(internalPoints[0], internalPoints[1]);
-        blobTracker.initLineSegment(roi, crossLine, sizeInfo, saveMode);
+        blobTracker.initLineSegment(roi, crossLine, sizeInfo, saveSnapshotMode);
     }
     else 
     {
@@ -385,7 +386,8 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const Size& nor
             else
             {
                 stringstream strm;
-                strm << "recordMode == RecordMode::CrossBottomBoundVisualRecord || RecordMode::CrossTriBoundVisualRecord, "
+                strm << "recordSnapshotMode == RecordSnapshotMode::CrossBottomBound || "
+                    "RecordSnapshotMode::CrossTriBound, "
                     << "includeRegionPoints.size() == " << includeRegionPoints.size() << ", "
                     << "excludeRegionPoints.size() == " << excludeRegionPoints.size() << ", "
                     << "recordLoopOrLineSegmentPoints.size() == 0, "
@@ -414,10 +416,10 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const Size& nor
         }
         crossLoop.init("[SpeedLoop]", internalPoints);
 
-        if (recordMode == RecordMode::CrossBottomBoundVisualRecord)
-            blobTracker.initBottomBound(roi, crossLoop, sizeInfo, saveMode);
-        else if (recordMode == RecordMode::CrossTriBoundVisualRecord)
-            blobTracker.initTriBound(roi, crossLoop, sizeInfo, saveMode);
+        if (recordSnapshotMode == RecordSnapshotMode::CrossBottomBound)
+            blobTracker.initBottomBound(roi, crossLoop, sizeInfo, saveSnapshotMode);
+        else if (recordSnapshotMode == RecordSnapshotMode::CrossTriBound)
+            blobTracker.initTriBound(roi, crossLoop, sizeInfo, saveSnapshotMode);
     }
 
     // 静态跟踪
@@ -618,7 +620,8 @@ void procVideo(const string& videoName, const string& savePath,
     const string& objectInfoFileName, const string& objectHistoryFileName,
     int procEveryNFrame, const Size& normSize, 
     int buildBackModelCount, int updateBackInterval, 
-    int crossMode, int saveMode, int saveInterval, int numOfSaved, bool normScale,
+    int recordSnapshotMode, int saveSnapshotMode, 
+    int saveSnapshotInterval, int numOfSnapshotSaved, bool normScale,
     const vector<vector<Point> >& includeRegionPoints,
     const vector<vector<Point> >& excludeRegionPoints,
     const vector<Point>& crossLoopOrLineSegmentPoints,
@@ -672,7 +675,8 @@ void procVideo(const string& videoName, const string& savePath,
 	// 初始化所有内部变量及参数
 	try
 	{
-        movObjDet.init(input, normSize, updateBackInterval, crossMode, saveMode, saveInterval, numOfSaved, 
+        movObjDet.init(input, normSize, updateBackInterval, 
+            recordSnapshotMode, saveSnapshotMode, saveSnapshotInterval, numOfSnapshotSaved, 
             normScale, includeRegionPoints, excludeRegionPoints, crossLoopOrLineSegmentPoints,
             minObjectArea, minObjectWidth, minObjectHeight, charRegionCheck, charRegionRects,
             checkTurnAround, maxDistRectAndBlob, minRatioIntersectToSelf, minRatioIntersectToBlob);

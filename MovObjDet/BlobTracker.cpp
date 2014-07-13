@@ -20,31 +20,31 @@ void BlobTracker::init(const RegionOfInterest& observedRegion, const SizeInfo& s
 }
 
 void BlobTracker::initLineSegment(const RegionOfInterest& observedRegion, const LineSegment& crossLine, 
-	const SizeInfo& sizesOrigAndNorm, int saveImageMode, const string& path)
+	const SizeInfo& sizesOrigAndNorm, int saveSnapshotMode, const string& path)
 {
 	ptrImpl = new BlobTrackerImpl;
-	ptrImpl->initLineSegment(observedRegion, crossLine, sizesOrigAndNorm, saveImageMode, path);
+	ptrImpl->initLineSegment(observedRegion, crossLine, sizesOrigAndNorm, saveSnapshotMode, path);
 }
 
 void BlobTracker::initBottomBound(const RegionOfInterest& observedRegion, const VirtualLoop& catchLoop, 
-	const SizeInfo& sizesOrigAndNorm, int saveImageMode, const string& path)
+	const SizeInfo& sizesOrigAndNorm, int saveSnapshotMode, const string& path)
 {
 	ptrImpl = new BlobTrackerImpl;
-	ptrImpl->initBottomBound(observedRegion, catchLoop, sizesOrigAndNorm, saveImageMode, path);
+	ptrImpl->initBottomBound(observedRegion, catchLoop, sizesOrigAndNorm, saveSnapshotMode, path);
 }
 
 void BlobTracker::initTriBound(const RegionOfInterest& observedRegion, const VirtualLoop& catchLoop, 
-	const SizeInfo& sizesOrigAndNorm, int saveImageMode, const string& path)
+	const SizeInfo& sizesOrigAndNorm, int saveSnapshotMode, const string& path)
 {
 	ptrImpl = new BlobTrackerImpl;
-	ptrImpl->initTriBound(observedRegion, catchLoop, sizesOrigAndNorm, saveImageMode, path);
+	ptrImpl->initTriBound(observedRegion, catchLoop, sizesOrigAndNorm, saveSnapshotMode, path);
 }
 
 void BlobTracker::initMultiRecord(const RegionOfInterest& observedRegion, const SizeInfo& sizesOrigAndNorm, 
-	int saveImageMode, int saveInterval, int numOfSaved, const string& path)
+	int saveSnapshotMode, int saveSnapshotInterval, int numOfSnapshotSaved, const string& path)
 {
 	ptrImpl = new BlobTrackerImpl;
-	ptrImpl->initMultiRecord(observedRegion, sizesOrigAndNorm, saveImageMode, saveInterval, numOfSaved, path);
+	ptrImpl->initMultiRecord(observedRegion, sizesOrigAndNorm, saveSnapshotMode, saveSnapshotInterval, numOfSnapshotSaved, path);
 }
 
 void BlobTracker::setConfigParams(const bool* checkTurnAround, const double* maxDistRectAndBlob,
@@ -168,7 +168,7 @@ void BlobTracker::BlobTrackerImpl::init(const RegionOfInterest& observedRegion, 
 }
 
 void BlobTracker::BlobTrackerImpl::initLineSegment(const RegionOfInterest& observedRegion, const LineSegment& crossLine, 
-	const SizeInfo& sizesOrigAndNorm, int saveImageMode, const string& path)
+	const SizeInfo& sizesOrigAndNorm, int saveSnapshotMode, const string& path)
 {	
     roi = new RegionOfInterest(observedRegion);
     recordLine = new LineSegment(crossLine);
@@ -177,12 +177,12 @@ void BlobTracker::BlobTrackerImpl::initLineSegment(const RegionOfInterest& obser
     currTime = new long long int;
     currCount = new int;
     initConfigParam(path);
-    blobInstance = new Blob(recordLine, sizeInfo, baseRect, currTime, currCount, 0, saveImageMode, path);
+    blobInstance = new Blob(recordLine, sizeInfo, baseRect, currTime, currCount, 0, saveSnapshotMode, path);
     blobCount = 0;
 }
 
 void BlobTracker::BlobTrackerImpl::initBottomBound(const RegionOfInterest& observedRegion, const VirtualLoop& catchLoop, 
-	const SizeInfo& sizesOrigAndNorm, int saveImageMode, const string& path)
+	const SizeInfo& sizesOrigAndNorm, int saveSnapshotMode, const string& path)
 {	
     roi = new RegionOfInterest(observedRegion);
     recordLoop = new VirtualLoop(catchLoop);
@@ -191,12 +191,12 @@ void BlobTracker::BlobTrackerImpl::initBottomBound(const RegionOfInterest& obser
     currTime = new long long int;
     currCount = new int;
     initConfigParam(path);
-    blobInstance = new Blob(recordLoop, sizeInfo, baseRect, currTime, currCount, 0, false, saveImageMode, path);
+    blobInstance = new Blob(recordLoop, sizeInfo, baseRect, currTime, currCount, 0, false, saveSnapshotMode, path);
     blobCount = 0;
 }
 
 void BlobTracker::BlobTrackerImpl::initTriBound(const RegionOfInterest& observedRegion, const VirtualLoop& velocityLoop, 
-	const SizeInfo& sizesOrigAndNorm, int saveImageMode, const string& path)
+	const SizeInfo& sizesOrigAndNorm, int saveSnapshotMode, const string& path)
 {	
     roi = new RegionOfInterest(observedRegion);
     recordLoop = new VirtualLoop(velocityLoop);
@@ -205,12 +205,12 @@ void BlobTracker::BlobTrackerImpl::initTriBound(const RegionOfInterest& observed
     currTime = new long long int;
     currCount = new int;
     initConfigParam(path);
-    blobInstance = new Blob(recordLoop, sizeInfo, baseRect, currTime, currCount, 0, true, saveImageMode, path);
+    blobInstance = new Blob(recordLoop, sizeInfo, baseRect, currTime, currCount, 0, true, saveSnapshotMode, path);
     blobCount = 0;
 }
 
 void BlobTracker::BlobTrackerImpl::initMultiRecord(const RegionOfInterest& observedRegion, const SizeInfo& sizesOrigAndNorm, 
-    int saveImageMode, int saveInterval, int numOfSaved, const string& path)
+    int saveSnapshotMode, int saveSnapshotInterval, int numOfSnapshotSaved, const string& path)
 {
     roi = new RegionOfInterest(observedRegion);
 	sizeInfo = new SizeInfo(sizesOrigAndNorm);
@@ -218,7 +218,7 @@ void BlobTracker::BlobTrackerImpl::initMultiRecord(const RegionOfInterest& obser
     currTime = new long long int;
     currCount = new int;
     initConfigParam(path);
-    blobInstance = new Blob(sizeInfo, baseRect, currTime, currCount, 0, saveImageMode, saveInterval, numOfSaved, path);
+    blobInstance = new Blob(sizeInfo, baseRect, currTime, currCount, 0, saveSnapshotMode, saveSnapshotInterval, numOfSnapshotSaved, path);
     blobCount = 0;
 }
 

@@ -127,7 +127,7 @@ void ObjectInfoParser::parse(const vector<zsfo::ObjectInfo>& src, vector<zpv::Ob
     for (int i = 0; i < size; i++)
     {
         const zsfo::ObjectInfo& refObj = src[i];
-        if (!refObj.isFinal || !refObj.hasHistory || !refObj.hasVisualHistory) continue;
+        if (!refObj.isFinal || !refObj.hasHistory || !refObj.hasSnapshotHistory) continue;
 
         double muWidth, muHeight, sigmaX, sigmaY;
         getNormHistoryProperties(refObj.history, muWidth, muHeight, sigmaX, sigmaY);
@@ -146,7 +146,7 @@ void ObjectInfoParser::parse(const vector<zsfo::ObjectInfo>& src, vector<zpv::Ob
         procVideoObj.timeBegAndEnd.first = refObj.history.front().time;
         procVideoObj.timeBegAndEnd.second = refObj.history.back().time;
         ++objectCount;
-        const zsfo::ObjectVisualRecord& refImage = refObj.visualHistory.front();
+        const zsfo::ObjectSnapshotRecord& refImage = refObj.snapshotHistory.front();
         procVideoObj.frameCount = refImage.number;
         procVideoObj.sliceLocation.x = refImage.rect.x;
         procVideoObj.sliceLocation.y = refImage.rect.y;
@@ -280,10 +280,10 @@ void procVideo(const TaskInfo& task, const ConfigInfo& config,
 
     Size origSize(input.image.size()), normSize(320, 240);
     int updateBackInterval = 2;
-    int recordMode = zsfo::RecordMode::MultiVisualRecord;
-    int saveMode = zsfo::SaveImageMode::SaveScene | zsfo::SaveImageMode::SaveSlice;
-    int saveInterval = 2;
-    int numOfSaved = 1;
+    int recordSnapshotMode = zsfo::RecordSnapshotMode::Multi;
+    int saveSnapshotMode = zsfo::SaveSnapshotMode::SaveScene | zsfo::SaveSnapshotMode::SaveSlice;
+    int saveSnapshotInterval = 2;
+    int numOfSnapshotSaved = 1;
     
     vector<vector<Point> > incPoints, excPoints;
     pairToPoint(config.includeRegion, incPoints);
@@ -305,7 +305,8 @@ void procVideo(const TaskInfo& task, const ConfigInfo& config,
     
     try
 	{
-        movObjDet.init(input, normSize, updateBackInterval, recordMode, saveMode, saveInterval, numOfSaved, 
+        movObjDet.init(input, normSize, updateBackInterval, 
+            recordSnapshotMode, saveSnapshotMode, saveSnapshotInterval, numOfSnapshotSaved, 
             normScale, incPoints, excPoints, vector<Point>(),
             &minObjectArea, &minObjectWidth, &minObjectHeight, &charRegionCheck, charRegions,
             &checkTurnAround, &maxDistRectAndBlob, &minRatioIntersectToSelf, &minRatioIntersectToBlob);
@@ -426,10 +427,10 @@ void procVideo(const TaskInfo& task, const ParamInfo& param,
     if (param.normSize.first > 320 && param.normSize.second > 240)
         normSize = Size(param.normSize.first, param.normSize.second);
     int updateBackInterval = 2;
-    int recordMode = zsfo::RecordMode::MultiVisualRecord;
-    int saveMode = zsfo::SaveImageMode::SaveScene | zsfo::SaveImageMode::SaveSlice;
-    int saveInterval = 2;
-    int numOfSaved = 1;
+    int recordSnapshotMode = zsfo::RecordSnapshotMode::Multi;
+    int saveSnapshotMode = zsfo::SaveSnapshotMode::SaveScene | zsfo::SaveSnapshotMode::SaveSlice;
+    int saveSnapshotInterval = 2;
+    int numOfSnapshotSaved = 1;
     
     vector<vector<Point> > incPoints, excPoints;
     pairToPoint(param.includeRegion, incPoints);
@@ -452,7 +453,8 @@ void procVideo(const TaskInfo& task, const ParamInfo& param,
     
     try
 	{
-        movObjDet.init(input, normSize, updateBackInterval, recordMode, saveMode, saveInterval, numOfSaved, 
+        movObjDet.init(input, normSize, updateBackInterval, 
+            recordSnapshotMode, saveSnapshotMode, saveSnapshotInterval, numOfSnapshotSaved, 
             normScale, incPoints, excPoints, vector<Point>(),
             &minObjectArea, &minObjectWidth, &minObjectHeight, &charRegionCheck, charRegions,
             &checkTurnAround, &maxDistRectAndBlob, &minRatioIntersectToSelf, &minRatioIntersectToBlob);
