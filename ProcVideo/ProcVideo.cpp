@@ -37,6 +37,7 @@ struct ObjectInfoParser
         const string& scenePrefix, const string& slicePrefix,
         const string& saveHistoryDir, const string& historyFileName);
     void parse(const vector<zsfo::ObjectInfo>& src, vector<zpv::ObjectInfo>& dst);
+    void parse(const vector<zsfo::ObjectInfo>& src, vector<zpv::TaicangObjectInfo>& dst);
     void final(void);
 
     int objectCount;
@@ -156,6 +157,77 @@ void ObjectInfoParser::parse(const vector<zsfo::ObjectInfo>& src, vector<zpv::Ob
 		string frameCountStr = getString(refImage.number);
         procVideoObj.sceneName = sceneNamePrefix + "ProcVideo_frame" + frameCountStr + ".jpg";
         procVideoObj.sliceName = sliceNamePrefix + "ProcVideo_frame" + frameCountStr + "_slice_" + IDStr + ".jpg";
+
+        imwrite(procVideoObj.sceneName, refImage.scene);
+        imwrite(procVideoObj.sliceName, refImage.slice);
+        //objectListFile << setw(8) << refObj.ID
+        //    << setw(12) << refImage.time << setw(12) << refImage.number
+        //    << setw(8) << refImage.rect.x << setw(8) << refImage.rect.y
+        //    << setw(8) << refImage.rect.width << setw(8) << refImage.rect.height;
+        //objectListFile << "\n";
+        const vector<zsfo::ObjectRecord>& refHistory = refObj.history;
+		trackletsFile << "Object Count:  " << objectCount << "\n";
+		trackletsFile << "ID:            " << refObj.ID << "\n";
+		trackletsFile << "Size:          " << refHistory.size() << "\n";
+		trackletsFile << "Frame Count Time Stamp       x       y       w       h" << "\n";
+		for (int j = 0; j < refHistory.size(); j++)
+		{
+			trackletsFile << setw(11) << refHistory[j].number
+				<< setw(11) << refHistory[j].time
+				<< setw(8) << refHistory[j].normRect.x
+				<< setw(8) << refHistory[j].normRect.y
+				<< setw(8) << refHistory[j].normRect.width
+				<< setw(8) << refHistory[j].normRect.height << "\n";
+		}
+		trackletsFile << "\n";
+    }
+    //objectListFile.close();
+    trackletsFile.close();
+}
+
+void ObjectInfoParser::parse(const vector<zsfo::ObjectInfo>& src, vector<zpv::TaicangObjectInfo>& dst)
+{
+    if (src.empty()) return;
+
+    int size = src.size();
+    dst.reserve(size);
+    //fstream objectListFile;
+    fstream trackletsFile;
+    //objectListFile.open(listName.c_str(), ios::ate | ios::out | ios::in);
+    trackletsFile.open(historyName.c_str(), ios::ate | ios::out | ios::in);
+    for (int i = 0; i < size; i++)
+    {
+        const zsfo::ObjectInfo& refObj = src[i];
+        if (!refObj.isFinal || !refObj.hasHistory || !refObj.hasVisualHistory) continue;
+        if (refObj.history.size() < 4) continue;
+
+        /*double muWidth, muHeight, sigmaX, sigmaY;
+        getNormHistoryProperties(refObj.history, muWidth, muHeight, sigmaX, sigmaY);
+        double sideLen = max(muWidth, muHeight);
+        double movStdDev = max(sigmaX, sigmaY);
+        double aspectRatio = muWidth / muHeight;
+        int historyLen = refObj.history.size();
+        if (sideLen < minSideLen && movStdDev < minMovStdDev ||
+            (aspectRatio < minAspectRatio || aspectRatio > maxAspectRatio) && historyLen < minHistoryLen ||
+            sideLen > maxHistoryLen && historyLen > maxHistoryLen)
+            continue;*/
+
+        dst.push_back(zpv::TaicangObjectInfo());
+        zpv::TaicangObjectInfo& procVideoObj = dst.back();
+        procVideoObj.objectID = refObj.ID;
+        procVideoObj.timeBegAndEnd.first = refObj.history.front().time;
+        procVideoObj.timeBegAndEnd.second = refObj.history.back().time;
+        ++objectCount;
+        const zsfo::ObjectVisualRecord& refImage = refObj.visualHistory.front();
+        procVideoObj.frameCount = refImage.number;
+        procVideoObj.sliceLocation.x = refImage.rect.x;
+        procVideoObj.sliceLocation.y = refImage.rect.y;
+        procVideoObj.sliceLocation.width = refImage.rect.width;
+        procVideoObj.sliceLocation.height = refImage.rect.height;
+        string IDStr = getString(refObj.ID);
+		string frameCountStr = getString(refImage.number);
+        procVideoObj.sceneName = sceneNamePrefix + "ProcVideo_frame_" + frameCountStr + ".jpg";
+        procVideoObj.sliceName = sliceNamePrefix + "ProcVideo_frame_" + frameCountStr + "_slice_" + IDStr + ".jpg";
 
         imwrite(procVideoObj.sceneName, refImage.scene);
         imwrite(procVideoObj.sliceName, refImage.slice);
@@ -355,13 +427,14 @@ void procVideo(const TaskInfo& task, const ConfigInfo& config,
     zsfo::ObjectDetails output;
     vector<ObjectInfo> objects;
     movObjDet.final(output);
+    infoParser.parse(output.objects, objects);
     infoParser.final();
     ptrCallBackFunc(100, objects, ptrUserData);
 }
 
 }
 
-void transformRects(const vector<zpv::ParamInfo::Rect>& src, vector<Rect>& dst)
+static void transformRects(const vector<zpv::TaicangParamInfo::Rect>& src, vector<Rect>& dst)
 {
     dst.clear();
     if (src.empty()) return;
@@ -376,11 +449,24 @@ void transformRects(const vector<zpv::ParamInfo::Rect>& src, vector<Rect>& dst)
     }
 }
 
+static void addInfo(const std::string& taskID, 
+    const std::string& caseName, const std::string& caseSetName, vector<zpv::TaicangObjectInfo>& objects)
+{
+    if (objects.empty()) return;
+    int size = objects.size();
+    for (int i = 0; i < size; i++)
+    {
+        objects[i].taskID = taskID;
+        objects[i].caseName = caseName;
+        objects[i].caseSetName = caseSetName;
+    }
+}
+
 namespace zpv
 {
 
-void procVideo(const TaskInfo& task, const ParamInfo& param,
-    procVideoCallBack ptrCallBackFunc, void* ptrUserData)
+void procVideo(const TaicangTaskInfo& task, const TaicangParamInfo& param,
+    taicangProcVideoCallBack ptrCallBackFunc, void* ptrUserData)
 {
     VideoCapture cap; 
     cap.open(task.videoPath);
@@ -474,7 +560,7 @@ void procVideo(const TaskInfo& task, const ParamInfo& param,
 		if (!cap.read(input.image)) 
 			continue;
         zsfo::ObjectDetails output;
-        vector<ObjectInfo> objects;
+        vector<TaicangObjectInfo> objects;
         if (count % procEveryNFrame == 0)
         {
             try
@@ -485,6 +571,7 @@ void procVideo(const TaskInfo& task, const ParamInfo& param,
                 {
                     movObjDet.proc(input, output);
                     infoParser.parse(output.objects, objects);
+                    addInfo(task.taskID, task.caseName, task.caseSetName, objects);
                 }
             }
             catch (const exception& e)
@@ -500,8 +587,10 @@ void procVideo(const TaskInfo& task, const ParamInfo& param,
     }
 
     zsfo::ObjectDetails output;
-    vector<ObjectInfo> objects;
+    vector<TaicangObjectInfo> objects;
     movObjDet.final(output);
+    infoParser.parse(output.objects, objects);
+    addInfo(task.taskID, task.caseName, task.caseSetName, objects);
     infoParser.final();
     ptrCallBackFunc(100, objects, ptrUserData);
 }

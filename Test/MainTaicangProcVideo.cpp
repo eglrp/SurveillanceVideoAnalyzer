@@ -14,7 +14,7 @@ using namespace cv;
 using namespace zpv;
 using namespace ztool;
 
-void callBack(float progressPercentage, const vector<zpv::ObjectInfo>& infos, void* ptrUserData)
+void callBack(float progressPercentage, const vector<zpv::TaicangObjectInfo>& infos, void* ptrUserData)
 {    
 	if (infos.empty())
 	{
@@ -58,8 +58,8 @@ int main(int argc, char** argv)
 
     string validVideoName;
     cvtPathToFileName(videoPath, validVideoName);
-	TaskInfo task;
-    ParamInfo param;
+	TaicangTaskInfo task;
+    TaicangParamInfo param;
 	task.taskID = "0XFFFF";
 	task.videoSegmentID = "0XABCD";
     task.videoPath = videoPath;
