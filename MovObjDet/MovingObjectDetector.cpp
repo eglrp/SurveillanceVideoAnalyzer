@@ -26,7 +26,7 @@ class MovingObjectDetector::Impl
 public:
     void init(const StampedImage& input, const std::string& pathPath);
     void init(const StampedImage& input, const cv::Size& normSize, int updateBackInterval,
-        int recordSnapshotMode, int saveSnapshotMode, 
+        bool historyWithImages, int recordSnapshotMode, int saveSnapshotMode, 
         int saveSnapshotInterval, int numOfSnapshotSaved, bool normScale,
         const std::vector<std::vector<cv::Point> >& includeRegionPoints,
         const std::vector<std::vector<cv::Point> >& excludeRegionPoints,
@@ -76,7 +76,7 @@ void MovingObjectDetector::init(const StampedImage& input, const string& pathPat
 }
 
 void MovingObjectDetector::init(const StampedImage& input, const Size& normSize, 
-    int updateBackInterval, int recordSnapshotMode, int saveSnapshotMode, 
+    int updateBackInterval, bool historyWithImages, int recordSnapshotMode, int saveSnapshotMode, 
     int saveSnapshotInterval, int numOfSnapshotSaved, bool normScale, 
     const vector<vector<Point> >& includeRegionPoints, 
     const vector<vector<Point> >& excludeRegionPoints, 
@@ -87,7 +87,7 @@ void MovingObjectDetector::init(const StampedImage& input, const Size& normSize,
     const double* minRatioIntersectToSelf, const double* minRatioIntersectToBlob)
 {
     ptrImpl = new Impl;
-    ptrImpl->init(input, normSize, updateBackInterval,
+    ptrImpl->init(input, normSize, updateBackInterval, historyWithImages,
         recordSnapshotMode, saveSnapshotMode, saveSnapshotInterval, numOfSnapshotSaved, normScale,
         includeRegionPoints, excludeRegionPoints, recordLoopOrLineSegmentPoints,
         minObjectArea, minObjectWidth, minObjectHeight,
@@ -117,25 +117,31 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const string& p
 	char stringNotUsed[500];
 
 	// 读取路径
-	char pathMOD[500];
-	char pathVirtualLoop[500];
-	char pathVisualInfo[500];
-	char pathBlobExtractor[500];
-	char pathBlobTracker[500];
+	char bufMOD[500];
+	char bufVirtualLoop[500];
+	char bufVisualInfo[500];
+	char bufBlobExtractor[500];
+	char bufBlobTracker[500];    
     fileDataSheet.open(pathPath.c_str());
 	if (!fileDataSheet.is_open())
 	{
         THROW_EXCEPT("cannot open file " + pathPath);
 	}
-	fileDataSheet >> stringNotUsed >> pathMOD;
-	fileDataSheet >> stringNotUsed >> pathVirtualLoop;
-	fileDataSheet >> stringNotUsed >> pathVisualInfo;
-	fileDataSheet >> stringNotUsed >> pathBlobExtractor;
-	fileDataSheet >> stringNotUsed >> pathBlobTracker;
+	fileDataSheet >> stringNotUsed >> bufMOD;
+	fileDataSheet >> stringNotUsed >> bufVirtualLoop;
+	fileDataSheet >> stringNotUsed >> bufVisualInfo;
+	fileDataSheet >> stringNotUsed >> bufBlobExtractor;
+	fileDataSheet >> stringNotUsed >> bufBlobTracker;
 	fileDataSheet.close();
 	fileDataSheet.clear();
 
+    string pathMOD(bufMOD);
+    string pathVirtualLoop(bufVirtualLoop);
+    string pathVisualInfo(bufVisualInfo);
+    string pathBlobExtractor(bufBlobExtractor);
+    string pathBlobTracker(bufBlobTracker);
 	// 配置文件
+    int historyWithImages;
     int recordSnapshotMode;
     int saveScene, saveSlice, saveMask;
     int saveSnapshotInterval, numOfSnapshotSaved;
@@ -154,6 +160,7 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const string& p
 		}
 	}
 	while (string(stringNotUsed) != string("[MOD]"));
+    fileDataSheet >> stringNotUsed >> historyWithImages;
     fileDataSheet >> stringNotUsed >> recordSnapshotMode;
     fileDataSheet >> stringNotUsed >> saveScene;
     fileDataSheet >> stringNotUsed >> saveSlice;
@@ -214,24 +221,25 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const string& p
     // 初始化抓拍线圈或者线段 初始化跟踪类
     if (recordSnapshotMode == RecordSnapshotMode::No)
     {
-        blobTracker.init(roi, sizeInfo, pathBlobTracker);
+        blobTracker.init(roi, sizeInfo, historyWithImages, pathBlobTracker);
     }
     else if (recordSnapshotMode == RecordSnapshotMode::Multi)
     {
-        blobTracker.initMultiRecord(roi, sizeInfo, saveSnapshotMode, saveSnapshotInterval, numOfSnapshotSaved, pathBlobTracker);
+        blobTracker.initMultiRecord(roi, sizeInfo, saveSnapshotMode, 
+            saveSnapshotInterval, numOfSnapshotSaved, historyWithImages, pathBlobTracker);
     }
     else if (recordSnapshotMode == RecordSnapshotMode::CrossLineSegment)
     {
         crossLine.init(pathVirtualLoop, "[CrossLine]");
-        blobTracker.initLineSegment(roi, crossLine, sizeInfo, saveSnapshotMode, pathBlobTracker);
+        blobTracker.initLineSegment(roi, crossLine, sizeInfo, saveSnapshotMode, historyWithImages, pathBlobTracker);
     }
     else
     {
         crossLoop.init(pathVirtualLoop, "[SpeedLoop]");
         if (recordSnapshotMode == RecordSnapshotMode::CrossBottomBound)
-            blobTracker.initBottomBound(roi, crossLoop, sizeInfo, saveSnapshotMode, pathBlobTracker);
+            blobTracker.initBottomBound(roi, crossLoop, sizeInfo, saveSnapshotMode, historyWithImages, pathBlobTracker);
         else if (recordSnapshotMode == RecordSnapshotMode::CrossTriBound)
-            blobTracker.initTriBound(roi, crossLoop, sizeInfo, saveSnapshotMode, pathBlobTracker);
+            blobTracker.initTriBound(roi, crossLoop, sizeInfo, saveSnapshotMode, historyWithImages, pathBlobTracker);
     }
 	// 静态跟踪
 #if CMPL_RUN_STATIC_OBJECT_TRACKER
@@ -254,7 +262,7 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const string& p
 }
 
 void MovingObjectDetector::Impl::init(const StampedImage& input, const Size& normSize, 
-    int updateBackInterval, int recordSnapshotMode, int saveSnapshotMode, 
+    int updateBackInterval, bool historyWithImages, int recordSnapshotMode, int saveSnapshotMode, 
     int saveSnapshotInterval, int numOfSnapshotSaved, bool normScale,
     const vector<vector<Point> >& includeRegionPoints, 
     const vector<vector<Point> >& excludeRegionPoints, 
@@ -337,11 +345,11 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const Size& nor
     // 初始化抓拍线圈或者线段 初始化跟踪类
     if (recordSnapshotMode == RecordSnapshotMode::No)
     {
-        blobTracker.init(roi, sizeInfo);
+        blobTracker.init(roi, sizeInfo, historyWithImages);
     }
     else if (recordSnapshotMode == RecordSnapshotMode::Multi)
     {
-        blobTracker.initMultiRecord(roi, sizeInfo, saveSnapshotMode, saveSnapshotInterval, numOfSnapshotSaved);
+        blobTracker.initMultiRecord(roi, sizeInfo, saveSnapshotMode, saveSnapshotInterval, numOfSnapshotSaved, historyWithImages);
     }
     else if (recordSnapshotMode == RecordSnapshotMode::CrossLineSegment)
     {
@@ -364,7 +372,7 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const Size& nor
             internalPoints[1] = mul(recordLoopOrLineSegmentPoints[1], scale);
         }
         crossLine.init(internalPoints[0], internalPoints[1]);
-        blobTracker.initLineSegment(roi, crossLine, sizeInfo, saveSnapshotMode);
+        blobTracker.initLineSegment(roi, crossLine, sizeInfo, saveSnapshotMode, historyWithImages);
     }
     else 
     {
@@ -417,9 +425,9 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const Size& nor
         crossLoop.init("[SpeedLoop]", internalPoints);
 
         if (recordSnapshotMode == RecordSnapshotMode::CrossBottomBound)
-            blobTracker.initBottomBound(roi, crossLoop, sizeInfo, saveSnapshotMode);
+            blobTracker.initBottomBound(roi, crossLoop, sizeInfo, saveSnapshotMode, historyWithImages);
         else if (recordSnapshotMode == RecordSnapshotMode::CrossTriBound)
-            blobTracker.initTriBound(roi, crossLoop, sizeInfo, saveSnapshotMode);
+            blobTracker.initTriBound(roi, crossLoop, sizeInfo, saveSnapshotMode, historyWithImages);
     }
 
     // 静态跟踪
@@ -620,7 +628,7 @@ void procVideo(const string& videoName, const string& savePath,
     const string& objectInfoFileName, const string& objectHistoryFileName,
     int procEveryNFrame, const Size& normSize, 
     int buildBackModelCount, int updateBackInterval, 
-    int recordSnapshotMode, int saveSnapshotMode, 
+    bool historyWithImages, int recordSnapshotMode, int saveSnapshotMode, 
     int saveSnapshotInterval, int numOfSnapshotSaved, bool normScale,
     const vector<vector<Point> >& includeRegionPoints,
     const vector<vector<Point> >& excludeRegionPoints,
@@ -675,7 +683,7 @@ void procVideo(const string& videoName, const string& savePath,
 	// 初始化所有内部变量及参数
 	try
 	{
-        movObjDet.init(input, normSize, updateBackInterval, 
+        movObjDet.init(input, normSize, updateBackInterval, historyWithImages, 
             recordSnapshotMode, saveSnapshotMode, saveSnapshotInterval, numOfSnapshotSaved, 
             normScale, includeRegionPoints, excludeRegionPoints, crossLoopOrLineSegmentPoints,
             minObjectArea, minObjectWidth, minObjectHeight, charRegionCheck, charRegionRects,

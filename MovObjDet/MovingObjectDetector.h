@@ -49,6 +49,8 @@ public:
                    将原始视频缩小至归一化尺寸进行处理, 一般取宽 320 高 240
         \param[in] updateBackInterval
                    调用多少次 proc 函数才进行一次背景模型的更新, 其他情况下只检测前景
+        \param[in] historyWithImages
+                   运动目标历史是否保存其每一帧中的截图
         \param[in] recordSnapshotMode 
                    快照记录模式
                    选择是仅保存矩形框跟踪历史, 还是附加抓拍图片历史
@@ -95,8 +97,10 @@ public:
         \param[in] minRatioIntersectToBlob 
                    如果当前帧某个矩形和某个被跟踪对象在上一帧的矩形的交集的面积和这个被跟踪对象矩形的面积的比值大于这个值, 则满足匹配条件之一
      */
-    void init(const StampedImage& input, const cv::Size& normSize = cv::Size(320, 240), int updateBackInterval = 4,
-        int recordSnapshotMode = RecordSnapshotMode::CrossTriBound, int saveSnapshotMode = SaveSnapshotMode::SaveSlice, 
+    void init(const StampedImage& input, const cv::Size& normSize = cv::Size(320, 240), 
+        int updateBackInterval = 4, bool historyWithImages = false,
+        int recordSnapshotMode = RecordSnapshotMode::CrossTriBound, 
+        int saveSnapshotMode = SaveSnapshotMode::SaveSlice, 
         int saveSnapshotInterval = 2, int numOfSnapshotSaved = 4, bool normScale = true, 
         const std::vector<std::vector<cv::Point> >& includeRegionPoints = std::vector<std::vector<cv::Point> >(),
         const std::vector<std::vector<cv::Point> >& excludeRegionPoints = std::vector<std::vector<cv::Point> >(),
@@ -185,7 +189,7 @@ void Z_LIB_EXPORT procVideo(const std::string& videoName, const std::string& sav
     const std::string& sceneName = std::string(), const std::string& sliceName = std::string(), const std::string& maskName = std::string(), 
     const std::string& objectInfoFileName = std::string(), const std::string& objectHistoryFileName = std::string(),
     int procEveryNFrame = 1, const cv::Size& normSize = cv::Size(320, 240), 
-    int buildBackModelCount = 20, int updateBackInterval = 4,
+    int buildBackModelCount = 20, int updateBackInterval = 4, bool historyWithImages = false,
     int recordSnapshotMode = RecordSnapshotMode::CrossTriBound, int saveSnapshotMode = SaveSnapshotMode::SaveSlice, 
     int saveSnapshotInterval = 2, int numOfSnapshotSaved = 4, bool normScale = true, 
     const std::vector<std::vector<cv::Point> >& includeRegionPoints = std::vector<std::vector<cv::Point> >(),

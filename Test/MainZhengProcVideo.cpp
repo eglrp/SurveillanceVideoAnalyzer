@@ -26,6 +26,7 @@ int	main(int argc, char* argv[])
     Size procSize(320, 240);
     int buildBackCount = 20;
     int updateBackInterval = 4;
+    bool historyWithImages;
     int recordSnapshotMode = RecordSnapshotMode::Multi;
     int saveSnapshotMode = SaveSnapshotMode::SaveSlice;
     int saveSnapshotInterval = 2, numOfSaved = 4;
@@ -62,7 +63,7 @@ int	main(int argc, char* argv[])
         procVideo(videoFileName.c_str(), savePath.c_str(),
             saveScene ? "Scene" : "", saveSlice ? "Slice" : "", saveMask ? "Mask" : "",
             saveInfo ? "ObjectInfo.txt" : "", saveHistory ? "ObjectHistory.txt" : "", procEveryNFrame,
-            procSize, buildBackCount, updateBackInterval, 
+            procSize, buildBackCount, updateBackInterval, historyWithImages,
             recordSnapshotMode, saveSnapshotMode, saveSnapshotInterval, numOfSaved, 
             isNormScale, incPts, excPts, catchPts, &minObjectArea, &minObjectWidth, &minObjectHeight,
             &charRegionCheck, charRegions, &checkTurnAround, &maxDistRectAndBlob, 

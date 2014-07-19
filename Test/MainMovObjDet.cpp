@@ -22,6 +22,7 @@ int	main(int argc, char* argv[])
     Size normSize(320, 240);
     int buildBackCount = 20;
     int updateBackInterval = 4;
+    bool historyWithImages = false;
     int recordSnapshotMode = RecordSnapshotMode::No;
     int saveSnapshotMode = SaveSnapshotMode::SaveSlice;
     int saveSnapshotInterval = 2, numOfSaved = 4;
@@ -55,7 +56,7 @@ int	main(int argc, char* argv[])
         input.time = cap.get(CV_CAP_PROP_POS_MSEC);
         input.number = cap.get(CV_CAP_PROP_POS_FRAMES);
         cap.read(input.image);
-        mod.init(input, normSize, updateBackInterval, 
+        mod.init(input, normSize, updateBackInterval, historyWithImages,
             recordSnapshotMode, saveSnapshotMode, saveSnapshotInterval, numOfSaved,
             isNormScale, incPts, excPts, catchPts, &minObjectArea, &minObjectWidth, &minObjectHeight,
             &charRegionCheck, charRegions, &checkTurnAround, &maxDistRectAndBlob,

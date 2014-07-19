@@ -66,13 +66,14 @@ void BlobQuanRecord::makeRecord(const Mat& scene, const Rect& rect,
 }
 
 BlobQuanHistory::BlobQuanHistory(const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
-    const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, int blobID)
+    const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, int blobID, bool historyWithImages)
     : ID(blobID),
       sizeInfo(sizesOrigAndNorm),
       currTime(time),
       currCount(count),
       checkDirStep(BlobQuanHistoryCheckDirStep),
-      maxDiffVal(BlobQuanHistoryMaxDiffVal)
+      maxDiffVal(BlobQuanHistoryMaxDiffVal),
+      recordImage(historyWithImages)
 {
 
 }
@@ -83,7 +84,8 @@ BlobQuanHistory::BlobQuanHistory(const BlobQuanHistory& history, int blobID)
       currTime(history.currTime),
       currCount(history.currCount),
       checkDirStep(history.checkDirStep),
-      maxDiffVal(history.maxDiffVal)
+      maxDiffVal(history.maxDiffVal),
+      recordImage(history.recordImage)
 {
 
 }
@@ -125,7 +127,10 @@ void BlobQuanHistory::pushRecord(const Rect& rect, double gradDiffMean)
 
 void BlobQuanHistory::pushRecord(const OrigSceneProxy& scene, const Rect& rect, double gradDiffMean)
 {
-    currRecord.makeRecord(scene.getShallowCopy(), rect, gradDiffMean, *currTime, *currCount, *sizeInfo);
+    if (recordImage)
+        currRecord.makeRecord(scene.getShallowCopy(), rect, gradDiffMean, *currTime, *currCount, *sizeInfo);
+    else
+        currRecord.makeRecord(rect, gradDiffMean, *currTime, *currCount, *sizeInfo);
     history.push_back(currRecord);
 
     int index = history.size() - 1;

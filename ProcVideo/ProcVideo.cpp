@@ -280,6 +280,7 @@ void procVideo(const TaskInfo& task, const ConfigInfo& config,
 
     Size origSize(input.image.size()), normSize(320, 240);
     int updateBackInterval = 2;
+    bool historyWithImages = false; 
     int recordSnapshotMode = zsfo::RecordSnapshotMode::Multi;
     int saveSnapshotMode = zsfo::SaveSnapshotMode::SaveScene | zsfo::SaveSnapshotMode::SaveSlice;
     int saveSnapshotInterval = 2;
@@ -305,7 +306,7 @@ void procVideo(const TaskInfo& task, const ConfigInfo& config,
     
     try
 	{
-        movObjDet.init(input, normSize, updateBackInterval, 
+        movObjDet.init(input, normSize, updateBackInterval, historyWithImages,
             recordSnapshotMode, saveSnapshotMode, saveSnapshotInterval, numOfSnapshotSaved, 
             normScale, incPoints, excPoints, vector<Point>(),
             &minObjectArea, &minObjectWidth, &minObjectHeight, &charRegionCheck, charRegions,
@@ -427,6 +428,7 @@ void procVideo(const TaskInfo& task, const ParamInfo& param,
     if (param.normSize.first > 320 && param.normSize.second > 240)
         normSize = Size(param.normSize.first, param.normSize.second);
     int updateBackInterval = 2;
+    bool historyWithImages = false;
     int recordSnapshotMode = zsfo::RecordSnapshotMode::Multi;
     int saveSnapshotMode = zsfo::SaveSnapshotMode::SaveScene | zsfo::SaveSnapshotMode::SaveSlice;
     int saveSnapshotInterval = 2;
@@ -453,7 +455,7 @@ void procVideo(const TaskInfo& task, const ParamInfo& param,
     
     try
 	{
-        movObjDet.init(input, normSize, updateBackInterval, 
+        movObjDet.init(input, normSize, updateBackInterval, historyWithImages,
             recordSnapshotMode, saveSnapshotMode, saveSnapshotInterval, numOfSnapshotSaved, 
             normScale, incPoints, excPoints, vector<Point>(),
             &minObjectArea, &minObjectWidth, &minObjectHeight, &charRegionCheck, charRegions,

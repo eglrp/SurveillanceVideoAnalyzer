@@ -141,40 +141,47 @@ public:
     /*!
         \param[in] observedRegion 观测和跟踪区域
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+        \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
     void init(const RegionOfInterest& observedRegion, const SizeInfo& sizesOrigAndNorm, 
-        const std::string& path = std::string());
+        bool historyWithImages = false, const std::string& path = std::string());
 	//! 按跨线抓拍的方式初始化
     /*!
         \param[in] observedRegion 观测和跟踪区域
         \param[in] crossLine 抓拍图片使用的线段, 当矩形中心靠近线圈时才进行抓拍, 线段应当位于观测和跟踪区域内
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
         \param[in] saveSnapshotMode 快照存图模式, 选择是否保存全景图, 目标截图和目标前景图
+        \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
     void initLineSegment(const RegionOfInterest& observedRegion, const LineSegment& crossLine, 
-        const SizeInfo& sizesOrigAndNorm, int saveSnapshotMode, const std::string& path = std::string());
+        const SizeInfo& sizesOrigAndNorm, int saveSnapshotMode, 
+        bool historyWithImages = false, const std::string& path = std::string());
     //! 按跨线圈底部边界抓拍的方式初始化
     /*!
         \param[in] observedRegion 观测和跟踪区域
         \param[in] catchLoop 抓拍图片使用的线圈, 本线圈应当位于观测和跟踪区域内部
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
         \param[in] saveSnapshotMode 快照存图模式, 选择是否保存全景图, 目标截图和目标前景图
+        \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
 	void initBottomBound(const RegionOfInterest& observedRegion, const VirtualLoop& catchLoop, 
-        const SizeInfo& sizesOrigAndNorm, int saveSnapshotMode, const std::string& path = std::string());
+        const SizeInfo& sizesOrigAndNorm, int saveSnapshotMode, 
+        bool historyWithImages = false, const std::string& path = std::string());
     //! 按跨越线圈左右下三边界抓拍的方式初始化
     /*!
         \param[in] observedRegion 观测和跟踪区域
         \param[in] catchLoop 抓拍图片使用的线圈, 本线圈应当位于观测和跟踪区域内部
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
         \param[in] saveSnapshotMode 快照存图模式, 选择是否保存全景图, 目标截图和目标前景图
+        \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
     void initTriBound(const RegionOfInterest& observedRegion, const VirtualLoop& catchLoop, 
-        const SizeInfo& sizesOrigAndNorm, int saveSnapshotMode, const std::string& path = std::string());
+        const SizeInfo& sizesOrigAndNorm, int saveSnapshotMode, 
+        bool historyWithImages = false, const std::string& path = std::string());
     //! 按保存多幅快照图片的方式初始化
     /*!
         \param[in] observedRegion 观测和跟踪区域
@@ -182,10 +189,12 @@ public:
         \param[in] saveSnapshotMode 快照存图模式, 选择是否保存全景图, 目标截图和目标前景图
         \param[in] saveSnapshotInterval 保存图片的帧间隔
         \param[in] numOfSnapshotSaved 最多保存多少张图片
+        \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
     void initMultiRecord(const RegionOfInterest& observedRegion, const SizeInfo& sizesOrigAndNorm, 
-        int saveSnapshotMode, int saveSnapshotInterval, int numOfSnapshotSaved, const std::string& path = std::string());
+        int saveSnapshotMode, int saveSnapshotInterval, int numOfSnapshotSaved, 
+        bool historyWithImages = false, const std::string& path = std::string());
     //! 修改一些配置参数
     /*!
         所有函数的传入参数均为指针形式, 只要指针不为空指针, 就会将类的配置参数按给定的值重置

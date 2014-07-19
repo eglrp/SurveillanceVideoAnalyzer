@@ -10,23 +10,23 @@ using namespace ztool;
 namespace zsfo
 {
 
-Blob::Blob(const Ptr<SizeInfo>& sizesOrigAndNorm, 
-    const Ptr<long long int>& time, const Ptr<int>& count, int blobID, const string& path)
+Blob::Blob(const Ptr<SizeInfo>& sizesOrigAndNorm, const Ptr<long long int>& time, const Ptr<int>& count, 
+    int blobID, bool historyWithImages, const string& path)
     : ID(blobID),  
       configOutputInfo(new ConfigOutputInfo)
 {
     initConfigParam(path);
-    rectHistory = new BlobQuanHistory(sizesOrigAndNorm, time, count, blobID);
+    rectHistory = new BlobQuanHistory(sizesOrigAndNorm, time, count, blobID, historyWithImages);
 }
 
 Blob::Blob(const Ptr<LineSegment>& crossLine, const Ptr<SizeInfo>& sizesOrigAndNorm, 
     const Ptr<Rect>& baseRectangle, const Ptr<long long int>& time, const Ptr<int>& count, 
-    int blobID, int saveSnapshotMode, const string& path)
+    int blobID, int saveSnapshotMode, bool historyWithImages, const string& path)
     : ID(blobID),    
       configOutputInfo(new ConfigOutputInfo)
 {	
     initConfigParam(path);
-    rectHistory = new BlobQuanHistory(sizesOrigAndNorm, time, count, blobID);
+    rectHistory = new BlobQuanHistory(sizesOrigAndNorm, time, count, blobID, historyWithImages);
     snapshotHistory = 
         (BlobSnapshotHistory*) new BlobCrossLineSnapshotHistory(crossLine, 
         sizesOrigAndNorm, baseRectangle, time, count, blobID, saveSnapshotMode, path);
@@ -34,12 +34,12 @@ Blob::Blob(const Ptr<LineSegment>& crossLine, const Ptr<SizeInfo>& sizesOrigAndN
 
 Blob::Blob(const Ptr<VirtualLoop>& recordLoop, const Ptr<SizeInfo>& sizesOrigAndNorm, 
     const Ptr<Rect>& baseRectangle, const Ptr<long long int>& time, const Ptr<int>& count, 
-    int blobID, bool isTriBound, int saveSnapshotMode, const string& path)
+    int blobID, bool isTriBound, int saveSnapshotMode, bool historyWithImages, const string& path)
     : ID(blobID),
       configOutputInfo(new ConfigOutputInfo)
 {
     initConfigParam(path);
-    rectHistory = new BlobQuanHistory(sizesOrigAndNorm, time, count, blobID);
+    rectHistory = new BlobQuanHistory(sizesOrigAndNorm, time, count, blobID, historyWithImages);
     if (isTriBound)
     {
         snapshotHistory = 
@@ -55,13 +55,13 @@ Blob::Blob(const Ptr<VirtualLoop>& recordLoop, const Ptr<SizeInfo>& sizesOrigAnd
 }
 
 Blob::Blob(const Ptr<SizeInfo>& sizesOrigAndNorm, const Ptr<Rect>& baseRectangle, 
-    const Ptr<long long int>& time, const Ptr<int>& count, 
-    int blobID, int saveSnapshotMode, int saveSnapshotInterval, int numOfSnapshotSaved, const string& path)
+    const Ptr<long long int>& time, const Ptr<int>& count, int blobID, int saveSnapshotMode, 
+    int saveSnapshotInterval, int numOfSnapshotSaved, bool historyWithImages, const string& path)
     : ID(blobID),
       configOutputInfo(new ConfigOutputInfo)
 {
     initConfigParam(path);
-    rectHistory = new BlobQuanHistory(sizesOrigAndNorm, time, count, blobID);
+    rectHistory = new BlobQuanHistory(sizesOrigAndNorm, time, count, blobID, historyWithImages);
     snapshotHistory =
         (BlobSnapshotHistory*) new BlobMultiRecordSnapshotHistory(sizesOrigAndNorm, baseRectangle, time, count, blobID,
         saveSnapshotMode, saveSnapshotInterval, numOfSnapshotSaved, path);
