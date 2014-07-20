@@ -221,29 +221,29 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const string& p
     // 初始化抓拍线圈或者线段 初始化跟踪类
     if (recordSnapshotMode == RecordSnapshotMode::No)
     {
-        blobTracker.init(roi, sizeInfo, historyWithImages, pathBlobTracker);
+        blobTracker.init(sizeInfo, roi, historyWithImages, pathBlobTracker);
     }
     else if (recordSnapshotMode == RecordSnapshotMode::Multi)
     {
-        blobTracker.initMultiRecord(roi, sizeInfo, saveSnapshotMode, 
+        blobTracker.initMultiRecord(sizeInfo, roi, saveSnapshotMode, 
             saveSnapshotInterval, numOfSnapshotSaved, historyWithImages, pathBlobTracker);
     }
     else if (recordSnapshotMode == RecordSnapshotMode::CrossLineSegment)
     {
         crossLine.init(pathVirtualLoop, "[CrossLine]");
-        blobTracker.initLineSegment(roi, crossLine, sizeInfo, saveSnapshotMode, historyWithImages, pathBlobTracker);
+        blobTracker.initLineSegment(sizeInfo, roi, crossLine, saveSnapshotMode, historyWithImages, pathBlobTracker);
     }
     else
     {
         crossLoop.init(pathVirtualLoop, "[SpeedLoop]");
         if (recordSnapshotMode == RecordSnapshotMode::CrossBottomBound)
-            blobTracker.initBottomBound(roi, crossLoop, sizeInfo, saveSnapshotMode, historyWithImages, pathBlobTracker);
+            blobTracker.initBottomBound(sizeInfo, roi, crossLoop, saveSnapshotMode, historyWithImages, pathBlobTracker);
         else if (recordSnapshotMode == RecordSnapshotMode::CrossTriBound)
-            blobTracker.initTriBound(roi, crossLoop, sizeInfo, saveSnapshotMode, historyWithImages, pathBlobTracker);
+            blobTracker.initTriBound(sizeInfo, roi, crossLoop, saveSnapshotMode, historyWithImages, pathBlobTracker);
     }
 	// 静态跟踪
 #if CMPL_RUN_STATIC_OBJECT_TRACKER
-	staticBlobTracker.init(roi, sizeInfo, pathBlobTracker);
+	staticBlobTracker.init(sizeInfo, roi, pathBlobTracker);
 #endif
 
 	procCount = 0;
@@ -345,11 +345,11 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const Size& nor
     // 初始化抓拍线圈或者线段 初始化跟踪类
     if (recordSnapshotMode == RecordSnapshotMode::No)
     {
-        blobTracker.init(roi, sizeInfo, historyWithImages);
+        blobTracker.init(sizeInfo, roi, historyWithImages);
     }
     else if (recordSnapshotMode == RecordSnapshotMode::Multi)
     {
-        blobTracker.initMultiRecord(roi, sizeInfo, saveSnapshotMode, saveSnapshotInterval, numOfSnapshotSaved, historyWithImages);
+        blobTracker.initMultiRecord(sizeInfo, roi, saveSnapshotMode, saveSnapshotInterval, numOfSnapshotSaved, historyWithImages);
     }
     else if (recordSnapshotMode == RecordSnapshotMode::CrossLineSegment)
     {
@@ -372,7 +372,7 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const Size& nor
             internalPoints[1] = mul(recordLoopOrLineSegmentPoints[1], scale);
         }
         crossLine.init(internalPoints[0], internalPoints[1]);
-        blobTracker.initLineSegment(roi, crossLine, sizeInfo, saveSnapshotMode, historyWithImages);
+        blobTracker.initLineSegment(sizeInfo, roi, crossLine, saveSnapshotMode, historyWithImages);
     }
     else 
     {
@@ -425,9 +425,9 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const Size& nor
         crossLoop.init("[SpeedLoop]", internalPoints);
 
         if (recordSnapshotMode == RecordSnapshotMode::CrossBottomBound)
-            blobTracker.initBottomBound(roi, crossLoop, sizeInfo, saveSnapshotMode, historyWithImages);
+            blobTracker.initBottomBound(sizeInfo, roi, crossLoop, saveSnapshotMode, historyWithImages);
         else if (recordSnapshotMode == RecordSnapshotMode::CrossTriBound)
-            blobTracker.initTriBound(roi, crossLoop, sizeInfo, saveSnapshotMode, historyWithImages);
+            blobTracker.initTriBound(sizeInfo, roi, crossLoop, saveSnapshotMode, historyWithImages);
     }
 
     // 静态跟踪

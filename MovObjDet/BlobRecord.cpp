@@ -634,8 +634,9 @@ void BlobSnapshotRecord::outputImages(ObjectSnapshotRecord& snapshotRecord) cons
         blobImage.copyTo(snapshotRecord.slice);
 }
 
-BlobTriBoundSnapshotHistory::BlobTriBoundSnapshotHistory(const cv::Ptr<VirtualLoop>& catchLoop, const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
-    const cv::Ptr<cv::Rect>& boundRect, const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, 
+BlobTriBoundSnapshotHistory::BlobTriBoundSnapshotHistory(const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
+    const cv::Ptr<VirtualLoop>& catchLoop, const cv::Ptr<cv::Rect>& boundRect, 
+    const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, 
     int blobID, int saveMode, const string& path)
     : ID(blobID),
       auxiCount(0),
@@ -1126,8 +1127,9 @@ bool BlobTriBoundSnapshotHistory::outputHistory(ObjectInfo& objectInfo) const
     return true;
 }
 
-BlobBottomBoundSnapshotHistory::BlobBottomBoundSnapshotHistory(const cv::Ptr<VirtualLoop>& catchLoop, const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
-    const cv::Ptr<cv::Rect>& boundRect, const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, 
+BlobBottomBoundSnapshotHistory::BlobBottomBoundSnapshotHistory(const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
+    const cv::Ptr<VirtualLoop>& catchLoop, const cv::Ptr<cv::Rect>& boundRect, 
+    const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, 
     int blobID, int saveMode, const string& path)
     : ID(blobID),
       auxiCount(0),
@@ -1317,8 +1319,9 @@ bool BlobBottomBoundSnapshotHistory::outputHistory(ObjectInfo& objectInfo) const
     return true;
 }
 
-BlobCrossLineSnapshotHistory::BlobCrossLineSnapshotHistory(const cv::Ptr<LineSegment>& lineToCross, const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
-    const cv::Ptr<cv::Rect>& boundRect, const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, 
+BlobCrossLineSnapshotHistory::BlobCrossLineSnapshotHistory(const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
+    const cv::Ptr<LineSegment>& lineToCross, const cv::Ptr<cv::Rect>& boundRect, 
+    const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, 
     int blobID, int saveMode, const string& path)
     : ID(blobID),
       auxiCount(0),

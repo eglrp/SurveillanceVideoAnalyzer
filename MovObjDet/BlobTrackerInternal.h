@@ -230,8 +230,8 @@ struct BlobTriBoundSnapshotHistory : public BlobSnapshotHistory
 {
     //! 构造函数
     /*!
-        \param[in] catchLoop 抓拍图片使用的线圈, 矩形边跨越线圈左边界或者右边界或者下边界才进行抓拍
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+        \param[in] catchLoop 归一化尺寸抓拍图片使用的线圈, 矩形边跨越线圈左边界或者右边界或者下边界才进行抓拍        
         \param[in] boundRect 归一化尺寸的基准矩形, 落在基准矩形内的部分才会保存
         \param[in] time 时间戳
         \param[in] count 帧编号
@@ -239,7 +239,7 @@ struct BlobTriBoundSnapshotHistory : public BlobSnapshotHistory
         \param[in] saveMode 存图模式, 选择是否保存全景图, 目标截图和目标前景图
         \param[in] path 配置文件路径
      */
-    BlobTriBoundSnapshotHistory(const cv::Ptr<VirtualLoop>& catchLoop, const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
+    BlobTriBoundSnapshotHistory(const cv::Ptr<SizeInfo>& sizesOrigAndNorm, const cv::Ptr<VirtualLoop>& catchLoop, 
 		const cv::Ptr<cv::Rect>& boundRect, const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, 
         int blobID, int saveMode, const std::string& path = std::string());  
     //! 拷贝构造函数只复制共享变量
@@ -286,8 +286,8 @@ struct BlobBottomBoundSnapshotHistory : public BlobSnapshotHistory
 {
     // 构造函数
     /*!
-        \param[in] catchLoop 抓拍图片使用的线圈, 矩形边跨越线圈下边界才进行抓拍
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+        \param[in] catchLoop 归一化尺寸抓拍图片使用的线圈, 矩形边跨越线圈下边界才进行抓拍        
         \param[in] boundRect 归一化尺寸的基准矩形, 落在基准矩形内的部分才会保存
         \param[in] time 时间戳
         \param[in] count 帧编号
@@ -295,7 +295,7 @@ struct BlobBottomBoundSnapshotHistory : public BlobSnapshotHistory
         \param[in] saveMode 存图模式, 选择是否保存全景图, 目标截图和目标前景图
         \param[in] path 配置文件路径
      */
-    BlobBottomBoundSnapshotHistory(const cv::Ptr<VirtualLoop>& catchLoop, const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
+    BlobBottomBoundSnapshotHistory(const cv::Ptr<SizeInfo>& sizesOrigAndNorm, const cv::Ptr<VirtualLoop>& catchLoop, 
 		const cv::Ptr<cv::Rect>& boundRect, const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, 
         int blobID, int saveMode, const std::string& path = std::string());
     // 拷贝构造函数只复制共享变量
@@ -338,8 +338,8 @@ struct BlobCrossLineSnapshotHistory : public BlobSnapshotHistory
 {
     //! 构造函数
     /*!
-        \param[in] lineToCross 抓拍图片使用的线段, 当矩形中心靠近线圈时才进行抓拍
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+        \param[in] lineToCross 归一化尺寸抓拍图片使用的线段, 当矩形中心靠近线圈时才进行抓拍        
         \param[in] boundRect 归一化尺寸的基准矩形, 落在基准矩形内的部分才会保存
         \param[in] time 时间戳
         \param[in] count 帧编号
@@ -347,7 +347,7 @@ struct BlobCrossLineSnapshotHistory : public BlobSnapshotHistory
         \param[in] saveMode 存图模式, 选择是否保存全景图, 目标截图和目标前景图
         \param[in] path 配置文件路径
      */
-    BlobCrossLineSnapshotHistory(const cv::Ptr<LineSegment>& lineToCross, const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
+    BlobCrossLineSnapshotHistory(const cv::Ptr<SizeInfo>& sizesOrigAndNorm, const cv::Ptr<LineSegment>& lineToCross, 
 		const cv::Ptr<cv::Rect>& boundRect, const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, 
         int blobID, int saveMode, const std::string& path = std::string());
     //! 拷贝构造函数只复制共享变量
@@ -453,8 +453,8 @@ public:
         int blobID, bool historyWithImages = false, const std::string& path = std::string());
     //! 跨线抓拍使用的构造函数
     /*!
-        \param[in] crossLine 抓拍图片使用的线段, 当矩形中心靠近线圈时才进行抓拍
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+        \param[in] crossLine 归一化尺寸抓拍图片使用的线段, 当矩形中心靠近线圈时才进行抓拍        
         \param[in] baseRect 归一化尺寸的基准矩形, 落在基准矩形内的部分才会保存
         \param[in] time 时间戳
         \param[in] count 帧编号
@@ -463,13 +463,13 @@ public:
         \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
-    Blob(const cv::Ptr<LineSegment>& crossLine, const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
+    Blob(const cv::Ptr<SizeInfo>& sizesOrigAndNorm, const cv::Ptr<LineSegment>& crossLine, 
         const cv::Ptr<cv::Rect>& baseRect, const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, 
         int blobID, int saveSnapshotMode, bool historyWithImages = false, const std::string& path = std::string());
     //! 跨越底部边界和左边右边底边三条边界抓拍使用的构造函数
     /*!
-        \param[in] catchLoop 抓拍图片使用的线圈
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+        \param[in] catchLoop 归一化尺寸抓拍图片使用的线圈        
         \param[in] baseRect 归一化尺寸的基准矩形, 落在基准矩形内的部分才会保存
         \param[in] time 时间戳
         \param[in] count 帧编号
@@ -479,13 +479,14 @@ public:
         \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
-    Blob(const cv::Ptr<VirtualLoop>& catchLoop, const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
+    Blob(const cv::Ptr<SizeInfo>& sizesOrigAndNorm, const cv::Ptr<VirtualLoop>& catchLoop, 
         const cv::Ptr<cv::Rect>& baseRect, const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, 
         int blobID, bool isTriBound, int saveSnapshotMode, 
         bool historyWithImages = false, const std::string& path = std::string());
     //! 保存多幅快照的构造函数
     /*!
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+        \param[in] baseRect 归一化尺寸的基准矩形, 落在基准矩形内的部分才会保存
         \param[in] time 时间戳
         \param[in] count 帧编号
         \param[in] blobID 运动目标编号
@@ -583,60 +584,60 @@ public:
     BlobTrackerImpl(void) {};
     //! 无抓拍图片初始化
     /*!
-        \param[in] observedRegion 观测和跟踪区域
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+        \param[in] observedRegion 归一化尺寸观测和跟踪区域        
         \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
-    void init(const RegionOfInterest& observedRegion, const SizeInfo& sizesOrigAndNorm, 
+    void init(const SizeInfo& sizesOrigAndNorm, const RegionOfInterest& observedRegion, 
         bool historyWithImages = false, const std::string& path = std::string());
 	//! 按跨线抓拍的方式初始化
     /*!
-        \param[in] observedRegion 观测和跟踪区域
-        \param[in] crossLine 抓拍图片使用的线段, 当矩形中心靠近线圈时才进行抓拍, 线段应当位于观测和跟踪区域内
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+        \param[in] observedRegion 归一化尺寸观测和跟踪区域
+        \param[in] crossLine 归一化尺寸抓拍图片使用的线段, 当矩形中心靠近线圈时才进行抓拍, 线段应当位于观测和跟踪区域内        
         \param[in] saveSnapshotMode 快照存图模式, 选择是否保存全景图, 目标截图和目标前景图
         \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
-    void initLineSegment(const RegionOfInterest& observedRegion, const LineSegment& crossLine, 
-        const SizeInfo& sizesOrigAndNorm, int saveSnapshotMode, 
+    void initLineSegment(const SizeInfo& sizesOrigAndNorm, 
+        const RegionOfInterest& observedRegion, const LineSegment& crossLine, int saveSnapshotMode, 
         bool historyWithImages = false, const std::string& path = std::string());
     //! 按跨线圈底部边界抓拍的方式初始化
     /*!
-        \param[in] observedRegion 观测和跟踪区域
-        \param[in] catchLoop 抓拍图片使用的线圈, 本线圈应当位于观测和跟踪区域内部
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+        \param[in] observedRegion 归一化尺寸观测和跟踪区域
+        \param[in] catchLoop 归一化尺寸抓拍图片使用的线圈, 本线圈应当位于观测和跟踪区域内部        
         \param[in] saveSnapshotMode 快照存图模式, 选择是否保存全景图, 目标截图和目标前景图
         \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
-	void initBottomBound(const RegionOfInterest& observedRegion, const VirtualLoop& catchLoop, 
-        const SizeInfo& sizesOrigAndNorm, int saveSnapshotMode, 
+	void initBottomBound(const SizeInfo& sizesOrigAndNorm, 
+        const RegionOfInterest& observedRegion, const VirtualLoop& catchLoop, int saveSnapshotMode, 
         bool historyWithImages = false, const std::string& path = std::string());
     //! 按跨越线圈左右下三边界抓拍的方式初始化
     /*!
-        \param[in] observedRegion 观测和跟踪区域
-        \param[in] catchLoop 抓拍图片使用的线圈, 本线圈应当位于观测和跟踪区域内部
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+        \param[in] observedRegion 归一化尺寸观测和跟踪区域
+        \param[in] catchLoop 归一化尺寸抓拍图片使用的线圈, 本线圈应当位于观测和跟踪区域内部        
         \param[in] saveSnapshotMode 快照存图模式, 选择是否保存全景图, 目标截图和目标前景图
         \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
-    void initTriBound(const RegionOfInterest& observedRegion, const VirtualLoop& catchLoop, 
-        const SizeInfo& sizesOrigAndNorm, int saveSnapshotMode, 
+    void initTriBound(const SizeInfo& sizesOrigAndNorm, 
+        const RegionOfInterest& observedRegion, const VirtualLoop& catchLoop, int saveSnapshotMode, 
         bool historyWithImages = false, const std::string& path = std::string());
     //! 按保存多幅快照图片的方式初始化
     /*!
-        \param[in] observedRegion 观测和跟踪区域
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+        \param[in] observedRegion 归一化尺寸观测和跟踪区域        
         \param[in] saveSnapshotMode 存图模式, 选择是否保存全景图, 目标截图和目标前景图
         \param[in] saveSnapshotInterval 保存图片的帧间隔
         \param[in] numOfSnapshotSaved 最多保存多少张图片
         \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
-    void initMultiRecord(const RegionOfInterest& observedRegion, const SizeInfo& sizesOrigAndNorm, 
+    void initMultiRecord(const SizeInfo& sizesOrigAndNorm, const RegionOfInterest& observedRegion, 
         int saveSnapshotMode, int saveSnapshotInterval, int numOfSnapshotSaved, 
         bool historyWithImages = false, const std::string& path = std::string());
     //! 修改一些配置参数

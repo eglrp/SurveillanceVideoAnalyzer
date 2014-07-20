@@ -139,60 +139,60 @@ public:
     BlobTracker(void) {};
     //! 无抓拍图片初始化
     /*!
-        \param[in] observedRegion 观测和跟踪区域
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+        \param[in] observedRegion 归一化尺寸观测和跟踪区域        
         \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
-    void init(const RegionOfInterest& observedRegion, const SizeInfo& sizesOrigAndNorm, 
+    void init(const SizeInfo& sizesOrigAndNorm, const RegionOfInterest& observedRegion, 
         bool historyWithImages = false, const std::string& path = std::string());
 	//! 按跨线抓拍的方式初始化
     /*!
-        \param[in] observedRegion 观测和跟踪区域
-        \param[in] crossLine 抓拍图片使用的线段, 当矩形中心靠近线圈时才进行抓拍, 线段应当位于观测和跟踪区域内
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+        \param[in] observedRegion 归一化尺寸观测和跟踪区域
+        \param[in] crossLine 归一化尺寸抓拍图片使用的线段, 当矩形中心靠近线圈时才进行抓拍, 线段应当位于观测和跟踪区域内        
         \param[in] saveSnapshotMode 快照存图模式, 选择是否保存全景图, 目标截图和目标前景图
         \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
-    void initLineSegment(const RegionOfInterest& observedRegion, const LineSegment& crossLine, 
-        const SizeInfo& sizesOrigAndNorm, int saveSnapshotMode, 
+    void initLineSegment(const SizeInfo& sizesOrigAndNorm, 
+        const RegionOfInterest& observedRegion, const LineSegment& crossLine, int saveSnapshotMode, 
         bool historyWithImages = false, const std::string& path = std::string());
     //! 按跨线圈底部边界抓拍的方式初始化
     /*!
-        \param[in] observedRegion 观测和跟踪区域
-        \param[in] catchLoop 抓拍图片使用的线圈, 本线圈应当位于观测和跟踪区域内部
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+        \param[in] observedRegion 归一化尺寸观测和跟踪区域
+        \param[in] catchLoop 归一化尺寸抓拍图片使用的线圈, 本线圈应当位于观测和跟踪区域内部        
         \param[in] saveSnapshotMode 快照存图模式, 选择是否保存全景图, 目标截图和目标前景图
         \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
-	void initBottomBound(const RegionOfInterest& observedRegion, const VirtualLoop& catchLoop, 
-        const SizeInfo& sizesOrigAndNorm, int saveSnapshotMode, 
+	void initBottomBound(const SizeInfo& sizesOrigAndNorm, 
+        const RegionOfInterest& observedRegion, const VirtualLoop& catchLoop, int saveSnapshotMode, 
         bool historyWithImages = false, const std::string& path = std::string());
     //! 按跨越线圈左右下三边界抓拍的方式初始化
     /*!
-        \param[in] observedRegion 观测和跟踪区域
-        \param[in] catchLoop 抓拍图片使用的线圈, 本线圈应当位于观测和跟踪区域内部
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+        \param[in] observedRegion 归一化尺寸观测和跟踪区域
+        \param[in] catchLoop 归一化尺寸抓拍图片使用的线圈, 本线圈应当位于观测和跟踪区域内部        
         \param[in] saveSnapshotMode 快照存图模式, 选择是否保存全景图, 目标截图和目标前景图
         \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
-    void initTriBound(const RegionOfInterest& observedRegion, const VirtualLoop& catchLoop, 
-        const SizeInfo& sizesOrigAndNorm, int saveSnapshotMode, 
+    void initTriBound(const SizeInfo& sizesOrigAndNorm, 
+        const RegionOfInterest& observedRegion, const VirtualLoop& catchLoop, int saveSnapshotMode, 
         bool historyWithImages = false, const std::string& path = std::string());
     //! 按保存多幅快照图片的方式初始化
     /*!
-        \param[in] observedRegion 观测和跟踪区域
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+        \param[in] observedRegion 归一化尺寸观测和跟踪区域        
         \param[in] saveSnapshotMode 快照存图模式, 选择是否保存全景图, 目标截图和目标前景图
         \param[in] saveSnapshotInterval 保存图片的帧间隔
         \param[in] numOfSnapshotSaved 最多保存多少张图片
         \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
-    void initMultiRecord(const RegionOfInterest& observedRegion, const SizeInfo& sizesOrigAndNorm, 
+    void initMultiRecord(const SizeInfo& sizesOrigAndNorm, const RegionOfInterest& observedRegion, 
         int saveSnapshotMode, int saveSnapshotInterval, int numOfSnapshotSaved, 
         bool historyWithImages = false, const std::string& path = std::string());
     //! 修改一些配置参数
@@ -277,11 +277,11 @@ public:
 
 	//! 初始化
 	/*!
-	    \param[in] observedRegion 观测静态目标的区域
-		\param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+	    \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+        \param[in] observedRegion 观测静态目标的区域		
 		\param[in] path 配置文件路径
 	 */
-	void init(const RegionOfInterest& observedRegion, const SizeInfo& sizesOrigAndNorm, 
+	void init(const SizeInfo& sizesOrigAndNorm, const RegionOfInterest& observedRegion, 
         const std::string& path = std::string());
 	//! 设置参数
 	/*!

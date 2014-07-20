@@ -19,7 +19,7 @@ Blob::Blob(const Ptr<SizeInfo>& sizesOrigAndNorm, const Ptr<long long int>& time
     rectHistory = new BlobQuanHistory(sizesOrigAndNorm, time, count, blobID, historyWithImages);
 }
 
-Blob::Blob(const Ptr<LineSegment>& crossLine, const Ptr<SizeInfo>& sizesOrigAndNorm, 
+Blob::Blob(const Ptr<SizeInfo>& sizesOrigAndNorm, const Ptr<LineSegment>& crossLine, 
     const Ptr<Rect>& baseRectangle, const Ptr<long long int>& time, const Ptr<int>& count, 
     int blobID, int saveSnapshotMode, bool historyWithImages, const string& path)
     : ID(blobID),    
@@ -28,11 +28,11 @@ Blob::Blob(const Ptr<LineSegment>& crossLine, const Ptr<SizeInfo>& sizesOrigAndN
     initConfigParam(path);
     rectHistory = new BlobQuanHistory(sizesOrigAndNorm, time, count, blobID, historyWithImages);
     snapshotHistory = 
-        (BlobSnapshotHistory*) new BlobCrossLineSnapshotHistory(crossLine, 
-        sizesOrigAndNorm, baseRectangle, time, count, blobID, saveSnapshotMode, path);
+        (BlobSnapshotHistory*) new BlobCrossLineSnapshotHistory(sizesOrigAndNorm, crossLine, 
+        baseRectangle, time, count, blobID, saveSnapshotMode, path);
 }
 
-Blob::Blob(const Ptr<VirtualLoop>& recordLoop, const Ptr<SizeInfo>& sizesOrigAndNorm, 
+Blob::Blob(const Ptr<SizeInfo>& sizesOrigAndNorm, const Ptr<VirtualLoop>& recordLoop, 
     const Ptr<Rect>& baseRectangle, const Ptr<long long int>& time, const Ptr<int>& count, 
     int blobID, bool isTriBound, int saveSnapshotMode, bool historyWithImages, const string& path)
     : ID(blobID),
@@ -43,14 +43,14 @@ Blob::Blob(const Ptr<VirtualLoop>& recordLoop, const Ptr<SizeInfo>& sizesOrigAnd
     if (isTriBound)
     {
         snapshotHistory = 
-            (BlobSnapshotHistory*) new BlobTriBoundSnapshotHistory(recordLoop, 
-            sizesOrigAndNorm, baseRectangle, time, count, blobID, saveSnapshotMode, path);
+            (BlobSnapshotHistory*) new BlobTriBoundSnapshotHistory(sizesOrigAndNorm, recordLoop, 
+            baseRectangle, time, count, blobID, saveSnapshotMode, path);
     }
     else
     {
         snapshotHistory = 
-            (BlobSnapshotHistory*) new BlobBottomBoundSnapshotHistory(recordLoop, 
-            sizesOrigAndNorm, baseRectangle, time, count, blobID, saveSnapshotMode, path);
+            (BlobSnapshotHistory*) new BlobBottomBoundSnapshotHistory(sizesOrigAndNorm, recordLoop, 
+            baseRectangle, time, count, blobID, saveSnapshotMode, path);
     }
 }
 

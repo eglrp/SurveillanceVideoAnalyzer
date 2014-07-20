@@ -120,10 +120,10 @@ void StaticBlob::displayHistory(void) const
 	printf("End display history...............\n");
 }
 
-void StaticBlobTracker::init(const RegionOfInterest& observedRegion, const SizeInfo& sizesOrigAndNorm, const string& path)
+void StaticBlobTracker::init(const SizeInfo& sizesOrigAndNorm, const RegionOfInterest& observedRegion, const string& path)
 {
 	ptrImpl = new Impl;
-	ptrImpl->init(observedRegion, sizesOrigAndNorm, path);
+	ptrImpl->init(sizesOrigAndNorm, observedRegion, path);
 }
 
 void StaticBlobTracker::setConfigParam(const double* allowedMissTimeInMinute, const double* minStaticTimeInMinute)
@@ -142,7 +142,7 @@ void StaticBlobTracker::drawBlobs(Mat& image, const Scalar& staticColor, const S
 	ptrImpl->drawBlobs(image, staticColor, nonStaticColor);
 }
 
-void StaticBlobTracker::Impl::init(const RegionOfInterest& observedRegion, const SizeInfo& sizesOrigAndNorm, const string& path)
+void StaticBlobTracker::Impl::init(const SizeInfo& sizesOrigAndNorm, const RegionOfInterest& observedRegion, const string& path)
 {
 	roi = observedRegion;
 	sizeInfo = sizesOrigAndNorm;

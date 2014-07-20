@@ -75,10 +75,10 @@ int main(int argc, char** argv)
 			SizeInfo sizeInfo;
 			sizeInfo.create(origSize, normSize);
 
-			//blobTracker.init(roi, sizeInfo, true);  // 只保存矩形历史记录, 无快照图片
-			blobTracker.initLineSegment(roi, lineSeg, sizeInfo, SaveSnapshotMode::SaveScene | SaveSnapshotMode::SaveSlice, true);
-            //blobTracker.initMultiRecord(roi, sizeInfo, SaveSnapshotMode::SaveScene | SaveSnapshotMode::SaveMask, 4, 4);
-            //blobTracker.initTriBound(roi, loop, sizeInfo, SaveSnapshotMode::SaveScene | SaveSnapshotMode::SaveSlice);
+			//blobTracker.init(sizeInfo, roi, true);  // 只保存矩形历史记录, 无快照图片
+			blobTracker.initLineSegment(sizeInfo, roi, lineSeg, SaveSnapshotMode::SaveScene | SaveSnapshotMode::SaveSlice, true);
+            //blobTracker.initMultiRecord(sizeInfo, roi, SaveSnapshotMode::SaveScene | SaveSnapshotMode::SaveMask, 4, 4);
+            //blobTracker.initTriBound(sizeInfo, roi, loop, SaveSnapshotMode::SaveScene | SaveSnapshotMode::SaveSlice);
 			bool checkTurnAround = true;
 			double maxDistRectAndBlob = 15;
             double intersectToSelf = 0.5;
