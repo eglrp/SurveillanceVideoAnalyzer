@@ -198,11 +198,7 @@ void ObjectInfoParser::parse(const vector<zsfo::ObjectInfo>& src, vector<zpv::Ta
     for (int i = 0; i < size; i++)
     {
         const zsfo::ObjectInfo& refObj = src[i];
-<<<<<<< HEAD
-        if (!refObj.isFinal || !refObj.hasHistory || !refObj.hasVisualHistory) continue;
-=======
         if (!refObj.isFinal || !refObj.hasHistory || !refObj.hasSnapshotHistory) continue;
->>>>>>> 570ed2896de2b88e2c4e01ddf9e406d4f24d3d37
         if (refObj.history.size() < 4) continue;
 
         /*double muWidth, muHeight, sigmaX, sigmaY;
@@ -222,11 +218,7 @@ void ObjectInfoParser::parse(const vector<zsfo::ObjectInfo>& src, vector<zpv::Ta
         procVideoObj.timeBegAndEnd.first = refObj.history.front().time;
         procVideoObj.timeBegAndEnd.second = refObj.history.back().time;
         ++objectCount;
-<<<<<<< HEAD
-        const zsfo::ObjectVisualRecord& refImage = refObj.visualHistory.front();
-=======
         const zsfo::ObjectSnapshotRecord& refImage = refObj.snapshotHistory.front();
->>>>>>> 570ed2896de2b88e2c4e01ddf9e406d4f24d3d37
         procVideoObj.frameCount = refImage.number;
         procVideoObj.sliceLocation.x = refImage.rect.x;
         procVideoObj.sliceLocation.y = refImage.rect.y;
