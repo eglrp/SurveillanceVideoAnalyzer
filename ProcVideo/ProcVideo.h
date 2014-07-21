@@ -67,32 +67,6 @@ struct ConfigInfo
     int environmentType;         ///< 光照天气背景类型
 };
 
-//! 参数信息
-struct ParamInfo
-{
-    typedef std::pair<int, int> Size;
-    typedef std::pair<int, int> Point;
-    struct Rect
-    {
-        int x;
-        int y;
-        int width;
-        int height;
-    };
-    Size normSize;          ///< 分析视频使用的归一化尺寸
-    bool normScale;         ///< 后面的参数是使用归一化尺寸还是原始尺寸
-    //! 感兴趣区域
-    std::vector<std::vector<Point > > includeRegion;
-	//! 不感兴趣区域, 仅当感兴趣区域为空, 不感兴趣区域非空时才有效
-	std::vector<std::vector<Point > > excludeRegion;
-    //! 过滤区域, 该区域内的物体会被过滤
-    std::vector<Rect> filterRects;
-    double minObjectArea;
-    double minObjectWidth;
-    double minObjectHeight;
-    double maxMatchDist;
-};
-
 //! 跟踪对象信息
 struct ObjectInfo
 {
@@ -157,7 +131,79 @@ Z_LIB_EXPORT bool findSplitPositions(const std::string& videoPath, const int exp
  */
 Z_LIB_EXPORT void procVideo(const TaskInfo& task, const ConfigInfo& config, 
     procVideoCallBack ptrCallBackFunc, void* ptrUserData);
+}
 
+namespace zpv
+{
+
+//! 任务信息
+struct TaicangTaskInfo
+{
+    std::string taskID;            ///< 任务编号
+    std::string caseName;          ///< 案例名
+    std::string caseSetName;       ///< 案例集合名
+    std::string videoPath;         ///< 视频全路径
+    std::string videoSegmentID;    ///< 视频分段号
+    std::pair<int, int> frameCountBegAndEnd; ///< 视频分段的起始帧号(包含)和结束帧号(包含)
+    std::string saveImagePath;     ///< 保存图片的路径
+    std::string saveHistoryPath;   ///< 保存历史轨迹文件的路径
+    std::string historyFileName;   ///< 历史轨迹文件名, 最终历史轨迹文件是 saveHistoryPath\historyFileName
+};
+
+//! 参数信息
+struct TaicangParamInfo
+{
+    typedef std::pair<int, int> Size;
+    typedef std::pair<int, int> Point;
+    struct Rect
+    {
+        int x;
+        int y;
+        int width;
+        int height;
+    };
+    Size normSize;          ///< 分析视频使用的归一化尺寸
+    bool normScale;         ///< 后面的参数是使用归一化尺寸还是原始尺寸
+    //! 感兴趣区域
+    std::vector<std::vector<Point > > includeRegion;
+	//! 不感兴趣区域, 仅当感兴趣区域为空, 不感兴趣区域非空时才有效
+	std::vector<std::vector<Point > > excludeRegion;
+    //! 过滤区域, 该区域内的物体会被过滤
+    std::vector<Rect> filterRects;
+    double minObjectArea;
+    double minObjectWidth;
+    double minObjectHeight;
+    double maxMatchDist;
+};
+
+//! 跟踪对象信息
+struct TaicangObjectInfo
+{
+	std::string taskID;      ///< 任务编号
+    std::string caseName;    ///< 案例名
+    std::string caseSetName; ///< 案例集合名
+    int objectID;            ///< 目标编号
+	//! 起始和结束的时间戳
+    std::pair<long long int, long long int> timeBegAndEnd;   
+    std::string sliceName;   ///< 全景图全路径
+    std::string sceneName;   ///< 目标截图全路径
+    int frameCount;          ///< 截图的帧编号
+    struct Rect
+    {
+        int x;
+        int y;
+        int width;
+        int height;
+    };
+    Rect sliceLocation;      ///< 截图在全景图中的位置
+};
+}
+
+typedef void (*taicangProcVideoCallBack)(float progressPercentage, 
+	const std::vector<zpv::TaicangObjectInfo>& infos, void* ptrUserData);
+
+namespace zpv
+{
 //! 处理视频片段函数
 /*!
     可能会抛出 std::exception 类型的异常
@@ -166,6 +212,6 @@ Z_LIB_EXPORT void procVideo(const TaskInfo& task, const ConfigInfo& config,
 	\param[in] ptrCallBackFunc 回调函数指针
 	\param[in,out] ptrUserData 用户数据
  */
-Z_LIB_EXPORT void procVideo(const TaskInfo& task, const ParamInfo& param,
-    procVideoCallBack ptrCallBackFunc, void* ptrUserData);
+Z_LIB_EXPORT void procVideo(const TaicangTaskInfo& task, const TaicangParamInfo& param,
+    taicangProcVideoCallBack ptrCallBackFunc, void* ptrUserData);
 }
