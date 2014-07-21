@@ -64,8 +64,9 @@ int	main(int argc, char* argv[])
     Size procSize(320, 240);
     int buildBackCount = 20;
     int updateBackInterval = 4;
-    int recordMode = RecordMode::MultiVisualRecord;
-    int saveMode = SaveImageMode::SaveSlice;
+    bool historyWithImages = false;
+    int recordSnapshotMode = RecordSnapshotMode::Multi;
+    int saveSnapshotMode = SaveSnapshotMode::SaveSlice;
     int saveInterval = 2, numOfSaved = 4;
     bool isNormScale = true;
     vector<vector<Point> > incPts(1);
@@ -100,7 +101,8 @@ int	main(int argc, char* argv[])
         procVideo(videoFileName.c_str(), string("result/Result_Of_" + validVideoName).c_str(),
             saveScene ? "Scene" : "", saveSlice ? "Slice" : "", saveMask ? "Mask" : "",
             saveInfo ? "ObjectInfo.txt" : "", saveHistory ? "ObjectHistory.txt" : "", procEveryNFrame,
-            procSize, buildBackCount, updateBackInterval, recordMode, saveMode, saveInterval, numOfSaved, 
+            procSize, buildBackCount, updateBackInterval, historyWithImages, 
+            recordSnapshotMode, saveSnapshotMode, saveInterval, numOfSaved, 
             isNormScale, incPts, excPts, catchPts, &minObjectArea, &minObjectWidth, &minObjectHeight,
             &charRegionCheck, charRegions, &checkTurnAround, &maxDistRectAndBlob, 
             &minRatioIntersectToSelf, &minRatioIntersectToBlob);

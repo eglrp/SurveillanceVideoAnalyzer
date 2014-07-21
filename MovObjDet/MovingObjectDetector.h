@@ -49,19 +49,21 @@ public:
                    将原始视频缩小至归一化尺寸进行处理, 一般取宽 320 高 240
         \param[in] updateBackInterval
                    调用多少次 proc 函数才进行一次背景模型的更新, 其他情况下只检测前景
-        \param[in] recordMode 
-                   历史信息存储模式
+        \param[in] historyWithImages
+                   运动目标历史是否保存其每一帧中的截图
+        \param[in] recordSnapshotMode 
+                   快照记录模式
                    选择是仅保存矩形框跟踪历史, 还是附加抓拍图片历史
                    抓拍图片历史保存跨越线圈的左右下边界抓拍, 跨越线圈的下边界抓拍, 跨越线段抓拍, 和无线圈无线段的多图抓拍
-        \param[in] saveMode
-                   存图方式
+        \param[in] saveSnapshotMode
+                   快照存图方式
                    选择是否保存全景图, 目标截图和目标前景图, 如果保存多幅图, 可采用位运算符将多个值相或
-                   如果 recordMode == RecordMode::NoVisualRecord, 则此参数不起作用
-        \param[in] saveInterval
-                   仅当 recordMode == RecordMode::MultiVisualRecord 时起作用
+                   如果 recordSnapshotMode == RecordSnapshotMode::No, 则此参数不起作用
+        \param[in] saveSnapshotInterval
+                   仅当 recordSnapshotMode == RecordSnapshotMode::Multi 时起作用
                    当本类的 proc 函数被调用这么多次, 才保存一次历史截图
-        \param[in] numOfSaved
-                   仅当 recordMode == RecordMode::MultiVisualRecord 时起作用
+        \param[in] numOfSnapshotSaved
+                   仅当 recordSnapshotMode == RecordSnapshotMode::Multi 时起作用
                    最多保存的历史截图的数量
         \param[in] normScale 
                    指定后面的参数是在原始视频尺寸给出的还是归一化尺寸给出的
@@ -95,9 +97,11 @@ public:
         \param[in] minRatioIntersectToBlob 
                    如果当前帧某个矩形和某个被跟踪对象在上一帧的矩形的交集的面积和这个被跟踪对象矩形的面积的比值大于这个值, 则满足匹配条件之一
      */
-    void init(const StampedImage& input, const cv::Size& normSize = cv::Size(320, 240), int updateBackInterval = 4,
-        int recordMode = RecordMode::CrossTriBoundVisualRecord, int saveMode = SaveImageMode::SaveSlice, 
-        int saveInterval = 2, int numOfSaved = 4, bool normScale = true, 
+    void init(const StampedImage& input, const cv::Size& normSize = cv::Size(320, 240), 
+        int updateBackInterval = 4, bool historyWithImages = false,
+        int recordSnapshotMode = RecordSnapshotMode::CrossTriBound, 
+        int saveSnapshotMode = SaveSnapshotMode::SaveSlice, 
+        int saveSnapshotInterval = 2, int numOfSnapshotSaved = 4, bool normScale = true, 
         const std::vector<std::vector<cv::Point> >& includeRegionPoints = std::vector<std::vector<cv::Point> >(),
         const std::vector<std::vector<cv::Point> >& excludeRegionPoints = std::vector<std::vector<cv::Point> >(),
         const std::vector<cv::Point>& crossLoopOrLineSegmentPoints = std::vector<cv::Point>(),
@@ -185,9 +189,9 @@ void Z_LIB_EXPORT procVideo(const std::string& videoName, const std::string& sav
     const std::string& sceneName = std::string(), const std::string& sliceName = std::string(), const std::string& maskName = std::string(), 
     const std::string& objectInfoFileName = std::string(), const std::string& objectHistoryFileName = std::string(),
     int procEveryNFrame = 1, const cv::Size& normSize = cv::Size(320, 240), 
-    int buildBackModelCount = 20, int updateBackInterval = 4,
-    int recordMode = RecordMode::CrossTriBoundVisualRecord, int saveMode = SaveImageMode::SaveSlice, 
-    int saveInterval = 2, int numOfSaved = 4, bool normScale = true, 
+    int buildBackModelCount = 20, int updateBackInterval = 4, bool historyWithImages = false,
+    int recordSnapshotMode = RecordSnapshotMode::CrossTriBound, int saveSnapshotMode = SaveSnapshotMode::SaveSlice, 
+    int saveSnapshotInterval = 2, int numOfSnapshotSaved = 4, bool normScale = true, 
     const std::vector<std::vector<cv::Point> >& includeRegionPoints = std::vector<std::vector<cv::Point> >(),
     const std::vector<std::vector<cv::Point> >& excludeRegionPoints = std::vector<std::vector<cv::Point> >(),
     const std::vector<cv::Point>& crossLoopOrLineSegmentPoints = std::vector<cv::Point>(),

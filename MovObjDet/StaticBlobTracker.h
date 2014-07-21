@@ -52,7 +52,7 @@ public:
 	Impl(void) {};
 	~Impl(void) {};
 
-	void init(const RegionOfInterest& observedRegion, const SizeInfo& sizesOrigAndNorm, const std::string& path);
+	void init(const SizeInfo& sizesOrigAndNorm, const RegionOfInterest& observedRegion, const std::string& path);
 	void setConfigParam(const double* allowedMissTimeInMinute = 0, const double* minStaticTimeInMinute = 0);
 	void proc(const long long int time, const int count, 
 		const std::vector<cv::Rect>& rects, std::vector<StaticObjectInfo>& staticObjects);	

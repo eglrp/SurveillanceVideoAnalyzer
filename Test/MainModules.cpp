@@ -75,10 +75,10 @@ int main(int argc, char** argv)
 			SizeInfo sizeInfo;
 			sizeInfo.create(origSize, normSize);
 
-			blobTracker.init(roi, sizeInfo);  // 只保存矩形历史记录, 无图片记录
-			//blobTracker.initLineSegment(roi, lineSeg, sizeInfo, SaveImageMode::SaveScene | SaveImageMode::SaveSlice);
-            //blobTracker.initMultiRecord(roi, sizeInfo, SaveImageMode::SaveScene | SaveImageMode::SaveMask, 4, 4);
-            //blobTracker.initTriBound(roi, loop, sizeInfo, SaveImageMode::SaveScene | SaveImageMode::SaveSlice);
+			//blobTracker.init(sizeInfo, roi, true);  // 只保存矩形历史记录, 无快照图片
+			blobTracker.initLineSegment(sizeInfo, roi, lineSeg, SaveSnapshotMode::SaveScene | SaveSnapshotMode::SaveSlice, true);
+            //blobTracker.initMultiRecord(sizeInfo, roi, SaveSnapshotMode::SaveScene | SaveSnapshotMode::SaveMask, 4, 4);
+            //blobTracker.initTriBound(sizeInfo, roi, loop, SaveSnapshotMode::SaveScene | SaveSnapshotMode::SaveSlice);
 			bool checkTurnAround = true;
 			double maxDistRectAndBlob = 15;
             double intersectToSelf = 0.5;
@@ -124,14 +124,14 @@ int main(int argc, char** argv)
 			for (int j = 0; j < objSize; j++)
 			{
 				const ObjectInfo& refObj = objects[j];
-				if (refObj.isFinal && refObj.hasVisualHistory)
+				if (refObj.isFinal && refObj.hasSnapshotHistory)
 				{
 					wait = true;
 					char buf[1024];
-					int visHisSize = refObj.visualHistory.size();
-					for (int k = 0; k < visHisSize; k++)
+					int shotHisSize = refObj.snapshotHistory.size();
+					for (int k = 0; k < shotHisSize; k++)
 					{
-                        const ObjectVisualRecord& refRec = refObj.visualHistory[k];
+                        const ObjectSnapshotRecord& refRec = refObj.snapshotHistory[k];
                         if (refRec.scene.data)
                         {
                             Mat image(refRec.scene);
@@ -177,14 +177,14 @@ int main(int argc, char** argv)
 			for (int j = 0; j < objSize; j++)
 			{
 				const ObjectInfo& refObj = objects[j];
-				if (refObj.isFinal && refObj.hasVisualHistory)
+				if (refObj.isFinal && refObj.hasSnapshotHistory)
 				{
 					wait = true;
 					char buf[1024];
-					int visHisSize = refObj.visualHistory.size();
-					for (int k = 0; k < visHisSize; k++)
+					int shotHisSize = refObj.snapshotHistory.size();
+					for (int k = 0; k < shotHisSize; k++)
 					{
-                        const ObjectVisualRecord& refRec = refObj.visualHistory[k];
+                        const ObjectSnapshotRecord& refRec = refObj.snapshotHistory[k];
 						if (refRec.scene.data)
                         {
                             sprintf(buf, "Scene %d-%d", j, k);

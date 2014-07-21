@@ -13,20 +13,20 @@ struct LineSegment;
 struct VirtualLoop;
 
 //! 记录快照模式
-struct RecordMode
+struct RecordSnapshotMode
 {
     enum 
     {
-        CrossTriBoundVisualRecord = 0,     ///< 给定抓拍线圈, 运动目标跨越左右下边界时抓拍
-        CrossBottomBoundVisualRecord = 1,  ///< 给定抓拍线圈, 运动目标跨越下边界时抓拍
-        CrossLineSegmentVisualRecord = 2,  ///< 给定线段, 运动目标跨越线段时抓拍
-        MultiVisualRecord = 3,             ///< 存多幅快照
-        NoVisualRecord = 4                 ///< 只记录矩形框历史
+        CrossTriBound = 0,     ///< 给定抓拍线圈, 运动目标跨越左右下边界时抓拍
+        CrossBottomBound = 1,  ///< 给定抓拍线圈, 运动目标跨越下边界时抓拍
+        CrossLineSegment = 2,  ///< 给定线段, 运动目标跨越线段时抓拍
+        Multi = 3,             ///< 存多幅快照
+        No = 4                 ///< 只记录矩形框历史
     };
 };
 
 //! 保存快照图片类型
-struct SaveImageMode
+struct SaveSnapshotMode
 {
     enum
     {
@@ -50,10 +50,10 @@ struct ObjectRecord
 };
 
 //! 输出运动目标的快照记录
-struct ObjectVisualRecord
+struct ObjectSnapshotRecord
 {
     //! 构造函数
-    ObjectVisualRecord(void) : time(0), number(0), bound(-1), cross(-1), direction(-1) {};
+    ObjectSnapshotRecord(void) : time(0), number(0), bound(-1), cross(-1), direction(-1) {};
 
     long long int time;        ///< 快照图片的时间戳
 	int number;                ///< 快照图片的帧编号
@@ -71,7 +71,7 @@ struct ObjectInfo
 {
 	//! 构造函数
     ObjectInfo(void)
-        : ID(0), isFinal(0), hasHistory(0), hasVisualHistory(0), speed(0), velocity(0)
+        : ID(0), isFinal(0), hasHistory(0), hasSnapshotHistory(0), speed(0), velocity(0)
 	{};
 
 	// 每帧处理结束都会返回的信息
@@ -86,8 +86,8 @@ struct ObjectInfo
 	std::vector<ObjectRecord> history;     ///< 历史轨迹
 
     // 快照信息
-    int hasVisualHistory;      ///< 是否有快照图片
-    std::vector<ObjectVisualRecord> visualHistory; ///< 快照图片
+    int hasSnapshotHistory;      ///< 是否有快照图片
+    std::vector<ObjectSnapshotRecord> snapshotHistory; ///< 快照图片
 	
 	double speed;              ///< 速度，标清版中单位为像素/秒
 	double velocity;           ///< 速度，高清版中单位为千米/时
@@ -139,53 +139,62 @@ public:
     BlobTracker(void) {};
     //! 无抓拍图片初始化
     /*!
-        \param[in] observedRegion 观测和跟踪区域
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+        \param[in] observedRegion 归一化尺寸观测和跟踪区域        
+        \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
-    void init(const RegionOfInterest& observedRegion, const SizeInfo& sizesOrigAndNorm, 
-        const std::string& path = std::string());
+    void init(const SizeInfo& sizesOrigAndNorm, const RegionOfInterest& observedRegion, 
+        bool historyWithImages = false, const std::string& path = std::string());
 	//! 按跨线抓拍的方式初始化
     /*!
-        \param[in] observedRegion 观测和跟踪区域
-        \param[in] crossLine 抓拍图片使用的线段, 当矩形中心靠近线圈时才进行抓拍, 线段应当位于观测和跟踪区域内
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
-        \param[in] saveImageMode 存图模式, 选择是否保存全景图, 目标截图和目标前景图
+        \param[in] observedRegion 归一化尺寸观测和跟踪区域
+        \param[in] crossLine 归一化尺寸抓拍图片使用的线段, 当矩形中心靠近线圈时才进行抓拍, 线段应当位于观测和跟踪区域内        
+        \param[in] saveSnapshotMode 快照存图模式, 选择是否保存全景图, 目标截图和目标前景图
+        \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
-    void initLineSegment(const RegionOfInterest& observedRegion, const LineSegment& crossLine, 
-        const SizeInfo& sizesOrigAndNorm, int saveImageMode, const std::string& path = std::string());
+    void initLineSegment(const SizeInfo& sizesOrigAndNorm, 
+        const RegionOfInterest& observedRegion, const LineSegment& crossLine, int saveSnapshotMode, 
+        bool historyWithImages = false, const std::string& path = std::string());
     //! 按跨线圈底部边界抓拍的方式初始化
     /*!
-        \param[in] observedRegion 观测和跟踪区域
-        \param[in] catchLoop 抓拍图片使用的线圈, 本线圈应当位于观测和跟踪区域内部
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
-        \param[in] saveImageMode 存图模式, 选择是否保存全景图, 目标截图和目标前景图
+        \param[in] observedRegion 归一化尺寸观测和跟踪区域
+        \param[in] catchLoop 归一化尺寸抓拍图片使用的线圈, 本线圈应当位于观测和跟踪区域内部        
+        \param[in] saveSnapshotMode 快照存图模式, 选择是否保存全景图, 目标截图和目标前景图
+        \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
-	void initBottomBound(const RegionOfInterest& observedRegion, const VirtualLoop& catchLoop, 
-        const SizeInfo& sizesOrigAndNorm, int saveImageMode, const std::string& path = std::string());
+	void initBottomBound(const SizeInfo& sizesOrigAndNorm, 
+        const RegionOfInterest& observedRegion, const VirtualLoop& catchLoop, int saveSnapshotMode, 
+        bool historyWithImages = false, const std::string& path = std::string());
     //! 按跨越线圈左右下三边界抓拍的方式初始化
     /*!
-        \param[in] observedRegion 观测和跟踪区域
-        \param[in] catchLoop 抓拍图片使用的线圈, 本线圈应当位于观测和跟踪区域内部
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
-        \param[in] saveImageMode 存图模式, 选择是否保存全景图, 目标截图和目标前景图
+        \param[in] observedRegion 归一化尺寸观测和跟踪区域
+        \param[in] catchLoop 归一化尺寸抓拍图片使用的线圈, 本线圈应当位于观测和跟踪区域内部        
+        \param[in] saveSnapshotMode 快照存图模式, 选择是否保存全景图, 目标截图和目标前景图
+        \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
-    void initTriBound(const RegionOfInterest& observedRegion, const VirtualLoop& catchLoop, 
-        const SizeInfo& sizesOrigAndNorm, int saveImageMode, const std::string& path = std::string());
-    //! 按保存多幅历史图片的方式初始化
+    void initTriBound(const SizeInfo& sizesOrigAndNorm, 
+        const RegionOfInterest& observedRegion, const VirtualLoop& catchLoop, int saveSnapshotMode, 
+        bool historyWithImages = false, const std::string& path = std::string());
+    //! 按保存多幅快照图片的方式初始化
     /*!
-        \param[in] observedRegion 观测和跟踪区域
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
-        \param[in] saveMode 存图模式, 选择是否保存全景图, 目标截图和目标前景图
-        \param[in] saveInterval 保存图片的帧间隔
-        \param[in] numOfSaved 最多保存多少张图片
+        \param[in] observedRegion 归一化尺寸观测和跟踪区域        
+        \param[in] saveSnapshotMode 快照存图模式, 选择是否保存全景图, 目标截图和目标前景图
+        \param[in] saveSnapshotInterval 保存图片的帧间隔
+        \param[in] numOfSnapshotSaved 最多保存多少张图片
+        \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
-    void initMultiRecord(const RegionOfInterest& observedRegion, const SizeInfo& sizesOrigAndNorm, 
-        int saveImageMode, int saveInterval, int numOfSaved, const std::string& path = std::string());
+    void initMultiRecord(const SizeInfo& sizesOrigAndNorm, const RegionOfInterest& observedRegion, 
+        int saveSnapshotMode, int saveSnapshotInterval, int numOfSnapshotSaved, 
+        bool historyWithImages = false, const std::string& path = std::string());
     //! 修改一些配置参数
     /*!
         所有函数的传入参数均为指针形式, 只要指针不为空指针, 就会将类的配置参数按给定的值重置
@@ -268,11 +277,11 @@ public:
 
 	//! 初始化
 	/*!
-	    \param[in] observedRegion 观测静态目标的区域
-		\param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+	    \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+        \param[in] observedRegion 观测静态目标的区域		
 		\param[in] path 配置文件路径
 	 */
-	void init(const RegionOfInterest& observedRegion, const SizeInfo& sizesOrigAndNorm, 
+	void init(const SizeInfo& sizesOrigAndNorm, const RegionOfInterest& observedRegion, 
         const std::string& path = std::string());
 	//! 设置参数
 	/*!

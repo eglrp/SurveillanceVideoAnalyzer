@@ -146,13 +146,13 @@ void OutputInfoParser::Impl::show(const StampedImage& input, const ObjectDetails
             printf("velocity: %.2f kilometers per hour, ", output.objects[i].velocity);
 #endif
 #if CMPL_SHOW_IMAGE
-            if (output.objects[i].hasVisualHistory)
+            if (output.objects[i].hasSnapshotHistory)
             {
-                int size = output.objects[i].visualHistory.size();
+                int size = output.objects[i].snapshotHistory.size();
                 for (int j = 0; j < size; j++)
                 {
                     string indexStr = getValString(j);
-                    const ObjectVisualRecord& refImage = output.objects[i].visualHistory[j];
+                    const ObjectSnapshotRecord& refImage = output.objects[i].snapshotHistory[j];
                     if (refImage.scene.data)
                     {
                         Mat scene;
@@ -193,7 +193,7 @@ void OutputInfoParser::Impl::show(const StampedImage& input, const ObjectDetails
                 for (int j = 0; j < size; j++)
                 {
                     string indexStr = getValString(j);
-                    const ObjectVisualRecord& refImage = output.objects[i].visualHistory[j];
+                    const ObjectSnapshotRecord& refImage = output.objects[i].snapshotHistory[j];
                     if (refImage.scene.data)
                         destroyWindow("Scene-" + indexStr);
                     if (refImage.slice.data)
@@ -270,14 +270,14 @@ void OutputInfoParser::Impl::save(const ObjectDetails& output)
 
 		const ObjectInfo& refObject = output.objects[i];
 
-        if (output.objects[i].hasVisualHistory)
+        if (output.objects[i].hasSnapshotHistory)
         {
             infoCount++;
-            int size = output.objects[i].visualHistory.size();
+            int size = output.objects[i].snapshotHistory.size();
             for (int j = 0; j < size; j++)
             {
                 stringstream sceneNameStr, sliceNameStr, maskNameStr;
-                const ObjectVisualRecord refImage = refObject.visualHistory[j];
+                const ObjectSnapshotRecord refImage = refObject.snapshotHistory[j];
                 if (saveScene && refImage.scene.data)
 			    {
                     sceneNameStr << resultPath << "/" << sceneName << refObject.ID << "-" << j << ".jpg";

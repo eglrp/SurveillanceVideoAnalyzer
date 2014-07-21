@@ -66,13 +66,14 @@ void BlobQuanRecord::makeRecord(const Mat& scene, const Rect& rect,
 }
 
 BlobQuanHistory::BlobQuanHistory(const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
-    const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, int blobID)
+    const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, int blobID, bool historyWithImages)
     : ID(blobID),
       sizeInfo(sizesOrigAndNorm),
       currTime(time),
       currCount(count),
       checkDirStep(BlobQuanHistoryCheckDirStep),
-      maxDiffVal(BlobQuanHistoryMaxDiffVal)
+      maxDiffVal(BlobQuanHistoryMaxDiffVal),
+      recordImage(historyWithImages)
 {
 
 }
@@ -83,7 +84,8 @@ BlobQuanHistory::BlobQuanHistory(const BlobQuanHistory& history, int blobID)
       currTime(history.currTime),
       currCount(history.currCount),
       checkDirStep(history.checkDirStep),
-      maxDiffVal(history.maxDiffVal)
+      maxDiffVal(history.maxDiffVal),
+      recordImage(history.recordImage)
 {
 
 }
@@ -125,7 +127,10 @@ void BlobQuanHistory::pushRecord(const Rect& rect, double gradDiffMean)
 
 void BlobQuanHistory::pushRecord(const OrigSceneProxy& scene, const Rect& rect, double gradDiffMean)
 {
-    currRecord.makeRecord(scene.getShallowCopy(), rect, gradDiffMean, *currTime, *currCount, *sizeInfo);
+    if (recordImage)
+        currRecord.makeRecord(scene.getShallowCopy(), rect, gradDiffMean, *currTime, *currCount, *sizeInfo);
+    else
+        currRecord.makeRecord(rect, gradDiffMean, *currTime, *currCount, *sizeInfo);
     history.push_back(currRecord);
 
     int index = history.size() - 1;
@@ -548,7 +553,7 @@ static const int findDirection[5][3] = {{-1, -1, -1}, {-1, -1, -1}, {-1, 2, 1}, 
 namespace zsfo
 {
 
-void BlobVisualRecord::makeRecord(OrigSceneProxy& scene, OrigForeProxy& fore, 
+void BlobSnapshotRecord::makeRecord(OrigSceneProxy& scene, OrigForeProxy& fore, 
     const SizeInfo& sizeInfo, const cv::Rect& baseRect, const cv::Rect& blobRect, 
     long long int currTime, int currCount, int saveMode)
 {
@@ -559,11 +564,11 @@ void BlobVisualRecord::makeRecord(OrigSceneProxy& scene, OrigForeProxy& fore,
     count = currCount;
 
     // 保存全景图
-    if (saveMode & SaveImageMode::SaveScene)
+    if (saveMode & SaveSnapshotMode::SaveScene)
         fullFrame = scene.getDeepCopy();
 
     // 保存运动目标的截图
-    if (saveMode & SaveImageMode::SaveSlice)
+    if (saveMode & SaveSnapshotMode::SaveSlice)
     {	    
         //Mat tempImage = Mat(scene.getDeepCopy(), origRect);
         //tempImage.copyTo(blobImage);
@@ -571,7 +576,7 @@ void BlobVisualRecord::makeRecord(OrigSceneProxy& scene, OrigForeProxy& fore,
     }
 
     // 保存运动目标的二值化前景图
-    if (saveMode & SaveImageMode::SaveMask)
+    if (saveMode & SaveSnapshotMode::SaveMask)
     {
         //Mat foreImageROI = Mat(normForeImage, normRect);
         //resize(foreImageROI, foreImage, Size(origRect.width, origRect.height));
@@ -580,7 +585,7 @@ void BlobVisualRecord::makeRecord(OrigSceneProxy& scene, OrigForeProxy& fore,
     }
 }
 
-void BlobVisualRecord::makeRecord(OrigSceneProxy& scene, OrigForeProxy& fore, 
+void BlobSnapshotRecord::makeRecord(OrigSceneProxy& scene, OrigForeProxy& fore, 
     const SizeInfo& sizeInfo, const Rect& baseRect, const Rect& blobRect, 
     int loopBound, int crossMode, long long int currTime, int currCount, int saveMode)
 {
@@ -590,7 +595,7 @@ void BlobVisualRecord::makeRecord(OrigSceneProxy& scene, OrigForeProxy& fore,
     makeRecord(scene, fore, sizeInfo, baseRect, blobRect, currTime, currCount, saveMode);
 }
 
-void BlobVisualRecord::copyTo(BlobVisualRecord& record) const
+void BlobSnapshotRecord::copyTo(BlobSnapshotRecord& record) const
 {
     record.bound = bound;
     record.crossIn = crossIn;
@@ -604,33 +609,34 @@ void BlobVisualRecord::copyTo(BlobVisualRecord& record) const
     fullFrame.copyTo(record.fullFrame);
 }
 
-void BlobVisualRecord::outputImages(ObjectVisualRecord& visualRecord) const
+void BlobSnapshotRecord::outputImages(ObjectSnapshotRecord& snapshotRecord) const
 {
     // 保存时间戳
-    visualRecord.time = time;
+    snapshotRecord.time = time;
     // 保存帧编号
-    visualRecord.number = count;
+    snapshotRecord.number = count;
     // 保存矩形
-    visualRecord.rect = origRect;
+    snapshotRecord.rect = origRect;
     // 保存截图时跨越虚拟线圈的位置
-    visualRecord.bound = bound;
+    snapshotRecord.bound = bound;
     // 保存截图时是进线圈还是出线圈
-    visualRecord.cross = crossIn;
+    snapshotRecord.cross = crossIn;
     // 保存截图的行驶方向
-    visualRecord.direction = direction;
+    snapshotRecord.direction = direction;
     // 保存抓拍车辆时的原始帧
     if (fullFrame.data)
-        fullFrame.copyTo(visualRecord.scene);
+        fullFrame.copyTo(snapshotRecord.scene);
     // 保存前景二值图
     if (foreImage.data)
-        foreImage.copyTo(visualRecord.mask);
+        foreImage.copyTo(snapshotRecord.mask);
     // 保存原始帧中的车辆截图
     if (blobImage.data)
-        blobImage.copyTo(visualRecord.slice);
+        blobImage.copyTo(snapshotRecord.slice);
 }
 
-BlobTriBoundVisualHistory::BlobTriBoundVisualHistory(const cv::Ptr<VirtualLoop>& catchLoop, const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
-    const cv::Ptr<cv::Rect>& boundRect, const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, 
+BlobTriBoundSnapshotHistory::BlobTriBoundSnapshotHistory(const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
+    const cv::Ptr<VirtualLoop>& catchLoop, const cv::Ptr<cv::Rect>& boundRect, 
+    const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, 
     int blobID, int saveMode, const string& path)
     : ID(blobID),
       auxiCount(0),
@@ -689,11 +695,11 @@ BlobTriBoundVisualHistory::BlobTriBoundVisualHistory(const cv::Ptr<VirtualLoop>&
     printf("    configUpdate.runShowImage = %s\n", configUpdate->runShowImage ? "true" : "false");
     printf("    configUpdate.waitTime = %d\n", configUpdate->waitTime);
     printf("    configUpdate.saveMode = ");
-    if (configUpdate->saveMode & SaveImageMode::SaveScene)
+    if (configUpdate->saveMode & SaveSnapshotMode::SaveScene)
         printf("scene ");
-    if (configUpdate->saveMode & SaveImageMode::SaveSlice)
+    if (configUpdate->saveMode & SaveSnapshotMode::SaveSlice)
         printf("slice ");
-    if (configUpdate->saveMode & SaveImageMode::SaveMask)
+    if (configUpdate->saveMode & SaveSnapshotMode::SaveMask)
         printf("mask");
     printf("\n");
 
@@ -701,7 +707,7 @@ BlobTriBoundVisualHistory::BlobTriBoundVisualHistory(const cv::Ptr<VirtualLoop>&
 #endif
 }
 
-BlobTriBoundVisualHistory::BlobTriBoundVisualHistory(const BlobTriBoundVisualHistory& history, int blobID)
+BlobTriBoundSnapshotHistory::BlobTriBoundSnapshotHistory(const BlobTriBoundSnapshotHistory& history, int blobID)
     : ID(blobID),
       auxiCount(0),
       recordLoop(history.recordLoop),
@@ -718,13 +724,13 @@ BlobTriBoundVisualHistory::BlobTriBoundVisualHistory(const BlobTriBoundVisualHis
 
 }
 
-BlobTriBoundVisualHistory* BlobTriBoundVisualHistory::createNew(int blobID) const
+BlobTriBoundSnapshotHistory* BlobTriBoundSnapshotHistory::createNew(int blobID) const
 {
-    BlobTriBoundVisualHistory* ptr = new BlobTriBoundVisualHistory(*this, blobID);
+    BlobTriBoundSnapshotHistory* ptr = new BlobTriBoundSnapshotHistory(*this, blobID);
     return ptr;
 }
 
-void BlobTriBoundVisualHistory::updateHistory(OrigSceneProxy& origFrame, 
+void BlobTriBoundSnapshotHistory::updateHistory(OrigSceneProxy& origFrame, 
     OrigForeProxy& foreImage, const cv::Rect& currRect)
 {
     if (!hasUpdate)
@@ -872,7 +878,7 @@ void BlobTriBoundVisualHistory::updateHistory(OrigSceneProxy& origFrame,
     lastRect = currRect;
 }
 
-bool BlobTriBoundVisualHistory::outputHistory(ObjectInfo& objectInfo) const
+bool BlobTriBoundSnapshotHistory::outputHistory(ObjectInfo& objectInfo) const
 {
     if (!hasUpdate)
     {
@@ -1088,41 +1094,42 @@ bool BlobTriBoundVisualHistory::outputHistory(ObjectInfo& objectInfo) const
         }
     }
 
-    objectInfo.hasVisualHistory = 1;
-    objectInfo.visualHistory.resize(1);
+    objectInfo.hasSnapshotHistory = 1;
+    objectInfo.snapshotHistory.resize(1);
     if (label == 0)
     {
 #if CMPL_WRITE_CONSOLE
         printf("Blob ID: %d No cross loop record, auxiliary record selected for output.\n", ID);
 #endif
-        auxiRecord.outputImages(objectInfo.visualHistory[0]);
+        auxiRecord.outputImages(objectInfo.snapshotHistory[0]);
     }
     else if (label == 1)
     {
 #if CMPL_WRITE_CONSOLE
         printf("Blob ID: %d Left record is optimal, selected for output.\n", ID);
 #endif
-        leftRecord.outputImages(objectInfo.visualHistory[0]);
+        leftRecord.outputImages(objectInfo.snapshotHistory[0]);
     }
     else if (label == 2)
     {
 #if CMPL_WRITE_CONSOLE
         printf("Blob ID: %d Right record is optimal, selected for output.\n", ID);
 #endif
-        rightRecord.outputImages(objectInfo.visualHistory[0]);
+        rightRecord.outputImages(objectInfo.snapshotHistory[0]);
     }
     else
     {
 #if CMPL_WRITE_CONSOLE
         printf("Blob ID: %d Bottom record is optimal, selected for output.\n", ID);
 #endif
-        bottomRecord.outputImages(objectInfo.visualHistory[0]);
+        bottomRecord.outputImages(objectInfo.snapshotHistory[0]);
     }
     return true;
 }
 
-BlobBottomBoundVisualHistory::BlobBottomBoundVisualHistory(const cv::Ptr<VirtualLoop>& catchLoop, const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
-    const cv::Ptr<cv::Rect>& boundRect, const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, 
+BlobBottomBoundSnapshotHistory::BlobBottomBoundSnapshotHistory(const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
+    const cv::Ptr<VirtualLoop>& catchLoop, const cv::Ptr<cv::Rect>& boundRect, 
+    const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, 
     int blobID, int saveMode, const string& path)
     : ID(blobID),
       auxiCount(0),
@@ -1179,11 +1186,11 @@ BlobBottomBoundVisualHistory::BlobBottomBoundVisualHistory(const cv::Ptr<Virtual
     printf("    configUpdate.runShowImage = %s\n", configUpdate->runShowImage ? "true" : "false");
     printf("    configUpdate.waitTime = %d\n", configUpdate->waitTime);
     printf("    configUpdate.saveMode = ");
-    if (configUpdate->saveMode & SaveImageMode::SaveScene)
+    if (configUpdate->saveMode & SaveSnapshotMode::SaveScene)
         printf("scene ");
-    if (configUpdate->saveMode & SaveImageMode::SaveSlice)
+    if (configUpdate->saveMode & SaveSnapshotMode::SaveSlice)
         printf("slice ");
-    if (configUpdate->saveMode & SaveImageMode::SaveMask)
+    if (configUpdate->saveMode & SaveSnapshotMode::SaveMask)
         printf("mask");
     printf("\n");
 
@@ -1191,7 +1198,7 @@ BlobBottomBoundVisualHistory::BlobBottomBoundVisualHistory(const cv::Ptr<Virtual
 #endif
 }
 
-BlobBottomBoundVisualHistory::BlobBottomBoundVisualHistory(const BlobBottomBoundVisualHistory& history, int blobID)
+BlobBottomBoundSnapshotHistory::BlobBottomBoundSnapshotHistory(const BlobBottomBoundSnapshotHistory& history, int blobID)
     : ID(blobID),
       auxiCount(0),
       recordLoop(history.recordLoop),
@@ -1206,13 +1213,13 @@ BlobBottomBoundVisualHistory::BlobBottomBoundVisualHistory(const BlobBottomBound
 
 }
 
-BlobBottomBoundVisualHistory* BlobBottomBoundVisualHistory::createNew(int blobID) const
+BlobBottomBoundSnapshotHistory* BlobBottomBoundSnapshotHistory::createNew(int blobID) const
 {
-    BlobBottomBoundVisualHistory* ptr = new BlobBottomBoundVisualHistory(*this, blobID);
+    BlobBottomBoundSnapshotHistory* ptr = new BlobBottomBoundSnapshotHistory(*this, blobID);
     return ptr;
 }
 
-void BlobBottomBoundVisualHistory::updateHistory(OrigSceneProxy& origFrame, 
+void BlobBottomBoundSnapshotHistory::updateHistory(OrigSceneProxy& origFrame, 
     OrigForeProxy& foreImage, const cv::Rect& currRect)
 {
     if (!hasUpdate)
@@ -1280,7 +1287,7 @@ void BlobBottomBoundVisualHistory::updateHistory(OrigSceneProxy& origFrame,
     lastRect = currRect;
 }
 
-bool BlobBottomBoundVisualHistory::outputHistory(ObjectInfo& objectInfo) const
+bool BlobBottomBoundSnapshotHistory::outputHistory(ObjectInfo& objectInfo) const
 {
     if (!hasUpdate)
     {
@@ -1290,8 +1297,8 @@ bool BlobBottomBoundVisualHistory::outputHistory(ObjectInfo& objectInfo) const
         return false;
     }
 
-    objectInfo.hasVisualHistory = 1;
-    objectInfo.visualHistory.resize(1);
+    objectInfo.hasSnapshotHistory = 1;
+    objectInfo.snapshotHistory.resize(1);
 #if CMPL_WRITE_CONSOLE
     printf("Blob ID: %d Output image.\n", ID);
 #endif
@@ -1300,20 +1307,21 @@ bool BlobBottomBoundVisualHistory::outputHistory(ObjectInfo& objectInfo) const
 #if CMPL_WRITE_CONSOLE
         printf("Blob ID: %d Bottom record exists, output this record\n", ID);
 #endif
-        bottomRecord.outputImages(objectInfo.visualHistory[0]);
+        bottomRecord.outputImages(objectInfo.snapshotHistory[0]);
     }
     else
     {
 #if CMPL_WRITE_CONSOLE
         printf("Blob ID: %d No cross loop record, auxiliary record selected for output.\n", ID);
 #endif
-        auxiRecord.outputImages(objectInfo.visualHistory[0]);
+        auxiRecord.outputImages(objectInfo.snapshotHistory[0]);
     }
     return true;
 }
 
-BlobCrossLineVisualHistory::BlobCrossLineVisualHistory(const cv::Ptr<LineSegment>& lineToCross, const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
-    const cv::Ptr<cv::Rect>& boundRect, const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, 
+BlobCrossLineSnapshotHistory::BlobCrossLineSnapshotHistory(const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
+    const cv::Ptr<LineSegment>& lineToCross, const cv::Ptr<cv::Rect>& boundRect, 
+    const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, 
     int blobID, int saveMode, const string& path)
     : ID(blobID),
       auxiCount(0),
@@ -1371,11 +1379,11 @@ BlobCrossLineVisualHistory::BlobCrossLineVisualHistory(const cv::Ptr<LineSegment
     printf("    configUpdate.runShowImage = %s\n", configUpdate->runShowImage ? "true" : "false");
     printf("    configUpdate.waitTime = %d\n", configUpdate->waitTime);
     printf("    configUpdate.saveMode = ");
-    if (configUpdate->saveMode & SaveImageMode::SaveScene)
+    if (configUpdate->saveMode & SaveSnapshotMode::SaveScene)
         printf("scene ");
-    if (configUpdate->saveMode & SaveImageMode::SaveSlice)
+    if (configUpdate->saveMode & SaveSnapshotMode::SaveSlice)
         printf("slice ");
-    if (configUpdate->saveMode & SaveImageMode::SaveMask)
+    if (configUpdate->saveMode & SaveSnapshotMode::SaveMask)
         printf("mask");
     printf("\n");
 
@@ -1383,7 +1391,7 @@ BlobCrossLineVisualHistory::BlobCrossLineVisualHistory(const cv::Ptr<LineSegment
 #endif
 }
 
-BlobCrossLineVisualHistory::BlobCrossLineVisualHistory(const BlobCrossLineVisualHistory& history, int blobID)
+BlobCrossLineSnapshotHistory::BlobCrossLineSnapshotHistory(const BlobCrossLineSnapshotHistory& history, int blobID)
     : ID(blobID),
       auxiCount(0),
       recordLine(history.recordLine),
@@ -1399,13 +1407,13 @@ BlobCrossLineVisualHistory::BlobCrossLineVisualHistory(const BlobCrossLineVisual
 
 }
 
-BlobCrossLineVisualHistory* BlobCrossLineVisualHistory::createNew(int blobID) const
+BlobCrossLineSnapshotHistory* BlobCrossLineSnapshotHistory::createNew(int blobID) const
 {
-    BlobCrossLineVisualHistory* ptr = new BlobCrossLineVisualHistory(*this, blobID);
+    BlobCrossLineSnapshotHistory* ptr = new BlobCrossLineSnapshotHistory(*this, blobID);
     return ptr;
 }
 
-void BlobCrossLineVisualHistory::updateHistory(OrigSceneProxy& origFrame, 
+void BlobCrossLineSnapshotHistory::updateHistory(OrigSceneProxy& origFrame, 
     OrigForeProxy& foreImage, const cv::Rect& currRect)
 {
     int currDist = recordLine->distTo(Point(currRect.x + currRect.width / 2, currRect.y + currRect.height / 2));
@@ -1459,7 +1467,7 @@ void BlobCrossLineVisualHistory::updateHistory(OrigSceneProxy& origFrame,
     }
 }
 
-bool BlobCrossLineVisualHistory::outputHistory(ObjectInfo& objectInfo) const
+bool BlobCrossLineSnapshotHistory::outputHistory(ObjectInfo& objectInfo) const
 {
     if (!hasCrossLine)
     {
@@ -1471,13 +1479,13 @@ bool BlobCrossLineVisualHistory::outputHistory(ObjectInfo& objectInfo) const
 #if CMPL_WRITE_CONSOLE
     printf("Blob ID: %d Output image.\n", ID);
 #endif
-    objectInfo.hasVisualHistory = 1;
-    objectInfo.visualHistory.resize(1);
-    crossLineRecord.outputImages(objectInfo.visualHistory[0]);
+    objectInfo.hasSnapshotHistory = 1;
+    objectInfo.snapshotHistory.resize(1);
+    crossLineRecord.outputImages(objectInfo.snapshotHistory[0]);
     return true;
 }
 
-BlobMultiRecordVisualHistory::BlobMultiRecordVisualHistory(const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
+BlobMultiRecordSnapshotHistory::BlobMultiRecordSnapshotHistory(const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
     const cv::Ptr<cv::Rect>& boundRect, const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, 
     int blobID, int saveMode, int saveInterval, int numOfSaved, const string& path)
     : ID(blobID),
@@ -1536,11 +1544,11 @@ BlobMultiRecordVisualHistory::BlobMultiRecordVisualHistory(const cv::Ptr<SizeInf
     printf("    configUpdate.runShowImage = %s\n", configUpdate->runShowImage ? "true" : "false");
     printf("    configUpdate.waitTime = %d\n", configUpdate->waitTime);
     printf("    configUpdate.saveMode = ");
-    if (configUpdate->saveMode & SaveImageMode::SaveScene)
+    if (configUpdate->saveMode & SaveSnapshotMode::SaveScene)
         printf("scene ");
-    if (configUpdate->saveMode & SaveImageMode::SaveSlice)
+    if (configUpdate->saveMode & SaveSnapshotMode::SaveSlice)
         printf("slice ");
-    if (configUpdate->saveMode & SaveImageMode::SaveMask)
+    if (configUpdate->saveMode & SaveSnapshotMode::SaveMask)
         printf("mask");
     printf("\n");
     printf("    configUpdate.saveInterval = %d\n", configUpdate->saveInterval);
@@ -1550,7 +1558,7 @@ BlobMultiRecordVisualHistory::BlobMultiRecordVisualHistory(const cv::Ptr<SizeInf
 #endif
 }
 
-BlobMultiRecordVisualHistory::BlobMultiRecordVisualHistory(const BlobMultiRecordVisualHistory& history, int blobID)
+BlobMultiRecordSnapshotHistory::BlobMultiRecordSnapshotHistory(const BlobMultiRecordSnapshotHistory& history, int blobID)
     : ID(blobID),
       auxiCount(0),
       allInside(false),
@@ -1563,9 +1571,9 @@ BlobMultiRecordVisualHistory::BlobMultiRecordVisualHistory(const BlobMultiRecord
     this->history.reserve(configUpdate->numOfSaved);
 }
 
-BlobMultiRecordVisualHistory* BlobMultiRecordVisualHistory::createNew(int blobID) const
+BlobMultiRecordSnapshotHistory* BlobMultiRecordSnapshotHistory::createNew(int blobID) const
 {
-    BlobMultiRecordVisualHistory* ptr = new BlobMultiRecordVisualHistory(*this, blobID);
+    BlobMultiRecordSnapshotHistory* ptr = new BlobMultiRecordSnapshotHistory(*this, blobID);
     return ptr;
 }
 
@@ -1583,7 +1591,7 @@ struct AbsolutelyInside
     {
         return region.contains(rect.tl()) && region.contains(rect.br());
     }
-    bool operator()(const zsfo::BlobVisualRecord& record)
+    bool operator()(const zsfo::BlobSnapshotRecord& record)
     {
         return region.contains(record.normRect.tl()) && region.contains(record.normRect.br());
     }
@@ -1599,7 +1607,7 @@ struct NotAbsolutelyInside
     {
         return !region.contains(rect.tl()) || !region.contains(rect.br());
     }
-    bool operator()(const zsfo::BlobVisualRecord& record)
+    bool operator()(const zsfo::BlobSnapshotRecord& record)
     {
         return !region.contains(record.normRect.tl()) || !region.contains(record.normRect.br());
     }
@@ -1608,7 +1616,7 @@ struct NotAbsolutelyInside
 
 struct Less
 {
-    bool operator()(const zsfo::BlobVisualRecord& lhs, const zsfo::BlobVisualRecord& rhs)
+    bool operator()(const zsfo::BlobSnapshotRecord& lhs, const zsfo::BlobSnapshotRecord& rhs)
     {
         return lhs.normRect.area() < rhs.normRect.area();
     }
@@ -1619,12 +1627,12 @@ struct Less
 namespace zsfo
 {
 
-void BlobMultiRecordVisualHistory::updateHistory(OrigSceneProxy& origFrame,
+void BlobMultiRecordSnapshotHistory::updateHistory(OrigSceneProxy& origFrame,
     OrigForeProxy& foreImage, const cv::Rect& currRect)
 {
     if (history.empty())
     {
-        history.push_back(BlobVisualRecord());
+        history.push_back(BlobSnapshotRecord());
         history[0].makeRecord(origFrame, foreImage, *sizeInfo, *baseRect, currRect,
             *currTime, *currCount, configUpdate->saveMode);
         if (configUpdate->numOfSaved == 1)
@@ -1643,7 +1651,7 @@ void BlobMultiRecordVisualHistory::updateHistory(OrigSceneProxy& origFrame,
         AbsolutelyInside inside(Rect(0, 0, sizeInfo->normWidth, sizeInfo->normHeight));
         if (size < configUpdate->numOfSaved)
         {
-            history.push_back(BlobVisualRecord());
+            history.push_back(BlobSnapshotRecord());
             history[size].makeRecord(origFrame, foreImage, *sizeInfo, *baseRect, currRect,
                 *currTime, *currCount, configUpdate->saveMode);
             if (size + 1 == configUpdate->numOfSaved &&
@@ -1667,7 +1675,7 @@ void BlobMultiRecordVisualHistory::updateHistory(OrigSceneProxy& origFrame,
                 // 如果当前矩形不靠近画面边界
                 if (inside(currRect))
                 {      
-                    vector<BlobVisualRecord>::iterator itrMin = min_element(history.begin(), history.end(), Less());
+                    vector<BlobSnapshotRecord>::iterator itrMin = min_element(history.begin(), history.end(), Less());
                     // 并且面积大于面积最小的历史截图, 则用当前帧的截图替换
                     if (currRect.area() > itrMin->normRect.area())
                     {
@@ -1687,7 +1695,7 @@ void BlobMultiRecordVisualHistory::updateHistory(OrigSceneProxy& origFrame,
                     // 所有截图都靠近画面边界, 选出历史截图中面积最小的进行替换
                     if (numOfInside == 0)
                     {                        
-                        vector<BlobVisualRecord>::iterator itrMin = min_element(history.begin(), history.end(), Less());
+                        vector<BlobSnapshotRecord>::iterator itrMin = min_element(history.begin(), history.end(), Less());
                         itrMin->makeRecord(origFrame, foreImage, *sizeInfo, *baseRect, currRect,
                             *currTime, *currCount, configUpdate->saveMode);
                     }
@@ -1696,7 +1704,7 @@ void BlobMultiRecordVisualHistory::updateHistory(OrigSceneProxy& origFrame,
                     {
                         sort(history.begin(), history.end(), Less());
                         NotAbsolutelyInside notInside(Rect(0, 0, sizeInfo->normWidth, sizeInfo->normHeight));
-                        vector<BlobVisualRecord>::iterator itrMin = find_if(history.begin(), history.end(), notInside);
+                        vector<BlobSnapshotRecord>::iterator itrMin = find_if(history.begin(), history.end(), notInside);
                         itrMin->makeRecord(origFrame, foreImage, *sizeInfo, *baseRect, currRect,
                             *currTime, *currCount, configUpdate->saveMode);
                     }
@@ -1704,7 +1712,7 @@ void BlobMultiRecordVisualHistory::updateHistory(OrigSceneProxy& origFrame,
                     else if (numOfInside == configUpdate->numOfSaved - 1)
                     {
                         NotAbsolutelyInside notInside(Rect(0, 0, sizeInfo->normWidth, sizeInfo->normHeight));
-                        vector<BlobVisualRecord>::iterator itr = find_if(history.begin(), history.end(), notInside);
+                        vector<BlobSnapshotRecord>::iterator itr = find_if(history.begin(), history.end(), notInside);
                         itr->makeRecord(origFrame, foreImage, *sizeInfo, *baseRect, currRect,
                             *currTime, *currCount, configUpdate->saveMode);
                     }
@@ -1716,7 +1724,7 @@ void BlobMultiRecordVisualHistory::updateHistory(OrigSceneProxy& origFrame,
                     // 所有截图都靠近画面边界, 选出历史截图中面积最小的进行替换
                     if (numOfInside == 0)
                     {
-                        vector<BlobVisualRecord>::iterator itrMin = min_element(history.begin(), history.end(), Less());
+                        vector<BlobSnapshotRecord>::iterator itrMin = min_element(history.begin(), history.end(), Less());
                         if (currRect.area() > itrMin->normRect.area())
                         {
                             itrMin->makeRecord(origFrame, foreImage, *sizeInfo, *baseRect, currRect,
@@ -1728,7 +1736,7 @@ void BlobMultiRecordVisualHistory::updateHistory(OrigSceneProxy& origFrame,
                     {
                         sort(history.begin(), history.end(), Less());
                         NotAbsolutelyInside notInside(Rect(0, 0, sizeInfo->normWidth, sizeInfo->normHeight));
-                        vector<BlobVisualRecord>::iterator itrMin = find_if(history.begin(), history.end(), notInside);
+                        vector<BlobSnapshotRecord>::iterator itrMin = find_if(history.begin(), history.end(), notInside);
                         if (currRect.area() > itrMin->normRect.area())
                         {
                             itrMin->makeRecord(origFrame, foreImage, *sizeInfo, *baseRect, currRect,
@@ -1741,13 +1749,13 @@ void BlobMultiRecordVisualHistory::updateHistory(OrigSceneProxy& origFrame,
     }
 }
 
-bool BlobMultiRecordVisualHistory::outputHistory(ObjectInfo& objectInfo) const
+bool BlobMultiRecordSnapshotHistory::outputHistory(ObjectInfo& objectInfo) const
 {
     int size = history.size();
-    objectInfo.hasVisualHistory = (size != 0);
-    objectInfo.visualHistory.resize(size);
+    objectInfo.hasSnapshotHistory = (size != 0);
+    objectInfo.snapshotHistory.resize(size);
     for (int i = 0; i < size; i++)
-        history[i].outputImages(objectInfo.visualHistory[i]);
+        history[i].outputImages(objectInfo.snapshotHistory[i]);
     return size != 0;
 }
 
