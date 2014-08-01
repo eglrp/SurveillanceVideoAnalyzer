@@ -181,6 +181,8 @@ public:
         float learnRate;
     };
 	Z_LIB_EXPORT void init(const cv::Mat& image, const ExtendedConfig& config);
+    Z_LIB_EXPORT void update(const cv::Mat& image, cv::Mat& foregroundImage,
+		const std::vector<cv::Rect>& rectsNoUpdate = std::vector<cv::Rect>());
 	Z_LIB_EXPORT void update(const cv::Mat& image, cv::Mat& foregroundImage, cv::Mat& backgroundImage, 
 		const std::vector<cv::Rect>& rectsNoUpdate = std::vector<cv::Rect>());
 	Z_LIB_EXPORT void refill(const cv::Mat& image);

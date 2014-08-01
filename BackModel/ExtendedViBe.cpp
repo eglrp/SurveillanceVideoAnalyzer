@@ -354,6 +354,13 @@ void ExtendedViBe::init(const Mat& image, const ExtendedConfig& config)
 		image.convertTo(backImage, CV_32FC1);
 }
 
+void ExtendedViBe::update(const Mat& image, Mat& foregroundImage,
+    const vector<Rect>& rectsNoUpdate)
+{
+    ViBe::update(image, foregroundImage, rectsNoUpdate);
+    accumulateWeighted(image, backImage, learnRate, ~(foregroundImage | noUpdateImage));
+}
+
 void ExtendedViBe::update(const Mat& image, Mat& foregroundImage, Mat& backgroundImage, 
     const vector<Rect>& rectsNoUpdate)
 {

@@ -18,7 +18,8 @@ int main(int argc, char** argv)
         /*"D:\\SHARED\\GuilinVideo\\DVR1_灵川八里街川东一路八里一路路口_20130826170046_20130826171424_63094171_0001.avi"*/
         /*"D:/SHARED/GuilinVideo/DVR1_灵川八里街川东一路八里一路路口_20130825150550_20130825151929_60634656_0001.avi"*/
         /*"D:/SHARED/GuilinVideo/DVR1_灵川八里街川东一路八里一路路口20130909070538.avi"*/
-		"D:/SHARED/MiscellaneousVideo/16s_0.flv"
+		/*"D:/SHARED/MiscellaneousVideo/16s_0.flv"*/
+        "D:\\SHARED\\TaicangVideo\\2\\70.flv"
         /*"D:\\SHARED\\HongshenVideo\\顾戴2.avi"*/
         /*"D:\\SHARED\\HongshenVideo\\test1030.avi"*/;
 	VideoCapture cap;
@@ -88,10 +89,11 @@ int main(int argc, char** argv)
 			continue;
 		}
 
-		Mat foreImage;
-		visualInfo.update(image, foreImage, true, stableRects);
+		Mat foreImage, backImage;
+		visualInfo.update(image, foreImage, backImage, true, stableRects);
         imshow("image", image);
         imshow("orig fore image", foreImage);
+        imshow("back image", backImage);
 		
 		vector<Rect> currRects;
 		blobExtractor.proc(foreImage, Mat(), Mat(), currRects, stableRects);
@@ -108,7 +110,9 @@ int main(int argc, char** argv)
 		blobTracker.drawTrackingState(draw, Scalar(255, 0, 0), Scalar(0, 255, 0), Scalar(0, 0, 255), Scalar(255, 255, 255));
 		imshow("tracking state", draw);
 
-		if (!objects.empty())
+		waitKey(10);
+        continue;
+        if (!objects.empty())
 		{
 			printf("frame count %d:\n", i);
 			int objSize = objects.size();
