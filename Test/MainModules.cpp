@@ -110,8 +110,6 @@ int main(int argc, char** argv)
 		blobTracker.drawTrackingState(draw, Scalar(255, 0, 0), Scalar(0, 255, 0), Scalar(0, 0, 255), Scalar(255, 255, 255));
 		imshow("tracking state", draw);
 
-		waitKey(10);
-        continue;
         if (!objects.empty())
 		{
 			printf("frame count %d:\n", i);

@@ -464,12 +464,73 @@ static void addInfo(const std::string& taskID,
     }
 }
 
+const static int numDaysAllowed = 90;
+static bool allowRun(void)
+{
+    const std::string currTime = __DATE__;
+    if (currTime.size() != 11)
+        return false;
+    
+    time_t currTimeVal;
+    time(&currTimeVal);
+    tm* localTime = localtime(&currTimeVal);
+    int currDay = localTime->tm_yday;
+    int currYear = localTime->tm_yday;
+
+    localTime->tm_mday = atoi(currTime.substr(4, 2).c_str());
+    std::string mon = currTime.substr(0, 3);
+    if (mon == "Jan")
+        localTime->tm_mon = 0;
+    else if (mon == "Feb")
+        localTime->tm_mon = 1;
+    else if (mon == "Mar")
+        localTime->tm_mon = 2;
+    else if (mon == "Apr")
+        localTime->tm_mon = 3;
+    else if (mon == "May")
+        localTime->tm_mon = 4;
+    else if (mon == "Jun")
+        localTime->tm_mon = 5;
+    else if (mon == "Jul")
+        localTime->tm_mon = 6;
+    else if (mon == "Aug")
+        localTime->tm_mon = 7;
+    else if (mon == "Sep")
+        localTime->tm_mon = 8;
+    else if (mon == "Oct")
+        localTime->tm_mon = 9;
+    else if (mon == "Nov")
+        localTime->tm_mon = 10;
+    else if (mon == "Dec")
+        localTime->tm_mon = 11;
+    if (mktime(localTime) < 0)
+        return false;
+    int cmplDay = localTime->tm_yday;
+    int cmplYear = localTime->tm_year;
+
+    if (cmplYear > currYear)
+        return false;
+    else if (cmplYear == currYear)
+    {
+        if (cmplDay < 365 - numDaysAllowed)
+            return (currDay >= cmplDay) && (currDay - cmplDay < numDaysAllowed);
+        else
+            return currDay >= cmplDay;
+    }
+    else if (cmplYear == currYear - 1)
+        return currDay <= cmplDay - 365 + numDaysAllowed;
+    else
+        return false;
+}
+
 namespace zpv
 {
 
 void procVideo(const TaicangTaskInfo& task, const TaicangParamInfo& param,
     taicangProcVideoCallBack ptrCallBackFunc, void* ptrUserData)
 {
+    if (!allowRun()) return;
+
     VideoCapture cap; 
     cap.open(task.videoPath);
 
