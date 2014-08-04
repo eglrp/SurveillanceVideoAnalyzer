@@ -16,6 +16,87 @@ using namespace std;
 using namespace cv;
 using namespace ztool;
 
+static void filterSmallRegions(cv::Mat& mask, int minWidth, int minHeight, int minArea)
+{
+    int width = mask.cols;
+    int height = mask.rows;
+    cv::Mat scan;
+    scan.create(height, width, CV_8UC1);
+    scan.setTo(0);
+    cv::Mat comp;
+    comp.create(height, width, CV_8UC1);
+    comp.setTo(0);
+    std::vector<unsigned char*> ptrMaskRow(height);
+    unsigned char **ptrMask = &ptrMaskRow[0];
+    std::vector<unsigned char*> ptrScanRow(height);
+    unsigned char **ptrScan = &ptrScanRow[0];
+    std::vector<unsigned char*> ptrCompRow(height);
+    unsigned char **ptrComp = &ptrCompRow[0];
+    for (int i = 0; i < height; i++)
+    {
+        ptrMask[i] = mask.ptr<unsigned char>(i);
+        ptrScan[i] = scan.ptr<unsigned char>(i);
+        ptrComp[i] = comp.ptr<unsigned char>(i);
+    } 
+    std::vector<cv::Point> stack;    
+    stack.resize(height * width);
+    cv::Point* ptrStack = &stack[0];
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            int stackSize = 0, area = 0;
+            if (ptrScan[i][j] == 0X00 && ptrMask[i][j] == 0XFF)
+            {                
+                ptrStack[stackSize] = cv::Point(j, i);
+                stackSize++;
+                ptrScan[i][j] = 0XFF;
+                int minX = j, minY = i, maxX = j, maxY = i; 
+                while (stackSize)
+                {
+                    area++;
+                    stackSize--;
+                    int x = ptrStack[stackSize].x, y = ptrStack[stackSize].y;                    
+                    ptrComp[y][x] = 0XFF;
+                    minX = std::min(minX, x);
+                    minY = std::min(minY, y);
+                    maxX = std::max(maxX, x);                    
+                    maxY = std::max(maxY, y);
+                    for (int offy = -1; offy <= 1; offy++)
+                    {
+                        for (int offx = -1; offx <= 1; offx++)
+                        {                            
+                            int currX = x + offx, currY = y + offy;
+                            if (currX >= 0 && currX < width &&
+                                currY >= 0 && currY < height &&
+                                ptrMask[currY][currX] == 0XFF && ptrScan[currY][currX] == 0X00)
+                            {
+                                ptrStack[stackSize] = cv::Point(currX, currY);
+                                stackSize++;
+                                ptrScan[currY][currX] = 0XFF;
+                            }
+                        }
+                    }                    
+                }
+                cv::Rect currRect(minX, minY, maxX - minX + 1, maxY - minY + 1);
+                if (currRect.width <= minWidth && currRect.height <= minHeight || area <= minArea ||
+                    area < minWidth * currRect.height || area < minHeight * currRect.width)
+                {
+                    for (int u = currRect.y; u < currRect.y + currRect.height; u++)
+                    {
+                        for (int v = currRect.x; v < currRect.x + currRect.width; v++)
+                        {
+                            if (ptrComp[u][v])
+                                ptrMask[u][v] = 0;
+                        }
+                    }
+                }
+                comp(currRect).setTo(0);
+            }
+        }
+    }
+}
+
 namespace zsfo
 {
 
@@ -82,13 +163,20 @@ void VisualInfo::update(const Mat& image, Mat& foreImage, Mat& backImage, Mat& g
 		calcThresholdedGradient(backGrayImage, backGradImage, 145);//145
 	normGradImage.copyTo(gradDiffImage);
 	gradDiffImage.setTo(0, backGradImage);
+#if CMPL_SHOW_IMAGE
+    imshow("Gradient Diff", gradDiffImage);
+#endif
     medianBlur(gradDiffImage, gradDiffImage, 3);
 #if CMPL_SHOW_IMAGE
     imshow("Frame Gradient", normGradImage);
     imshow("Back Frame Gradient", backGradImage);
-    imshow("Gradient Diff", gradDiffImage);
+    imshow("Blurred Gradient Diff", gradDiffImage);
 #endif
 
+    filterSmallRegions(gradDiffImage, 5, 5, 20);
+#if CMPL_SHOW_IMAGE
+    imshow("Filtered Blurred Gradient Diff", gradDiffImage);
+#endif
     // 给前景图加上梯度差值
 	for (int i = 0; i < foreImage.rows; i++)
     {

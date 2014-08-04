@@ -56,7 +56,7 @@ private:
 	std::vector<cv::Rect> rects, rectsNoUpdate;	
 	cv::Mat initImage, normImage, foreImage, backImage, gradDiffImage;
 #if CMPL_CALC_PROC_TIME
-    RepeatTimer visualTimer, extractTimer, trackTimer;
+    ztool::RepeatTimer visualTimer, extractTimer, trackTimer;
 #endif
 };
 
@@ -520,6 +520,7 @@ void MovingObjectDetector::Impl::build(const StampedImage& input)
 	resize(origFrame, initImage, Size(sizeInfo.normWidth, sizeInfo.normHeight));
 	medianBlur(initImage, normImage, 3);
 	GaussianBlur(normImage, normImage, Size(3, 3), 0.0);
+    //GaussianBlur(initImage, normImage, Size(3, 3), 0.0);
 #if CMPL_CALC_PROC_TIME
     visualTimer.start();    
 #endif
@@ -544,6 +545,7 @@ void MovingObjectDetector::Impl::proc(const StampedImage& input, ObjectDetails& 
 	resize(origFrame, initImage, Size(sizeInfo.normWidth, sizeInfo.normHeight));
 	medianBlur(initImage, normImage, 3);
 	GaussianBlur(normImage, normImage, Size(3, 3), 0.0);
+    //GaussianBlur(initImage, normImage, Size(3, 3), 0.0);
 #if CMPL_CALC_PROC_TIME
     visualTimer.start();    
 #endif

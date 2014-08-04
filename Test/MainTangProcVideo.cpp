@@ -45,7 +45,7 @@ int main(int argc, char** argv)
     /*"D:/SHARED/GuilinVideo/DVR1_灵川八里街川东一路八里一路路口20130909070538.avi"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\DCS-7010L_20140416160622.avi"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\案发前20秒(2).avi"*/
-	/*"D:/SHARED/TaicangVideo/1/70.flv"*/
+	"D:/SHARED/TaicangVideo/12/73.flv"
     /*"D:\\SHARED\\MiscellaneousVideo\\video\\4M2D12-21-2C.avi"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\video\\test1030.avi"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\video\\古北-头顶1.avi"*/
@@ -54,7 +54,8 @@ int main(int argc, char** argv)
     /*"D:\\SHARED\\MiscellaneousVideo\\ch03_20140427105139MP4.avi"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\05_29_08 06_03_11.avi"*/
     /*"D:/SHARED/TaicangVideo/CARCRASH_T112901_camera-t129f01_1_bak.avi"*/
-    "D:/SHARED/TaicangVideo/2_M.dav";
+    /*"D:/SHARED/TaicangVideo/1/70.flv"*/
+    /*"D:/SHARED/LiaoyuanVideo/12-16-55_N_16_00h00m00s_00h00m36s.avi"*/;
 	VideoCapture cap;
 	cap.open(videoPath);
 	int totalFrameCount = cap.get(CV_CAP_PROP_FRAME_COUNT);

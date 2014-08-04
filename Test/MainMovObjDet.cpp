@@ -18,23 +18,28 @@ using namespace ztool;
 
 int	main(int argc, char* argv[])
 {
-	string videoFileName = "D:/SHARED/TaicangVideo/1/70.flv";
+	string videoFileName = "D:/SHARED/TaicangVideo/1/70.flv"
+        /*"D:/SHARED/XinjiangVideo/7S大湾北路金疆大厦卡口 20140730-112005--20140730-112205.mp4"*/;
     Size normSize(320, 240);
     int buildBackCount = 20;
     int updateBackInterval = 4;
     bool historyWithImages = false;
     int recordSnapshotMode = RecordSnapshotMode::No;
-    int saveSnapshotMode = SaveSnapshotMode::SaveSlice;
+    int saveSnapshotMode = SaveSnapshotMode::SaveSlice | SaveSnapshotMode::SaveScene;
     int saveSnapshotInterval = 2, numOfSaved = 4;
     bool isNormScale = true;
     vector<vector<Point> > incPts(1);
     vector<vector<Point> > excPts;
     incPts[0].resize(4);
-    incPts[0][0] = Point(10, 120);
+    incPts[0][0] = Point(10, 10);
     incPts[0][1] = Point(10, 230);
     incPts[0][2] = Point(310, 230);
-    incPts[0][3] = Point(310, 120);
-    vector<Point> catchPts;
+    incPts[0][3] = Point(310, 10);
+    vector<Point> catchPts(4);
+    catchPts[0] = Point(10, 120);
+    catchPts[1] = Point(10, 220);
+    catchPts[2] = Point(310, 220);
+    catchPts[3] = Point(310, 120);
     double minObjectArea = 50;
     double minObjectWidth = 10;
     double minObjectHeight = 10;
@@ -110,9 +115,11 @@ int	main(int argc, char* argv[])
 				    }
 			    }
             }
-            imshow("state", normImage);
-            waitKey(longWait ? 0 : 10);
+            //imshow("state", normImage);
+            //waitKey(longWait ? 0 : 10);
+            waitKey(10);
         }
+        mod.final(output);
     }
     catch (exception& e)
     {

@@ -422,7 +422,7 @@ void procVideo(const TaskInfo& task, const ConfigInfo& config,
         if (ptrCallBackFunc && (count % progressInterval == 0 || !objects.empty()))
             ptrCallBackFunc(float(count) / procTotalCount * 100, objects, ptrUserData);
 #if CMPL_SHOW_IMAGE        
-		waitKey(output.objects.empty() ? 5 : 0);
+		waitKey(output.objects.empty() ? 5 : 5);
 #endif
     }
 
