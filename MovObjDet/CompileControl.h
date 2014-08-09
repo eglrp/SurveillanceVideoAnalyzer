@@ -11,4 +11,4 @@
 // 静态目标跟踪
 #define CMPL_RUN_STATIC_OBJECT_TRACKER    0
 // 计时并且显示
-#define CMPL_CALC_PROC_TIME               0
+#define CMPL_CALC_PROC_TIME               1

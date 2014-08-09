@@ -623,7 +623,7 @@ void procVideo(const TaicangTaskInfo& task, const TaicangParamInfo& param,
         if (input.number >= totalFrameCount)
             break;
 		if (!cap.read(input.image)) 
-			continue;
+			break;
         zsfo::ObjectDetails output;
         vector<TaicangObjectInfo> objects;
         if (count % procEveryNFrame == 0)
