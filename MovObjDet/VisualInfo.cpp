@@ -158,9 +158,10 @@ void VisualInfo::update(const Mat& image, Mat& foreImage, Mat& backImage, Mat& g
 		cvtColor(backImage, backGrayImage, CV_BGR2GRAY);
 
     // 计算梯度差
+    blur(normGrayImage, normGrayImage, Size(3, 3));
 	calcThresholdedGradient(normGrayImage, normGradImage, 145);//145
     if (fullUpdate) 
-		calcThresholdedGradient(backGrayImage, backGradImage, 145);//145
+        calcThresholdedGradient(backGrayImage, backGradImage, 145);//145
 	normGradImage.copyTo(gradDiffImage);
 	gradDiffImage.setTo(0, backGradImage);
 #if CMPL_SHOW_IMAGE
@@ -173,7 +174,7 @@ void VisualInfo::update(const Mat& image, Mat& foreImage, Mat& backImage, Mat& g
     imshow("Blurred Gradient Diff", gradDiffImage);
 #endif
 
-    filterSmallRegions(gradDiffImage, 5, 5, 20);
+    //filterSmallRegions(gradDiffImage, 5, 5, 20);
 #if CMPL_SHOW_IMAGE
     imshow("Filtered Blurred Gradient Diff", gradDiffImage);
 #endif

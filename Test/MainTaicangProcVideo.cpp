@@ -45,7 +45,8 @@ int main(int argc, char** argv)
     /*"D:/SHARED/GuilinVideo/DVR1_灵川八里街川东一路八里一路路口20130909070538.avi"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\DCS-7010L_20140416160622.avi"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\案发前20秒(2).avi"*/
-	"D:/SHARED/TaicangVideo/1/70.flv"
+	/*"D:/SHARED/TaicangVideo/1/70.flv"*/
+    "D:/SHARED/TaicangVideo/209_32058517001310010090_40_2014-08-07 08_42_35~2014-08-07 08_47_35_bak.avi"
     /*"D:\\SHARED\\MiscellaneousVideo\\video\\4M2D12-21-2C.avi"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\video\\test1030.avi"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\video\\古北-头顶1.avi"*/
@@ -68,7 +69,7 @@ int main(int argc, char** argv)
     task.historyFileName = "history.txt";
     param.normSize = make_pair(320, 240);
     param.normScale = true;
-    param.minObjectArea = 100;
+    param.minObjectArea = 50;
     param.minObjectWidth = 10;
     param.minObjectHeight = 10;
     param.maxMatchDist = 20;

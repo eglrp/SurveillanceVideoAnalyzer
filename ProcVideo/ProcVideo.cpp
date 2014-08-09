@@ -475,7 +475,7 @@ static bool allowRun(void)
     time(&currTimeVal);
     tm* localTime = localtime(&currTimeVal);
     int currDay = localTime->tm_yday;
-    int currYear = localTime->tm_yday;
+    int currYear = localTime->tm_year;
 
     localTime->tm_mday = atoi(currTime.substr(4, 2).c_str());
     std::string mon = currTime.substr(0, 3);

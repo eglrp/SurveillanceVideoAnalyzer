@@ -199,7 +199,6 @@ struct TaicangObjectInfo
 };
 }
 
-
 typedef void (*taicangProcVideoCallBack)(float progressPercentage, 
 	const std::vector<zpv::TaicangObjectInfo>& infos, void* ptrUserData);
 
