@@ -308,7 +308,10 @@ bool findSplitPositions(const string& videoPath, const double segmentUnit,
 #endif
 		THROW_EXCEPT("cannot open file " + videoPath);
 	}
-	double videoFrameCount = videoCap.get(CV_CAP_PROP_FRAME_COUNT);
+    int count = 0;
+    while (videoCap.read(frame))
+        count++;
+	double videoFrameCount = count/*videoCap.get(CV_CAP_PROP_FRAME_COUNT)*/;
 	double videoFrameRate = videoCap.get(CV_CAP_PROP_FPS);
 	if (videoFrameCount < 1.0)
 	{
@@ -394,7 +397,10 @@ bool findSplitPositions(const string& videoPath, const double segmentUnit,
 	cout << "num of segments = " << numOfSeg << "\n";
 #endif
 
-	segmentLengthInSecond.clear();
+    videoCap.release();
+    videoCap.open(videoPath);
+    count = 0;
+    segmentLengthInSecond.clear();
 	splitBegAndEnd.clear();
 	vector<int> splitFramePos;
 	splitFramePos.push_back(0);
@@ -407,37 +413,44 @@ bool findSplitPositions(const string& videoPath, const double segmentUnit,
 		center = splitUnitInSecond * j * videoFrameRate;
 		begInc = (splitUnitInSecond * j - marginInSecond) * videoFrameRate;
 		endExc = (splitUnitInSecond * j + marginInSecond) * videoFrameRate;
-
-		if (!videoCap.set(CV_CAP_PROP_POS_FRAMES, begInc))
-		{
-#if VIDEO_SPLIT_CMPL_LOG
-			string message = "ERROR in function findSplitPositions(), "
-					         "cannot seek designated frame";
-			logFile << message << "\n";
-			logFile.close();
-			cerr << message << "\n";
-#endif
-			THROW_EXCEPT("cannot seek designated frame, frame count " + getIntString(begInc));
-		}
-		if (!videoCap.read(frame))
-		{
-#if VIDEO_SPLIT_CMPL_LOG
-			string message = "ERROR in function findSplitPositions(), "
-					         "cannot read designated frame";
-			logFile << message << "\n";
-			logFile.close();
-			cerr << message << "\n";
-#endif
-			THROW_EXCEPT("cannot read designated frame, frame count " + getIntString(begInc));
-		}
+        
+        while (count <= begInc)
+        {
+            if (!videoCap.read(frame))
+                THROW_EXCEPT("cannot seek designated frame, frame count " + getIntString(begInc));
+            count++;
+        }
+//        if (!videoCap.set(CV_CAP_PROP_POS_FRAMES, begInc))
+//		{
+//#if VIDEO_SPLIT_CMPL_LOG
+//			string message = "ERROR in function findSplitPositions(), "
+//					         "cannot seek designated frame";
+//			logFile << message << "\n";
+//			logFile.close();
+//			cerr << message << "\n";
+//#endif
+//			THROW_EXCEPT("cannot seek designated frame, frame count " + getIntString(begInc));
+//		}
+//		if (!videoCap.read(frame))
+//		{
+//#if VIDEO_SPLIT_CMPL_LOG
+//			string message = "ERROR in function findSplitPositions(), "
+//					         "cannot read designated frame";
+//			logFile << message << "\n";
+//			logFile.close();
+//			cerr << message << "\n";
+//#endif
+//			THROW_EXCEPT("cannot read designated frame, frame count " + getIntString(begInc));
+//		}
 		resize(frame, image, Size(width, height), INTER_LINEAR);
 
-		try
+        try
 		{
 			zvs::VideoAnalyzer analyzer;
 			analyzer.init(image);		
 
-			for (int i = 1; i < endExc - begInc; i++)
+			printf("before proc count = %d\n", count);
+            for (int i = 1; i < endExc - begInc; i++)
 			{
 				if (!videoCap.read(frame))
 				{
@@ -450,9 +463,11 @@ bool findSplitPositions(const string& videoPath, const double segmentUnit,
 #endif
 					THROW_EXCEPT("cannot read designated frame, frame count " + getIntString(begInc + i));
 				}
+                count++;
 				resize(frame, image, Size(width, height), INTER_LINEAR);
 				analyzer.proc(image);
 			}
+            printf("after proc count = %d\n", count);
 			int cutPosition = analyzer.findSplitPosition((endExc - begInc) / 2);
 #if VIDEO_SPLIT_CMPL_LOG
 			cout << "split segment " << j - 1 << " and segment " << j << ": ";

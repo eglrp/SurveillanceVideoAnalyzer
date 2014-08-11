@@ -419,7 +419,7 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const Size& nor
         }
         else
         {
-            THROW_EXCEPT("recordMode == RecordMode::CrossBottomBoundVisualRecord || RecordMode::CrossTriBoundVisualRecord, "
+            THROW_EXCEPT("recordSnapshotMode == RecordSnapshotMode::CrossBottomBound || RecordSnapshotMode::CrossTriBound, "
                 "recordLoopOrLineSegmentPoints.size() != 0 && recordLoopOrLineSegmentPoints.size() != 4");
         }
         crossLoop.init("[SpeedLoop]", internalPoints);
