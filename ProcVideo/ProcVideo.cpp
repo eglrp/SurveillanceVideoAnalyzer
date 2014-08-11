@@ -563,18 +563,15 @@ void procVideo(const TaicangTaskInfo& task, const TaicangParamInfo& param,
     while (readCount < begIncCount)
     {
         if (!cap.read(frame))
-            THROW_EXCEPT("cannot read frame, frame count " + getString(begIncCount));
+            THROW_EXCEPT("cannot read frame, frame count " + getString(readCount));
         readCount++;
     }
-    //if (!cap.set(CV_CAP_PROP_POS_FRAMES, begIncCount))
-    //{
-    //    THROW_EXCEPT("cannot locate frame count " + getString(begIncCount));
-    //}
 
     zsfo::StampedImage input;
     input.time = (long long int)cap.get(CV_CAP_PROP_POS_MSEC);
-	input.number = readCount/*(int)cap.get(CV_CAP_PROP_POS_FRAMES)*/;
-    cap.read(input.image);
+	input.number = readCount;
+    if (!cap.read(input.image))
+        THROW_EXCEPT("cannot read frame, frame count " + getString(begIncCount));
     readCount++;
 
     zsfo::MovingObjectDetector movObjDet;
@@ -628,7 +625,7 @@ void procVideo(const TaicangTaskInfo& task, const TaicangParamInfo& param,
     for (int count = 1; count < procTotalCount; count++)
     {
         input.time = (long long int)cap.get(CV_CAP_PROP_POS_MSEC);
-	    input.number = readCount/*(int)cap.get(CV_CAP_PROP_POS_FRAMES)*/;
+	    input.number = readCount;
         if (input.number >= totalFrameCount)
             break;
 		if (!cap.read(input.image)) 

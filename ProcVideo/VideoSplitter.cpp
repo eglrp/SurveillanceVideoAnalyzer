@@ -420,28 +420,6 @@ bool findSplitPositions(const string& videoPath, const double segmentUnit,
                 THROW_EXCEPT("cannot seek designated frame, frame count " + getIntString(begInc));
             count++;
         }
-//        if (!videoCap.set(CV_CAP_PROP_POS_FRAMES, begInc))
-//		{
-//#if VIDEO_SPLIT_CMPL_LOG
-//			string message = "ERROR in function findSplitPositions(), "
-//					         "cannot seek designated frame";
-//			logFile << message << "\n";
-//			logFile.close();
-//			cerr << message << "\n";
-//#endif
-//			THROW_EXCEPT("cannot seek designated frame, frame count " + getIntString(begInc));
-//		}
-//		if (!videoCap.read(frame))
-//		{
-//#if VIDEO_SPLIT_CMPL_LOG
-//			string message = "ERROR in function findSplitPositions(), "
-//					         "cannot read designated frame";
-//			logFile << message << "\n";
-//			logFile.close();
-//			cerr << message << "\n";
-//#endif
-//			THROW_EXCEPT("cannot read designated frame, frame count " + getIntString(begInc));
-//		}
 		resize(frame, image, Size(width, height), INTER_LINEAR);
 
         try
