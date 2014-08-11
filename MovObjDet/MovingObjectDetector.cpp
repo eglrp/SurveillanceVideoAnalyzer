@@ -146,7 +146,7 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const string& p
     int saveScene, saveSlice, saveMask;
     int saveSnapshotInterval, numOfSnapshotSaved;
 	int normWidth, normHeight;
-	fileDataSheet.open(pathMOD);
+    fileDataSheet.open(pathMOD.c_str());
 	if (!fileDataSheet.is_open())
 	{
         THROW_EXCEPT(string("cannot open file ") + pathMOD);
