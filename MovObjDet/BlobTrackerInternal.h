@@ -260,7 +260,6 @@ struct BlobTriBoundSnapshotHistory : public BlobSnapshotHistory
 	BlobSnapshotRecord leftRecord;         ///< 矩形左边跨越线圈左边时的记录
 	BlobSnapshotRecord rightRecord;        ///< 矩形右边跨越线圈右边时的记录	
 	BlobSnapshotRecord bottomRecord;       ///< 矩形底边跨越线圈底边时的记录
-    BlobSnapshotRecord auxiRecord;         ///< 辅助记录 永远是跨越底部边界 进线圈在没有边界记录的时候会输出
 	
     cv::Ptr<VirtualLoop> recordLoop;       ///< 抓拍图片的线圈
 	cv::Ptr<SizeInfo> sizeInfo;            ///< 原始尺寸和归一化尺寸
@@ -269,7 +268,6 @@ struct BlobTriBoundSnapshotHistory : public BlobSnapshotHistory
     cv::Ptr<int> currCount;                ///< 帧编号
 	bool hasUpdate;                        ///< 是否已经保存了至少一次记录
 	cv::Rect lastRect;                     ///< 上一帧中的归一化只存矩形
-	int auxiCount;                         ///< auxiRecord 的辅助计数
 
     //! updateHistory 函数的配置参数
     struct ConfigUpdate
@@ -312,7 +310,6 @@ struct BlobBottomBoundSnapshotHistory : public BlobSnapshotHistory
 	int ID;                                ///< 运动目标编号
 	bool hasBottomCrossLoopBottom;         ///< 矩形底边是否已经跨越线圈底边
 	BlobSnapshotRecord bottomRecord;       ///< 矩形底边跨越线圈底边时的记录
-	BlobSnapshotRecord auxiRecord;         ///< 辅助记录 永远是跨越底部边界 进线圈在没有边界记录的时候会输出
 
     cv::Ptr<VirtualLoop> recordLoop;        ///< 抓拍图片的线圈
 	cv::Ptr<SizeInfo> sizeInfo;            ///< 原始尺寸和归一化尺寸
@@ -321,7 +318,6 @@ struct BlobBottomBoundSnapshotHistory : public BlobSnapshotHistory
     cv::Ptr<int> currCount;                ///< 帧编号
 	bool hasUpdate;                        ///< 是否已经保存了至少一次记录
 	cv::Rect lastRect;                     ///< 上一帧中的归一化只存矩形
-	int auxiCount;                         ///< auxiRecord 的辅助计数
 
     //! updateHistory 函数的配置参数
     struct ConfigUpdate

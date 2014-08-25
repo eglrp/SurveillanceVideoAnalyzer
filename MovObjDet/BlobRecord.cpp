@@ -639,7 +639,6 @@ BlobTriBoundSnapshotHistory::BlobTriBoundSnapshotHistory(const cv::Ptr<SizeInfo>
     const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, 
     int blobID, int saveMode, const string& path)
     : ID(blobID),
-      auxiCount(0),
       recordLoop(catchLoop),
       sizeInfo(sizesOrigAndNorm),
       baseRect(boundRect),
@@ -709,7 +708,6 @@ BlobTriBoundSnapshotHistory::BlobTriBoundSnapshotHistory(const cv::Ptr<SizeInfo>
 
 BlobTriBoundSnapshotHistory::BlobTriBoundSnapshotHistory(const BlobTriBoundSnapshotHistory& history, int blobID)
     : ID(blobID),
-      auxiCount(0),
       recordLoop(history.recordLoop),
       sizeInfo(history.sizeInfo),
       baseRect(history.baseRect),
@@ -735,27 +733,9 @@ void BlobTriBoundSnapshotHistory::updateHistory(OrigSceneProxy& origFrame,
 {
     if (!hasUpdate)
     {
-        auxiRecord.makeRecord(origFrame, foreImage, *sizeInfo, *baseRect,
-                              currRect, -1, -1, *currTime, *currCount, configUpdate->saveMode);
         hasUpdate = true;
         lastRect = currRect;
-        auxiCount = 0;
         return;
-    }	
-    else if (!hasLeftCrossLoopLeft &&
-             !hasRightCrossLoopRight &&
-             !hasBottomCrossLoopBottom)
-    {
-        auxiCount++;
-        if (auxiCount == BlobVisHisRcrdFrmCntDiff)
-        {
-            auxiCount = 0;
-            if (currRect.area() > lastRect.area())
-            {			
-                auxiRecord.makeRecord(origFrame, foreImage, *sizeInfo, *baseRect, 
-                                      currRect, -1, -1, *currTime, *currCount, configUpdate->saveMode);
-            }
-        }
     }
 
     if (hasLeftCrossLoopLeft == false)
@@ -1093,17 +1073,18 @@ bool BlobTriBoundSnapshotHistory::outputHistory(ObjectInfo& objectInfo) const
                 label = 3;
         }
     }
-
-    objectInfo.hasSnapshotHistory = 1;
-    objectInfo.snapshotHistory.resize(1);
+    
     if (label == 0)
     {
 #if CMPL_WRITE_CONSOLE
-        printf("Blob ID: %d No cross loop record, auxiliary record selected for output.\n", ID);
+        printf("Blob ID: %d No cross loop record, no record selected for output.\n", ID);
 #endif
-        auxiRecord.outputImages(objectInfo.snapshotHistory[0]);
+        return false;
     }
-    else if (label == 1)
+
+    objectInfo.hasSnapshotHistory = 1;
+    objectInfo.snapshotHistory.resize(1);
+    if (label == 1)
     {
 #if CMPL_WRITE_CONSOLE
         printf("Blob ID: %d Left record is optimal, selected for output.\n", ID);
@@ -1132,7 +1113,6 @@ BlobBottomBoundSnapshotHistory::BlobBottomBoundSnapshotHistory(const cv::Ptr<Siz
     const cv::Ptr<long long int>& time, const cv::Ptr<int>& count, 
     int blobID, int saveMode, const string& path)
     : ID(blobID),
-      auxiCount(0),
       recordLoop(catchLoop),
       sizeInfo(sizesOrigAndNorm),
       baseRect(boundRect),
@@ -1200,7 +1180,6 @@ BlobBottomBoundSnapshotHistory::BlobBottomBoundSnapshotHistory(const cv::Ptr<Siz
 
 BlobBottomBoundSnapshotHistory::BlobBottomBoundSnapshotHistory(const BlobBottomBoundSnapshotHistory& history, int blobID)
     : ID(blobID),
-      auxiCount(0),
       recordLoop(history.recordLoop),
       sizeInfo(history.sizeInfo),
       baseRect(history.baseRect),
@@ -1224,25 +1203,9 @@ void BlobBottomBoundSnapshotHistory::updateHistory(OrigSceneProxy& origFrame,
 {
     if (!hasUpdate)
     {
-        auxiRecord.makeRecord(origFrame, foreImage, *sizeInfo, *baseRect,
-                              currRect, -1, -1, *currTime, *currCount, configUpdate->saveMode);
         hasUpdate = true;
         lastRect = currRect;
-        auxiCount = 0;
         return;
-    }
-    else if (!hasBottomCrossLoopBottom)
-    {
-        auxiCount++;
-        if (auxiCount == BlobVisHisRcrdFrmCntDiff)
-        {
-            auxiCount = 0;
-            if (currRect.area() > lastRect.area())
-            {
-                auxiRecord.makeRecord(origFrame, foreImage, *sizeInfo, *baseRect, 
-                                      currRect, -1, -1, *currTime, *currCount, configUpdate->saveMode);
-            }
-        }
     }
 
     if (hasBottomCrossLoopBottom == false)
@@ -1296,9 +1259,7 @@ bool BlobBottomBoundSnapshotHistory::outputHistory(ObjectInfo& objectInfo) const
 #endif
         return false;
     }
-
-    objectInfo.hasSnapshotHistory = 1;
-    objectInfo.snapshotHistory.resize(1);
+    
 #if CMPL_WRITE_CONSOLE
     printf("Blob ID: %d Output image.\n", ID);
 #endif
@@ -1307,16 +1268,18 @@ bool BlobBottomBoundSnapshotHistory::outputHistory(ObjectInfo& objectInfo) const
 #if CMPL_WRITE_CONSOLE
         printf("Blob ID: %d Bottom record exists, output this record\n", ID);
 #endif
+        objectInfo.hasSnapshotHistory = 1;
+        objectInfo.snapshotHistory.resize(1);
         bottomRecord.outputImages(objectInfo.snapshotHistory[0]);
+        return true;
     }
     else
     {
 #if CMPL_WRITE_CONSOLE
-        printf("Blob ID: %d No cross loop record, auxiliary record selected for output.\n", ID);
+        printf("Blob ID: %d No cross loop record, no record selected for output.\n", ID);
 #endif
-        auxiRecord.outputImages(objectInfo.snapshotHistory[0]);
+        return false;
     }
-    return true;
 }
 
 BlobCrossLineSnapshotHistory::BlobCrossLineSnapshotHistory(const cv::Ptr<SizeInfo>& sizesOrigAndNorm, 
