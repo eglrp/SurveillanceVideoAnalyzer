@@ -466,7 +466,7 @@ static void addInfo(const std::string& taskID,
 }
 
 const static int numDaysAllowed = 90;
-const static int clearOutputInterval = 8;
+const static int resizeOutputInterval = 8;
 
 namespace zpv
 {
@@ -475,7 +475,7 @@ void procVideo(const TaicangTaskInfo& task, const TaicangParamInfo& param,
     taicangProcVideoCallBack ptrCallBackFunc, void* ptrUserData)
 {
     bool allow = ztool::allowRun(numDaysAllowed);
-    int clearOutputCount = 0;
+    int resizeOutputCount = 0;
 
     VideoCapture cap; 
     cap.open(task.videoPath);
@@ -599,14 +599,15 @@ void procVideo(const TaicangTaskInfo& task, const TaicangParamInfo& param,
         }
         if (!allow && !objects.empty())
         {
-            clearOutputCount = (clearOutputCount + 1) % clearOutputInterval;
-            if (!clearOutputCount)
-                objects.clear();
+            resizeOutputCount = (resizeOutputCount + 1) % resizeOutputInterval;
+            int numObjects = objects.size();
+            if (!resizeOutputCount && numObjects > 1)
+                objects.resize(numObjects / 2);
         }
         if (ptrCallBackFunc && (count % progressInterval == 0 || !objects.empty()))
             ptrCallBackFunc(float(count) / procTotalCount * 100, objects, ptrUserData);
 #if CMPL_SHOW_IMAGE        
-		waitKey(output.objects.empty() ? 5 : 0);
+		waitKey(output.objects.empty() ? 5 : 5);
 #endif
     }
 

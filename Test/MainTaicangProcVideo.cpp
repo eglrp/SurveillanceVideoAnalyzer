@@ -28,20 +28,26 @@ void callBack(float progressPercentage, const vector<zpv::TaicangObjectInfo>& in
 	{
 		printf("  Obj ID = %d\n", infos[i].objectID);
 		printf("  time stamp = (%lld, %lld)\n", infos[i].timeBegAndEnd.first, infos[i].timeBegAndEnd.second);
+        printf("  snapshot count = %d\n", infos[i].frameCount);
 		printf("  scene path = %s\n", infos[i].sceneName.c_str());
 		printf("  slice path = %s\n", infos[i].sliceName.c_str());
 		printf("  slice location = (%d, %d, %d, %d)\n", 
 			infos[i].sliceLocation.x, infos[i].sliceLocation.y,
 			infos[i].sliceLocation.width, infos[i].sliceLocation.height);
 		printf("\n");
+        char name[128];
+        sprintf(name, "result %d", i);
+        Mat image = imread(infos[i].sliceName);
+        imshow(name, image);
 	}
+    waitKey(0);
 }
 
 int main(int argc, char** argv)
 {
-    string videoPath = 
+    string videoPath = "D:\\SHARED\\HaerbinVideo\\080011301522-20140919154529.asf"
     /*"D:\\SHARED\\XinjiangVideo\\2014-08-31\\21.102.10.103_06_20140831193904656.mp4"*/
-    "D:\\SHARED\\XinjiangVideo\\2014-08-30\\21.102.10.103_03_20140830182449984.mp4"
+    /*"D:\\SHARED\\XinjiangVideo\\2014-08-30\\21.102.10.103_03_20140830182449984.mp4"*/
     /*"D:\\SHARED\\TrimpsVideo\\20140320\\Video09_2014_03_20_13_05_15_type1.avi"*/
     /*"D:\\SHARED\\TrimpsVideo\\20140320\\Video06_2014_03_20_13_00_15_type1.avi"*/
     /*"D:\\SHARED\\TrimpsVideo\\20140316\\01\\Video01_2014_03_16_14_57_28_type1.avi"*/

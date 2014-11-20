@@ -18,15 +18,15 @@ using namespace ztool;
 
 int	main(int argc, char* argv[])
 {
-	string videoFileName = "D:/SHARED/TaicangVideo/1/70.flv"
+	string videoFileName = "D:\\SHARED\\HaerbinVideo\\080011301522-20140919154529.asf"
         /*"D:/SHARED/XinjiangVideo/7S大湾北路金疆大厦卡口 20140730-112005--20140730-112205.mp4"*/;
     Size normSize(320, 240);
     int buildBackCount = 20;
     int updateBackInterval = 4;
     bool historyWithImages = false;
-    int recordSnapshotMode = RecordSnapshotMode::No;
-    int saveSnapshotMode = SaveSnapshotMode::SaveSlice | SaveSnapshotMode::SaveScene;
-    int saveSnapshotInterval = 2, numOfSaved = 4;
+    int recordSnapshotMode = RecordSnapshotMode::Multi;
+    int saveSnapshotMode = SaveSnapshotMode::SaveSlice;
+    int saveSnapshotInterval = 2, numOfSaved = 1;
     bool isNormScale = true;
     vector<vector<Point> > incPts(1);
     vector<vector<Point> > excPts;
@@ -46,7 +46,7 @@ int	main(int argc, char* argv[])
     bool charRegionCheck = false;
     vector<Rect> charRegions;
     bool checkTurnAround = true;
-    double maxDistRectAndBlob = 20;
+    double maxDistRectAndBlob = 30;
     double minRatioIntersectToSelf = 0.5;
     double minRatioIntersectToBlob = 0.5;
 
@@ -101,7 +101,7 @@ int	main(int argc, char* argv[])
 				    const ObjectInfo& refObj = objects[j];				  
 				    if (refObj.isFinal && refObj.hasHistory)
 				    {
-                        printf("ID: %d\n", refObj.ID);
+                        /*printf("ID: %d\n", refObj.ID);
 					    printf("      time     count    x    y    w    h\n");
 					    int hisSize = refObj.history.size();
 					    for (int k = 0; k < hisSize; k++)
@@ -110,7 +110,13 @@ int	main(int argc, char* argv[])
 						    printf("%10lld%10d%5d%5d%5d%5d\n", refRec.time, refRec.number, 
 							    refRec.origRect.x, refRec.origRect.y, refRec.origRect.width, refRec.origRect.height);
 					    }
-					    printf("\n");
+					    printf("\n");*/
+                        char imageName[64];
+                        printf("ID: %d, finished, output image frame count = %d\n", refObj.ID, refObj.snapshotHistory[0].number);
+                        sprintf(imageName, "ID: %d", refObj.ID);
+                        imshow(imageName, refObj.snapshotHistory[0].slice);
+                        waitKey(0);
+                        destroyWindow(imageName);
                         longWait = true;
 				    }
 			    }
