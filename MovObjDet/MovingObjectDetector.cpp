@@ -335,6 +335,7 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const Size& nor
             for (int i = 0; i < numOfPoly; i++)
             {
                 int size = points[i].size();
+                externalPoints[i].resize(size);
                 for (int j = 0; j < size; j++)
                     externalPoints[i][j] = mul(points[i][j], scale);
             }

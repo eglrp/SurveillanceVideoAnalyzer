@@ -320,7 +320,7 @@ void procVideo(const TaskInfo& task, const ConfigInfo& config,
     }
 
     double fps = cap.get(CV_CAP_PROP_FPS);
-    int procEveryNFrame = (fps < 16) ? 1 : int(fps / 10 + 0.5);
+    int procEveryNFrame = (fps < 16 || fps > 30) ? 1 : int(fps / 10 + 0.5);
 	int totalFrameCount = cap.get(CV_CAP_PROP_FRAME_COUNT);
 
     int buildFrameCount = 0;
@@ -486,7 +486,7 @@ void procVideo(const TaicangTaskInfo& task, const TaicangParamInfo& param,
     }
 
     double fps = cap.get(CV_CAP_PROP_FPS);
-    int procEveryNFrame = (fps < 16) ? 1 : int(fps / 10 + 0.5);
+    int procEveryNFrame = (fps < 16 || fps > 30) ? 1 : int(fps / 10 + 0.5);
 	int totalFrameCount = cap.get(CV_CAP_PROP_FRAME_COUNT);
 
     int buildFrameCount = 0;
@@ -531,16 +531,18 @@ void procVideo(const TaicangTaskInfo& task, const TaicangParamInfo& param,
     int recordSnapshotMode = zsfo::RecordSnapshotMode::Multi;
     int saveSnapshotMode = zsfo::SaveSnapshotMode::SaveScene | zsfo::SaveSnapshotMode::SaveSlice;
     int saveSnapshotInterval = 2;
-    int numOfSnapshotSaved = 1;
-    
+    int numOfSnapshotSaved = 1;    
+
+    bool normScale = param.normScale;
     vector<vector<Point> > incPoints, excPoints;
     pairToPoint(param.includeRegion, incPoints);
     pairToPoint(param.excludeRegion, excPoints);
-    ztool::Size2d scaleNormToOrig = ztool::div(normSize, origSize); 
-    mul(incPoints, scaleNormToOrig);
-    mul(excPoints, scaleNormToOrig);
-
-    bool normScale = param.normScale;
+    if (!normScale)
+    {
+        ztool::Size2d scaleNormToOrig = ztool::div(normSize, origSize); 
+        mul(incPoints, scaleNormToOrig);
+        mul(excPoints, scaleNormToOrig);
+    }
     double minObjectArea = param.minObjectArea;
     double minObjectWidth = param.minObjectWidth;
     double minObjectHeight = param.minObjectHeight;

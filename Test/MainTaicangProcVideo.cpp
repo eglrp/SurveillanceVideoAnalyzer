@@ -45,7 +45,7 @@ void callBack(float progressPercentage, const vector<zpv::TaicangObjectInfo>& in
 
 int main(int argc, char** argv)
 {
-    string videoPath = "D:\\SHARED\\HaerbinVideo\\080011301522-20140919154529.asf"
+    string videoPath = /*"D:/Files/RTXFiles/zhengxuping/46(00h02m05s-00h07m07s).avi"*/
     /*"D:\\SHARED\\XinjiangVideo\\2014-08-31\\21.102.10.103_06_20140831193904656.mp4"*/
     /*"D:\\SHARED\\XinjiangVideo\\2014-08-30\\21.102.10.103_03_20140830182449984.mp4"*/
     /*"D:\\SHARED\\TrimpsVideo\\20140320\\Video09_2014_03_20_13_05_15_type1.avi"*/
@@ -54,7 +54,7 @@ int main(int argc, char** argv)
     /*"D:/SHARED/GuilinVideo/DVR1_灵川八里街川东一路八里一路路口20130909070538.avi"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\DCS-7010L_20140416160622.avi"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\案发前20秒(2).avi"*/
-	/*"D:/SHARED/TaicangVideo/1/70.flv"*/
+	"D:/SHARED/TaicangVideo/1/70.flv"
     /*"D:/SHARED/TaicangVideo/227省道、北门街_0_2014-08-20_10-09-08.asf"*/
     /*"D:/SHARED/TaicangVideo/209_32058517001310010090_40_2014-08-07 08_42_35~2014-08-07 08_47_35_bak.avi"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\video\\4M2D12-21-2C.avi"*/
@@ -79,6 +79,12 @@ int main(int argc, char** argv)
     task.historyFileName = "history.txt";
     param.normSize = make_pair(320, 240);
     param.normScale = true;
+    param.includeRegion.resize(1);
+    param.includeRegion[0].resize(4);
+    param.includeRegion[0][0] = make_pair(40, 40);
+    param.includeRegion[0][1] = make_pair(40, 200);
+    param.includeRegion[0][2] = make_pair(280, 200);
+    param.includeRegion[0][3] = make_pair(280, 40);
     param.minObjectArea = 50;
     param.minObjectWidth = 10;
     param.minObjectHeight = 10;
