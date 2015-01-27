@@ -474,8 +474,8 @@ namespace zpv
 void procVideo(const TaicangTaskInfo& task, const TaicangParamInfo& param,
     taicangProcVideoCallBack ptrCallBackFunc, void* ptrUserData)
 {
-    bool allow = ztool::allowRun(numDaysAllowed);
-    int resizeOutputCount = 0;
+    //bool allow = ztool::allowRun(numDaysAllowed);
+    //int resizeOutputCount = 0;
 
     VideoCapture cap; 
     cap.open(task.videoPath);
@@ -599,13 +599,13 @@ void procVideo(const TaicangTaskInfo& task, const TaicangParamInfo& param,
                 THROW_EXCEPT(e.what());
             }
         }
-        if (!allow && !objects.empty())
-        {
-            resizeOutputCount = (resizeOutputCount + 1) % resizeOutputInterval;
-            int numObjects = objects.size();
-            if (!resizeOutputCount && numObjects > 1)
-                objects.resize(numObjects / 2);
-        }
+        //if (!allow && !objects.empty())
+        //{
+        //    resizeOutputCount = (resizeOutputCount + 1) % resizeOutputInterval;
+        //    int numObjects = objects.size();
+        //    if (!resizeOutputCount && numObjects > 1)
+        //        objects.resize(numObjects / 2);
+        //}
         if (ptrCallBackFunc && (count % progressInterval == 0 || !objects.empty()))
             ptrCallBackFunc(float(count) / procTotalCount * 100, objects, ptrUserData);
 #if CMPL_SHOW_IMAGE        

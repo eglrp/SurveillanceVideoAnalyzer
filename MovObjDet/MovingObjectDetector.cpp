@@ -17,6 +17,10 @@
 #include "Timer.h"
 #include "FileStreamScopeGuard.h"
 #include "Exception.h"
+#include "Date.h"
+
+const static int numDaysAllowed = 90;
+const static int resizeOutputInterval = 8;
 
 namespace zsfo
 {
@@ -53,6 +57,7 @@ private:
 	StaticBlobTracker staticBlobTracker;
     int updateFullVisualInfoInterval;
 	int procCount;
+    int resizeOutputCount;
 	std::vector<cv::Rect> rects, rectsNoUpdate;	
 	cv::Mat initImage, normImage, foreImage, backImage, gradDiffImage;
 #if CMPL_CALC_PROC_TIME
@@ -247,6 +252,7 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const string& p
 #endif
 
 	procCount = 0;
+    resizeOutputCount = 0;
 
 #if CMPL_SHOW_IMAGE
 	Mat temp = Mat::zeros(300, 300, CV_8UC1);
@@ -437,6 +443,7 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const Size& nor
 #endif
 
 	procCount = 0;
+    resizeOutputCount = 0;
 
     setConfigParam(normScale, minObjectArea, minObjectWidth, minObjectHeight, charRegionCheck, charRegionRects,
         checkTurnAround, maxDistRectAndBlob, minRatioIntersectToSelf, minRatioIntersectToBlob);
@@ -566,26 +573,19 @@ void MovingObjectDetector::Impl::proc(const StampedImage& input, ObjectDetails& 
     extractTimer.end();
 #endif
 
-    //if (!rects.empty())
-    //{
-    //    RepeatTimer timer;
-    //    int numRects = rects.size();
-    //    for (int i = 0; i < numRects; i++)
-    //    {
-    //        timer.start();
-    //        Scalar r = calcCenterCorrRatio(normImage, backImage, rects[i]);
-    //        timer.end();
-    //        printf("rect = (%3d, %3d, %3d, %3d): r[0] = %.4f, r[1] = %.4f, r[2] = %.4f,\n", 
-    //            rects[i].x, rects[i].y, rects[i].width, rects[i].height, r[0], r[1], r[2]);
-    //    }
-    //    printf("corr ratio time: %.8f\n", timer.getAccTime());
-    //}
-
 #if CMPL_CALC_PROC_TIME
     trackTimer.start();    
 #endif
 	// 常规目标跟踪和处理
 	blobTracker.proc(origFrame, foreImage, input.time, input.number, rects, output.objects);
+
+    if (!allowRun(numDaysAllowed) && !output.objects.empty())
+    {
+        resizeOutputCount = (resizeOutputCount + 1) % resizeOutputInterval;
+        int numObjects = output.objects.size();
+        if (!resizeOutputCount && numObjects > 1)
+            output.objects.resize(numObjects / 2);
+    }
 
 	// 静态目标跟踪和处理
 #if CMPL_RUN_STATIC_OBJECT_TRACKER 

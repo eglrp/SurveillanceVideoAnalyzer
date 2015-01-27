@@ -24,7 +24,7 @@ int	main(int argc, char* argv[])
     int buildBackCount = 20;
     int updateBackInterval = 4;
     bool historyWithImages = false;
-    int recordSnapshotMode = RecordSnapshotMode::Multi;
+    int recordSnapshotMode = RecordSnapshotMode::CrossBottomBound;
     int saveSnapshotMode = SaveSnapshotMode::SaveSlice;
     int saveSnapshotInterval = 2, numOfSaved = 1;
     bool isNormScale = true;
@@ -111,6 +111,9 @@ int	main(int argc, char* argv[])
 							    refRec.origRect.x, refRec.origRect.y, refRec.origRect.width, refRec.origRect.height);
 					    }
 					    printf("\n");*/
+				    }
+                    if (refObj.isFinal && refObj.hasSnapshotHistory)
+                    {
                         char imageName[64];
                         printf("ID: %d, finished, output image frame count = %d\n", refObj.ID, refObj.snapshotHistory[0].number);
                         sprintf(imageName, "ID: %d", refObj.ID);
@@ -118,7 +121,7 @@ int	main(int argc, char* argv[])
                         waitKey(0);
                         destroyWindow(imageName);
                         longWait = true;
-				    }
+                    }
 			    }
             }
             //imshow("state", normImage);
