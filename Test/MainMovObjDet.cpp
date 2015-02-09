@@ -18,7 +18,8 @@ using namespace ztool;
 
 int	main(int argc, char* argv[])
 {
-	string videoFileName = "D:\\SHARED\\HaerbinVideo\\080011301522-20140919154529.asf"
+	string videoFileName = "D:\\Files\\RTXFiles\\zhengxuping\\bb.avi"
+        /*"D:\\SHARED\\HaerbinVideo\\080011301522-20140919154529.asf"*/
         /*"D:/SHARED/XinjiangVideo/7S大湾北路金疆大厦卡口 20140730-112005--20140730-112205.mp4"*/;
     Size normSize(320, 240);
     int buildBackCount = 20;
@@ -120,11 +121,13 @@ int	main(int argc, char* argv[])
                         imshow(imageName, refObj.snapshotHistory[0].slice);
                         waitKey(0);
                         destroyWindow(imageName);
+                        sprintf(imageName, "ID%d.bmp", refObj.ID);
+                        imwrite(imageName, refObj.snapshotHistory[0].slice);
                         longWait = true;
                     }
 			    }
             }
-            //imshow("state", normImage);
+            imshow("state", normImage);
             //waitKey(longWait ? 0 : 10);
             waitKey(10);
         }

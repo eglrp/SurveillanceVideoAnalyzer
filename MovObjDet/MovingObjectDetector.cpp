@@ -17,10 +17,6 @@
 #include "Timer.h"
 #include "FileStreamScopeGuard.h"
 #include "Exception.h"
-#include "Date.h"
-
-const static int numDaysAllowed = 90;
-const static int resizeOutputInterval = 8;
 
 namespace zsfo
 {
@@ -57,7 +53,6 @@ private:
 	StaticBlobTracker staticBlobTracker;
     int updateFullVisualInfoInterval;
 	int procCount;
-    int resizeOutputCount;
 	std::vector<cv::Rect> rects, rectsNoUpdate;	
 	cv::Mat initImage, normImage, foreImage, backImage, gradDiffImage;
 #if CMPL_CALC_PROC_TIME
@@ -252,7 +247,6 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const string& p
 #endif
 
 	procCount = 0;
-    resizeOutputCount = 0;
 
 #if CMPL_SHOW_IMAGE
 	Mat temp = Mat::zeros(300, 300, CV_8UC1);
@@ -443,7 +437,6 @@ void MovingObjectDetector::Impl::init(const StampedImage& input, const Size& nor
 #endif
 
 	procCount = 0;
-    resizeOutputCount = 0;
 
     setConfigParam(normScale, minObjectArea, minObjectWidth, minObjectHeight, charRegionCheck, charRegionRects,
         checkTurnAround, maxDistRectAndBlob, minRatioIntersectToSelf, minRatioIntersectToBlob);
@@ -578,14 +571,6 @@ void MovingObjectDetector::Impl::proc(const StampedImage& input, ObjectDetails& 
 #endif
 	// 常规目标跟踪和处理
 	blobTracker.proc(origFrame, foreImage, input.time, input.number, rects, output.objects);
-
-    if (!allowRun(numDaysAllowed) && !output.objects.empty())
-    {
-        resizeOutputCount = (resizeOutputCount + 1) % resizeOutputInterval;
-        int numObjects = output.objects.size();
-        if (!resizeOutputCount && numObjects > 1)
-            output.objects.resize(numObjects / 2);
-    }
 
 	// 静态目标跟踪和处理
 #if CMPL_RUN_STATIC_OBJECT_TRACKER 
