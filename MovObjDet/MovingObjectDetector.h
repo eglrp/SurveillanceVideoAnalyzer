@@ -12,19 +12,19 @@ namespace zsfo
 //! 加了时间戳和帧编号的图片
 struct StampedImage
 {
-	//! 构造函数
+    //! 构造函数
     StampedImage(void) : time(0), number(0) {};
 
-	long long int time;        ///< 时间戳
-	int number;                ///< 帧编号
-	cv::Mat image;             ///< 输入全景图
+    long long int time;        ///< 时间戳
+    int number;                ///< 帧编号
+    cv::Mat image;             ///< 输入全景图
 };
 
 //! 描述检测到的目标的具体信息的结构体
 struct ObjectDetails
 {
     std::vector<ObjectInfo> objects;                ///< 输出的运动目标
-	std::vector<StaticObjectInfo> staticObjects;    ///< 输出的静态目标
+    std::vector<StaticObjectInfo> staticObjects;    ///< 输出的静态目标
 };
 
 //! 跟踪和快照类
@@ -120,18 +120,18 @@ public:
         \param[in] input 当前帧和时间戳, 帧编号等信息
         \param[out] output 当前帧的处理结果, 包括正在跟踪的目标的当前信息, 和结束跟踪的目标的历史轨迹和快照
     */
-	void proc(const StampedImage& input, ObjectDetails& output);
+    void proc(const StampedImage& input, ObjectDetails& output);
     //! 视频处理完之后调用 
     /*!
         视频已经处理完, 不管是否跟踪结束, 都将运动目标的历史轨迹和抓拍图片输出
      */
-	void final(ObjectDetails& output);
+    void final(ObjectDetails& output);
 
 private:
     class Impl;
     cv::Ptr<Impl> ptrImpl;
-	MovingObjectDetector(const MovingObjectDetector& movObjDet);
-	MovingObjectDetector& operator=(const MovingObjectDetector& movObjDet);
+    MovingObjectDetector(const MovingObjectDetector& movObjDet);
+    MovingObjectDetector& operator=(const MovingObjectDetector& movObjDet);
 };
 
 //! MovingObjectDetector 类输出结果解析类
@@ -149,24 +149,24 @@ public:
         \param[in] isPicSmall 原图尺寸是否小, 如果不是, 在调用 show 函数显示图片的时候, 会将图片的宽和高缩小至原来的一半再显示
         \param[in] waitKeyTime 显示图片后的等待响应时间
      */
-	void init(const std::string& savePath, 
-		const std::string& sceneImageName, const std::string& sliceImageName, const std::string& maskImageName,
-		const std::string& objectInfoFileName, const std::string& objectHistoryFileName,
-		bool isPicSmall = true, int waitKeyTime = 0);
+    void init(const std::string& savePath, 
+        const std::string& sceneImageName, const std::string& sliceImageName, const std::string& maskImageName,
+        const std::string& objectInfoFileName, const std::string& objectHistoryFileName,
+        bool isPicSmall = true, int waitKeyTime = 0);
     //! 新的视频帧或者图片分析完后, 调用该函数显示分析结果
     /*!
         显示处于跟踪状态的目标的信息, 对于结束跟踪的目标, 显示截图等
         \param[in] input 
         \param[in] output 
      */
-	void show(const StampedImage& input, const ObjectDetails& output);
+    void show(const StampedImage& input, const ObjectDetails& output);
     //! 保存结束跟踪的目标的信息
-	void save(const ObjectDetails& output);
+    void save(const ObjectDetails& output);
     //! 视频或者图片序列结束后调用, 给文本文件加上结束符
     /*!
         \param[in] label 结束符
      */
-	void final(const std::string& label = "End");
+    void final(const std::string& label = "End");
 
 private:
     class Impl;

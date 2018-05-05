@@ -39,13 +39,13 @@ struct SaveSnapshotMode
 //! 输出运动目标的单帧历史记录
 struct ObjectRecord
 {
-	//! 构造函数
-    ObjectRecord(void) : time(0), number(0)	{};
+    //! 构造函数
+    ObjectRecord(void) : time(0), number(0) {};
 
-	long long int time;        ///< 时间戳
-	int number;                ///< 帧编号
-	cv::Rect normRect;         ///< 归一化帧中的矩形
-	cv::Rect origRect;         ///< 原始尺寸帧中的矩形
+    long long int time;        ///< 时间戳
+    int number;                ///< 帧编号
+    cv::Rect normRect;         ///< 归一化帧中的矩形
+    cv::Rect origRect;         ///< 原始尺寸帧中的矩形
     cv::Mat image;             ///< 目标截图, 从原始帧中的 origRect 中截取
 };
 
@@ -56,79 +56,79 @@ struct ObjectSnapshotRecord
     ObjectSnapshotRecord(void) : time(0), number(0), bound(-1), cross(-1), direction(-1) {};
 
     long long int time;        ///< 快照图片的时间戳
-	int number;                ///< 快照图片的帧编号
-	cv::Mat scene;             ///< 快照图片对应的全景图, 视频帧的尺寸
-	cv::Mat mask;              ///< 快照图片对应的前景图, 视频帧的尺寸
+    int number;                ///< 快照图片的帧编号
+    cv::Mat scene;             ///< 快照图片对应的全景图, 视频帧的尺寸
+    cv::Mat mask;              ///< 快照图片对应的前景图, 视频帧的尺寸
     cv::Mat slice;             ///< 快照图片
-	cv::Rect rect;             ///< 运动目标在全景图上的矩形
-	int bound;                 ///< 快照时跨越线圈的边界 1 左边界 2 右边界 3 下边界 -1 未知
-	int cross;                 ///< 快照时是否进线圈 1 是 0 不是 -1 未知
-	int direction;             ///< 快照时的行驶方向 1 从左到右 2 从右到左 3 从上到下 4 从下到上 -1 未知
+    cv::Rect rect;             ///< 运动目标在全景图上的矩形
+    int bound;                 ///< 快照时跨越线圈的边界 1 左边界 2 右边界 3 下边界 -1 未知
+    int cross;                 ///< 快照时是否进线圈 1 是 0 不是 -1 未知
+    int direction;             ///< 快照时的行驶方向 1 从左到右 2 从右到左 3 从上到下 4 从下到上 -1 未知
 };
 
 //! 输出的运动目标结构体
 struct ObjectInfo
 {
-	//! 构造函数
+    //! 构造函数
     ObjectInfo(void)
         : ID(0), isFinal(0), hasHistory(0), hasSnapshotHistory(0), speed(0), velocity(0)
-	{};
+    {};
 
-	// 每帧处理结束都会返回的信息
-	int ID;                    ///< 运动目标编号
-	cv::Rect currRect;         ///< 运动目标在当前帧中的矩形
-	int isFinal;               ///< 是否跟踪结束	
+    // 每帧处理结束都会返回的信息
+    int ID;                    ///< 运动目标编号
+    cv::Rect currRect;         ///< 运动目标在当前帧中的矩形
+    int isFinal;               ///< 是否跟踪结束  
 
-	// 以下信息 isFinal = 1 时才能获取
+    // 以下信息 isFinal = 1 时才能获取
 
-	// 历史信息
-	int hasHistory;            ///< 是否有历史轨迹信息
-	std::vector<ObjectRecord> history;     ///< 历史轨迹
+    // 历史信息
+    int hasHistory;            ///< 是否有历史轨迹信息
+    std::vector<ObjectRecord> history;     ///< 历史轨迹
 
     // 快照信息
     int hasSnapshotHistory;      ///< 是否有快照图片
     std::vector<ObjectSnapshotRecord> snapshotHistory; ///< 快照图片
-	
-	double speed;              ///< 速度，标清版中单位为像素/秒
-	double velocity;           ///< 速度，高清版中单位为千米/时
+    
+    double speed;              ///< 速度，标清版中单位为像素/秒
+    double velocity;           ///< 速度，高清版中单位为千米/时
 };
 
 //! 输出的静态目标结构体
 struct StaticObjectInfo
 {
-	//! 构造函数
+    //! 构造函数
     StaticObjectInfo(void) : ID(0) {};
 
-	int ID;          ///< 目标编号
-	cv::Rect rect;   ///< 目标的位置
+    int ID;          ///< 目标编号
+    cv::Rect rect;   ///< 目标的位置
 };
 
 //! 表示原始尺寸和归一化尺寸的结构体
 struct SizeInfo
 {
-	//! 初始化成员变量
+    //! 初始化成员变量
     /*!
         \param[in] origSize 原始尺寸
         \param[in] normSize 归一化尺寸
      */
     void create(const cv::Size& origSize, const cv::Size& normSize);
-	
-	int normWidth;    ///< 归一化宽度
-	int normHeight;   ///< 归一化高度
-	int origWidth;    ///< 原始宽度
-	int origHeight;   ///< 原始高度
-	double horiScale; ///< 水平尺度因子
-	double vertScale; ///< 竖直尺度因子
+    
+    int normWidth;    ///< 归一化宽度
+    int normHeight;   ///< 归一化高度
+    int origWidth;    ///< 原始宽度
+    int origHeight;   ///< 原始高度
+    double horiScale; ///< 水平尺度因子
+    double vertScale; ///< 竖直尺度因子
 };
 
 inline void SizeInfo::create(const cv::Size& origSize, const cv::Size& normSize)
 {
-	normWidth = normSize.width;
-	normHeight = normSize.height;
-	origWidth = origSize.width;
-	origHeight = origSize.height;
-	horiScale = double(origWidth) / double(normWidth);
-	vertScale = double(origHeight) / double(normHeight);
+    normWidth = normSize.width;
+    normHeight = normSize.height;
+    origWidth = origSize.width;
+    origHeight = origSize.height;
+    horiScale = double(origWidth) / double(normWidth);
+    vertScale = double(origHeight) / double(normHeight);
 }
 
 //! 管理所有跟踪对象和所有共享资源的类
@@ -146,7 +146,7 @@ public:
      */
     void init(const SizeInfo& sizesOrigAndNorm, const RegionOfInterest& observedRegion, 
         bool historyWithImages = false, const std::string& path = std::string());
-	//! 按跨线抓拍的方式初始化
+    //! 按跨线抓拍的方式初始化
     /*!
         \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
         \param[in] observedRegion 归一化尺寸观测和跟踪区域
@@ -167,7 +167,7 @@ public:
         \param[in] historyWithImages 运动目标历史是否保存其在每一帧中的截图
         \param[in] path 配置文件路径
      */
-	void initBottomBound(const SizeInfo& sizesOrigAndNorm, 
+    void initBottomBound(const SizeInfo& sizesOrigAndNorm, 
         const RegionOfInterest& observedRegion, const VirtualLoop& catchLoop, int saveSnapshotMode, 
         bool historyWithImages = false, const std::string& path = std::string());
     //! 按跨越线圈左右下三边界抓拍的方式初始化
@@ -205,18 +205,18 @@ public:
      */
     void setConfigParams(const bool* checkTurnAround = 0, const double* maxDistRectAndBlob = 0,
         const double* minRatioIntersectToSelf = 0, const double* minRatioIntersectToBlob = 0);
-	//! 处理函数
+    //! 处理函数
     /*!
-	    如果 BlobTracker 的实例按照含有保存历史图片的方式进行初始化, 并且调用这个版本的处理函数, 将不会得到图片
+        如果 BlobTracker 的实例按照含有保存历史图片的方式进行初始化, 并且调用这个版本的处理函数, 将不会得到图片
         \param[in] time 时间戳
         \param[in] count 帧编号
         \param[in] rects 当前帧中检测到的矩形
         \param[out] objects 输出信息, 当前处于跟踪状态的目标输出位置等信息, 结束跟踪的目标输出历史轨迹
      */
     void proc(long long int time, int count, const std::vector<cv::Rect>& rects, std::vector<ObjectInfo>& objects);
-	//! 处理函数
+    //! 处理函数
     /*!
-	    如果 BlobTracker 的实例按照无抓拍图片的方式进行初始化, 并且调用这个版本的处理函数, 将不会得到图片
+        如果 BlobTracker 的实例按照无抓拍图片的方式进行初始化, 并且调用这个版本的处理函数, 将不会得到图片
         \param[in] origFrame 原始尺寸的视频帧
         \param[in] foreImage 归一化尺寸的前景图
         \param[in] time 时间戳
@@ -225,10 +225,10 @@ public:
         \param[out] objects 输出信息, 当前处于跟踪状态的目标输出位置等信息, 结束跟踪的目标输出历史轨迹和快照截图
      */
     void proc(const cv::Mat& origFrame, const cv::Mat& foreImage, 
-		long long int time, int count, const std::vector<cv::Rect>& rects, std::vector<ObjectInfo>& objects);
+        long long int time, int count, const std::vector<cv::Rect>& rects, std::vector<ObjectInfo>& objects);
     //! 处理函数
     /*!
-	    如果 BlobTracker 的实例按照无抓拍图片的方式进行初始化, 并且调用这个版本的处理函数, 将不会得到图片
+        如果 BlobTracker 的实例按照无抓拍图片的方式进行初始化, 并且调用这个版本的处理函数, 将不会得到图片
         \param[in] origFrame 原始尺寸的视频帧
         \param[in] foreImage 归一化尺寸的前景图
         \param[in] gradDiffImage 归一化尺寸输入图和背景图的梯度图的差值图
@@ -238,7 +238,7 @@ public:
         \param[in] rects 当前帧中检测到的矩形
         \param[out] objects 输出信息, 当前处于跟踪状态的目标输出位置等信息, 结束跟踪的目标输出历史轨迹和快照截图
      */
-	void proc(const cv::Mat& origFrame, const cv::Mat& foreImage, 
+    void proc(const cv::Mat& origFrame, const cv::Mat& foreImage, 
         const cv::Mat& gradDiffImage, const cv::Mat& lastGradDiffImage, 
         long long int time, int count, const std::vector<cv::Rect>& rects, std::vector<ObjectInfo>& objects);
     //! 画跟踪状态
@@ -250,7 +250,7 @@ public:
         \param[in] blobHistoryColor 运动目标矩形中心历史轨迹线的颜色
      */
     void drawTrackingState(cv::Mat& frame, const cv::Scalar& observedRegionColor, const cv::Scalar& crossLoopOrLineColor,
-        const cv::Scalar& blobRectColor, const cv::Scalar& blobHistoryColor) const;	
+        const cv::Scalar& blobRectColor, const cv::Scalar& blobHistoryColor) const; 
     //! 视频处理完最后一帧调用的终止函数
     /*!
         视频已经处理完, 不管是否跟踪结束, 都将运动目标的历史轨迹和抓拍图片输出
@@ -262,57 +262,57 @@ private:
     BlobTracker(const BlobTracker&);
     BlobTracker& operator=(const BlobTracker&);
 
-	class BlobTrackerImpl;
-	cv::Ptr<BlobTrackerImpl> ptrImpl;
+    class BlobTrackerImpl;
+    cv::Ptr<BlobTrackerImpl> ptrImpl;
 };
 
 //! 静态目标跟踪类
 class Z_LIB_EXPORT StaticBlobTracker
 {
 public:
-	//! 构造函数
-	StaticBlobTracker(void) {};
-	//! 析构函数
-	~StaticBlobTracker(void) {};
+    //! 构造函数
+    StaticBlobTracker(void) {};
+    //! 析构函数
+    ~StaticBlobTracker(void) {};
 
-	//! 初始化
-	/*!
-	    \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
-        \param[in] observedRegion 观测静态目标的区域		
-		\param[in] path 配置文件路径
-	 */
-	void init(const SizeInfo& sizesOrigAndNorm, const RegionOfInterest& observedRegion, 
+    //! 初始化
+    /*!
+        \param[in] sizesOrigAndNorm 原始尺寸和归一化尺寸
+        \param[in] observedRegion 观测静态目标的区域     
+        \param[in] path 配置文件路径
+     */
+    void init(const SizeInfo& sizesOrigAndNorm, const RegionOfInterest& observedRegion, 
         const std::string& path = std::string());
-	//! 设置参数
-	/*!
-	    如果指针不为空, 则会对相关的内部参数进行更改
-	    \param[in] allowedMissTimeInMinute 如果一个目标消失了最多这么多时间后重新在相同位置被发现, 则目标不会被删除, 而是继续被跟踪
-		\param[in] minStaticTimeInMinute 如果被跟踪的目标的持续时间第一次达到这个值, 则会在 proc 函数中输出到 staticObjects 中
-	 */
-	void setConfigParam(const double* allowedMissTimeInMinute = 0, const double* minStaticTimeInMinute = 0);
-	//! 处理函数
+    //! 设置参数
+    /*!
+        如果指针不为空, 则会对相关的内部参数进行更改
+        \param[in] allowedMissTimeInMinute 如果一个目标消失了最多这么多时间后重新在相同位置被发现, 则目标不会被删除, 而是继续被跟踪
+        \param[in] minStaticTimeInMinute 如果被跟踪的目标的持续时间第一次达到这个值, 则会在 proc 函数中输出到 staticObjects 中
+     */
+    void setConfigParam(const double* allowedMissTimeInMinute = 0, const double* minStaticTimeInMinute = 0);
+    //! 处理函数
     /*!
         \param[in] time 时间戳
         \param[in] count 帧编号
         \param[in] rects 当前帧中的矩形
         \param[out] staticObjects 输出信息, 首次检测到静止状态的目标将会被输出
      */
-	void proc(const long long int time, const int count, 
-		const std::vector<cv::Rect>& rects, std::vector<StaticObjectInfo>& staticObjects);
-	//! 画出目标
-	/*!
-	    \param[in,out] image 归一化尺寸输入图片
-		\param[in] staticColor 已被判定为静止的目标的颜色
-		\param[in] nonStaticColor 未被判定为静止的目标的颜色
-	 */
-	void drawBlobs(cv::Mat& image, const cv::Scalar& staticColor, const cv::Scalar& nonStaticColor) const;
+    void proc(const long long int time, const int count, 
+        const std::vector<cv::Rect>& rects, std::vector<StaticObjectInfo>& staticObjects);
+    //! 画出目标
+    /*!
+        \param[in,out] image 归一化尺寸输入图片
+        \param[in] staticColor 已被判定为静止的目标的颜色
+        \param[in] nonStaticColor 未被判定为静止的目标的颜色
+     */
+    void drawBlobs(cv::Mat& image, const cv::Scalar& staticColor, const cv::Scalar& nonStaticColor) const;
 
 private:
-	StaticBlobTracker(const StaticBlobTracker&);
-	StaticBlobTracker& operator=(const StaticBlobTracker&);
+    StaticBlobTracker(const StaticBlobTracker&);
+    StaticBlobTracker& operator=(const StaticBlobTracker&);
 
-	class Impl;
-	cv::Ptr<Impl> ptrImpl;
+    class Impl;
+    cv::Ptr<Impl> ptrImpl;
 };
 
 } // end namespace zsfo

@@ -16,7 +16,7 @@ public:
         \param[in] path 配置文件的路径, 如果等于 0 则采用默认参数
         \param[in] label 配置文件中参数的标签
      */
-	void init(const cv::Size& imageSize, const std::string& path = std::string(), const std::string& label = std::string());
+    void init(const cv::Size& imageSize, const std::string& path = std::string(), const std::string& label = std::string());
     // 修改配置参数
     /*!
         本函数用于修改控制私有成员函数行为的配置参数
@@ -47,8 +47,8 @@ public:
         const bool* charRegionCheck = 0, const std::vector<cv::Rect>& charRegionRects = std::vector<cv::Rect>(),
         const bool* merge = 0, const bool* mergeHori = 0, const bool* mergeVert = 0, const bool* mergeBigSmall = 0,
         const bool* refine = 0, const bool* refineByShape = 0, const bool* refineByGrad = 0, const bool* refineByColor = 0);
-	//! 简单版本的处理函数
-	/*!
+    //! 简单版本的处理函数
+    /*!
         根据前景图 foreImage(CV_8UC1) 找前景矩形, 过滤掉较小的矩形, 
         如果设置了相关系数检测, 并且 image 和 backImage 都不为空, 则执行相关系数检测, 
         如果 image 和 backImage 在矩形区域部分相关系数较大, 该矩形也会被滤除
@@ -56,9 +56,9 @@ public:
         用 origRects 合并矩形, 得到 rects
         操作顺序是合并竖直方向上位置相近的矩形, 合并水平方向上位置相近的矩形, 合并大小差异较大的矩形
         从 rects 中判定是否有在同一区域稳定了一段时间的矩形, 被判定为稳定的矩形传给 stableRects
-		使用该函数时, 有关阴影消除的参数都不起作用
+        使用该函数时, 有关阴影消除的参数都不起作用
      */
-	void proc(cv::Mat& foreImage, const cv::Mat& image, const cv::Mat& backImage, 
+    void proc(cv::Mat& foreImage, const cv::Mat& image, const cv::Mat& backImage, 
         std::vector<cv::Rect>& rects, std::vector<cv::Rect>& stableRects);
     //! 处理函数
     /*!
@@ -79,18 +79,18 @@ public:
         refinedRects 传出为 rects
         4 从 origRects 矩形中判定是否有在同一区域稳定了一段时间的矩形, 被判定为稳定的矩形传给 stableRects
      */
-	void proc(cv::Mat& foreImage, const cv::Mat& image, const cv::Mat& backImage, const cv::Mat& gradDiffImage, 
+    void proc(cv::Mat& foreImage, const cv::Mat& image, const cv::Mat& backImage, const cv::Mat& gradDiffImage, 
         std::vector<cv::Rect>& rects, std::vector<cv::Rect>& stableRects);
     //! 在 image 上用颜色 color 画字符区域
-	void drawCharRect(cv::Mat& image, const cv::Scalar& color);
-	//! 在 image 上用颜色 color 画稳定的矩形区域
-	void drawStableRects(cv::Mat& image, const cv::Scalar& color);
+    void drawCharRect(cv::Mat& image, const cv::Scalar& color);
+    //! 在 image 上用颜色 color 画稳定的矩形区域
+    void drawStableRects(cv::Mat& image, const cv::Scalar& color);
     //! 在 image 上用颜色 color 画最终矩形区域
     void drawFinalRects(cv::Mat& image, const cv::Scalar& color);
 
 private:
-	class Impl;
-	cv::Ptr<Impl> ptrImpl;
+    class Impl;
+    cv::Ptr<Impl> ptrImpl;
 };
 
 }// end zsfo
