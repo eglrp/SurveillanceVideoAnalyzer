@@ -13,15 +13,15 @@ using namespace std;
 using namespace cv;
 using namespace zsfo;
 
-int	main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
-	string videoFileName = "D:/SHARED/TaicangVideo/1/70.flv";
-	string savePath = "result";
-	bool saveScene = true;
-	bool saveSlice = true;
-	bool saveMask = false;
-	bool saveInfo = false;
-	bool saveHistory = true;
+    string videoFileName = "D:/SHARED/TaicangVideo/1/70.flv";
+    string savePath = "result";
+    bool saveScene = true;
+    bool saveSlice = true;
+    bool saveMask = false;
+    bool saveInfo = false;
+    bool saveHistory = true;
     int procEveryNFrame = 1;
     Size procSize(320, 240);
     int buildBackCount = 20;

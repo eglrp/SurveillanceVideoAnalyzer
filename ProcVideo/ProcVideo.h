@@ -58,10 +58,10 @@ struct EnvironmentType
 struct ConfigInfo
 {
     std::string configPath;  ///< 配置文件路径
-	//! 感兴趣区域
+    //! 感兴趣区域
     std::vector<std::vector<std::pair<int, int> > > includeRegion;
-	//! 不感兴趣区域, 仅当感兴趣区域为空, 不感兴趣区域非空时才有效
-	std::vector<std::vector<std::pair<int, int> > > excludeRegion;
+    //! 不感兴趣区域, 仅当感兴趣区域为空, 不感兴趣区域非空时才有效
+    std::vector<std::vector<std::pair<int, int> > > excludeRegion;
     int tiltType;                ///< 视角类型
     int zoomType;                ///< 视距类型
     int environmentType;         ///< 光照天气背景类型
@@ -70,8 +70,8 @@ struct ConfigInfo
 //! 跟踪对象信息
 struct ObjectInfo
 {
-	int objectID;            ///< 目标编号
-	//! 起始和结束的时间戳
+    int objectID;            ///< 目标编号
+    //! 起始和结束的时间戳
     std::pair<long long int, long long int> timeBegAndEnd;   
     std::string sliceName;   ///< 全景图全路径
     std::string sceneName;   ///< 目标截图全路径
@@ -89,7 +89,7 @@ struct ObjectInfo
 }
 
 typedef void (*procVideoCallBack)(float progressPercentage, 
-	const std::vector<zpv::ObjectInfo>& infos, void* ptrUserData);
+    const std::vector<zpv::ObjectInfo>& infos, void* ptrUserData);
 
 namespace zpv
 {
@@ -104,8 +104,8 @@ namespace zpv
     \return 函数成功执行, 返回 true, 否则返回 false
  */
 Z_LIB_EXPORT bool findSplitPositions(const std::string& videoPath, const double splitUnitInSecond,
-	double& videoLengthInSecond, std::vector<double>& segmentLengthInSecond,
-	std::vector<std::pair<int, int> >& splitBegAndEnd);
+    double& videoLengthInSecond, std::vector<double>& segmentLengthInSecond,
+    std::vector<std::pair<int, int> >& splitBegAndEnd);
 
 //! 分割视频函数
 /*!
@@ -118,16 +118,16 @@ Z_LIB_EXPORT bool findSplitPositions(const std::string& videoPath, const double 
     \return 函数成功执行, 返回 true, 否则返回 false
  */
 Z_LIB_EXPORT bool findSplitPositions(const std::string& videoPath, const int expectSegNum,
-	double& videoLengthInSecond, std::vector<double>& segmentLengthInSecond,
-	std::vector<std::pair<int, int> >& splitBegAndEnd);
+    double& videoLengthInSecond, std::vector<double>& segmentLengthInSecond,
+    std::vector<std::pair<int, int> >& splitBegAndEnd);
 
 //! 处理视频片段函数
 /*!
     可能会抛出 std::exception 类型的异常
     \param[in] task 分析任务信息
-	\param[in] config 配置信息
-	\param[in] ptrCallBackFunc 回调函数指针
-	\param[in,out] ptrUserData 用户数据
+    \param[in] config 配置信息
+    \param[in] ptrCallBackFunc 回调函数指针
+    \param[in,out] ptrUserData 用户数据
  */
 Z_LIB_EXPORT void procVideo(const TaskInfo& task, const ConfigInfo& config, 
     procVideoCallBack ptrCallBackFunc, void* ptrUserData);
@@ -166,8 +166,8 @@ struct TaicangParamInfo
     bool normScale;         ///< 后面的参数是使用归一化尺寸还是原始尺寸
     //! 感兴趣区域
     std::vector<std::vector<Point > > includeRegion;
-	//! 不感兴趣区域, 仅当感兴趣区域为空, 不感兴趣区域非空时才有效
-	std::vector<std::vector<Point > > excludeRegion;
+    //! 不感兴趣区域, 仅当感兴趣区域为空, 不感兴趣区域非空时才有效
+    std::vector<std::vector<Point > > excludeRegion;
     //! 过滤区域, 该区域内的物体会被过滤
     std::vector<Rect> filterRects;
     double minObjectArea;
@@ -179,11 +179,11 @@ struct TaicangParamInfo
 //! 跟踪对象信息
 struct TaicangObjectInfo
 {
-	std::string taskID;      ///< 任务编号
+    std::string taskID;      ///< 任务编号
     std::string caseName;    ///< 案例名
     std::string caseSetName; ///< 案例集合名
     int objectID;            ///< 目标编号
-	//! 起始和结束的时间戳
+    //! 起始和结束的时间戳
     std::pair<long long int, long long int> timeBegAndEnd;   
     std::string sliceName;   ///< 全景图全路径
     std::string sceneName;   ///< 目标截图全路径
@@ -200,7 +200,7 @@ struct TaicangObjectInfo
 }
 
 typedef void (*taicangProcVideoCallBack)(float progressPercentage, 
-	const std::vector<zpv::TaicangObjectInfo>& infos, void* ptrUserData);
+    const std::vector<zpv::TaicangObjectInfo>& infos, void* ptrUserData);
 
 namespace zpv
 {
@@ -208,9 +208,9 @@ namespace zpv
 /*!
     可能会抛出 std::exception 类型的异常
     \param[in] task 分析任务信息
-	\param[in] param 参数信息
-	\param[in] ptrCallBackFunc 回调函数指针
-	\param[in,out] ptrUserData 用户数据
+    \param[in] param 参数信息
+    \param[in] ptrCallBackFunc 回调函数指针
+    \param[in,out] ptrUserData 用户数据
  */
 Z_LIB_EXPORT void procVideo(const TaicangTaskInfo& task, const TaicangParamInfo& param,
     taicangProcVideoCallBack ptrCallBackFunc, void* ptrUserData);

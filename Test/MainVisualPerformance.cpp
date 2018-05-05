@@ -19,7 +19,7 @@ const static double minWidth = 10, minHeight = 10, minArea = 100;
 
 int main(void)
 {
-	const char* const path = /*"D:\\SHARED\\TrimpsVideo\\Video01_2013_10_23_17_50_55_type1.avi"*/
+    const char* const path = /*"D:\\SHARED\\TrimpsVideo\\Video01_2013_10_23_17_50_55_type1.avi"*/
         /*"D:\\SHARED\\TrimpsVideo\\Video02_2013_10_23_17_50_55_type1.avi"*/
         /*"D:\\SHARED\\TrimpsVideo\\Video02_2013_10_23_18_10_02_type1.avi"*/
         /*"D:\\SHARED\\TrimpsVideo\\Video03_2013_10_23_17_50_55_type1.avi"*/
@@ -35,57 +35,57 @@ int main(void)
         /*"D:/SHARED/GuilinVideo/DVR1_灵川八里街川东一路八里一路路口_20130826170046_20130826171424_63094171_0001.avi"*/
         /*"D:/SHARED/GuilinVideo/DVR1_灵川八里街川东一路八里一路路口_20130827081157_20130827082536_54418000_0001.avi"*/
         /*"D:/SHARED/GuilinVideo/DVR1_灵川八里街川东一路八里一路路口20130909070538.avi"*/
-		/*"D:/SHARED/TaicangVideo/1/70.flv"*/
+        /*"D:/SHARED/TaicangVideo/1/70.flv"*/
         /*"D:\\SHARED\\TaicangVideo\\Night\\1.avi"*/
         "D:/SHARED/BishengRoadVideo/23711.flv";
-	VideoCapture cap;
-	cap.open(path);
-	VisualInfo visualInfo;
-	BlobExtractor blobExtractor;
-	Size normSize(normWidth, normHeight);
+    VideoCapture cap;
+    cap.open(path);
+    VisualInfo visualInfo;
+    BlobExtractor blobExtractor;
+    Size normSize(normWidth, normHeight);
     Timer totalTimer;
     RepeatTimer procTimer;
     int procCount = 1;
-	int readCount = 0;
-	int updateCount = 0;
-	bool init = false;
+    int readCount = 0;
+    int updateCount = 0;
+    bool init = false;
     vector<Rect> noUpdate(1);
     noUpdate[0] = Rect(0, 0, normWidth, normHeight);
     vector<Rect> rects, stableRects;
-	Mat frame, image;
-	for (int count = 0; count < 5000; count++)
-	{		
-		if (!cap.read(frame)) break;
-		if (readCount++ % procEveryNFrame)
-			continue;
-		resize(frame, image, normSize);
+    Mat frame, image;
+    for (int count = 0; count < 5000; count++)
+    {       
+        if (!cap.read(frame)) break;
+        if (readCount++ % procEveryNFrame)
+            continue;
+        resize(frame, image, normSize);
         GaussianBlur(image, image, Size(3, 3), 1.0);
 
-		if (!init)
-		{
-			init = true;
+        if (!init)
+        {
+            init = true;
 
-			visualInfo.init(image);
+            visualInfo.init(image);
             blobExtractor.init(normSize);
             blobExtractor.setConfigParams(&minArea, &minWidth, &minHeight);
-			continue;
-		}
+            continue;
+        }
 
-		Mat foreImage;
+        Mat foreImage;
         if (updateCount++ % updateEveryNProcFrame)
-		{
-			//printf("\n");
+        {
+            //printf("\n");
             procTimer.start();
-			visualInfo.update(image, foreImage, false, noUpdate);
+            visualInfo.update(image, foreImage, false, noUpdate);
             procTimer.end();
-		}
-		else
-		{
-			//printf(", full update\n");
+        }
+        else
+        {
+            //printf(", full update\n");
             procTimer.start();
-			visualInfo.update(image, foreImage);
+            visualInfo.update(image, foreImage);
             procTimer.end();
-		}
+        }
         //char buf[1024];
         //sprintf(buf, "D:\\SHARED\\GuilinVideo\\Result\\VisualInfoP4U1Thres145\\result%d.bmp", count);
         //imwrite(buf, foreImage);
@@ -113,11 +113,11 @@ int main(void)
             imwrite(buf, result);
         }
 
-		//waitKey(30);
-	}
+        //waitKey(30);
+    }
     totalTimer.end();
     printf("avg proc time = %.6f, proc count = %d\n", procTimer.getAvgTime(), procTimer.getCount());
-	printf("total proc time = %.6f\n", totalTimer.elapse());
+    printf("total proc time = %.6f\n", totalTimer.elapse());
     system("pause");
-	return 0;
+    return 0;
 }

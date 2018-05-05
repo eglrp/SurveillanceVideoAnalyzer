@@ -155,7 +155,7 @@ void ObjectInfoParser::parse(const vector<zsfo::ObjectInfo>& src, vector<zpv::Ob
         procVideoObj.sliceLocation.width = refImage.rect.width;
         procVideoObj.sliceLocation.height = refImage.rect.height;
         string IDStr = getString(refObj.ID);
-		string frameCountStr = getString(refImage.number);
+        string frameCountStr = getString(refImage.number);
         procVideoObj.sceneName = sceneNamePrefix + "ProcVideo_frame" + frameCountStr + ".jpg";
         procVideoObj.sliceName = sliceNamePrefix + "ProcVideo_frame" + frameCountStr + "_slice_" + IDStr + ".jpg";
 
@@ -167,20 +167,20 @@ void ObjectInfoParser::parse(const vector<zsfo::ObjectInfo>& src, vector<zpv::Ob
         //    << setw(8) << refImage.rect.width << setw(8) << refImage.rect.height;
         //objectListFile << "\n";
         const vector<zsfo::ObjectRecord>& refHistory = refObj.history;
-		trackletsFile << "Object Count:  " << objectCount << "\n";
-		trackletsFile << "ID:            " << refObj.ID << "\n";
-		trackletsFile << "Size:          " << refHistory.size() << "\n";
-		trackletsFile << "Frame Count Time Stamp       x       y       w       h" << "\n";
-		for (int j = 0; j < refHistory.size(); j++)
-		{
-			trackletsFile << setw(11) << refHistory[j].number
-				<< setw(11) << refHistory[j].time
-				<< setw(8) << refHistory[j].normRect.x
-				<< setw(8) << refHistory[j].normRect.y
-				<< setw(8) << refHistory[j].normRect.width
-				<< setw(8) << refHistory[j].normRect.height << "\n";
-		}
-		trackletsFile << "\n";
+        trackletsFile << "Object Count:  " << objectCount << "\n";
+        trackletsFile << "ID:            " << refObj.ID << "\n";
+        trackletsFile << "Size:          " << refHistory.size() << "\n";
+        trackletsFile << "Frame Count Time Stamp       x       y       w       h" << "\n";
+        for (int j = 0; j < refHistory.size(); j++)
+        {
+            trackletsFile << setw(11) << refHistory[j].number
+                << setw(11) << refHistory[j].time
+                << setw(8) << refHistory[j].normRect.x
+                << setw(8) << refHistory[j].normRect.y
+                << setw(8) << refHistory[j].normRect.width
+                << setw(8) << refHistory[j].normRect.height << "\n";
+        }
+        trackletsFile << "\n";
     }
     //objectListFile.close();
     trackletsFile.close();
@@ -226,7 +226,7 @@ void ObjectInfoParser::parse(const vector<zsfo::ObjectInfo>& src, vector<zpv::Ta
         procVideoObj.sliceLocation.width = refImage.rect.width;
         procVideoObj.sliceLocation.height = refImage.rect.height;
         string IDStr = getString(refObj.ID);
-		string frameCountStr = getString(refImage.number);
+        string frameCountStr = getString(refImage.number);
         procVideoObj.sceneName = sceneNamePrefix + "ProcVideo_frame_" + frameCountStr + ".jpg";
         procVideoObj.sliceName = sliceNamePrefix + "ProcVideo_frame_" + frameCountStr + "_slice_" + IDStr + ".jpg";
 
@@ -238,20 +238,20 @@ void ObjectInfoParser::parse(const vector<zsfo::ObjectInfo>& src, vector<zpv::Ta
         //    << setw(8) << refImage.rect.width << setw(8) << refImage.rect.height;
         //objectListFile << "\n";
         const vector<zsfo::ObjectRecord>& refHistory = refObj.history;
-		trackletsFile << "Object Count:  " << objectCount << "\n";
-		trackletsFile << "ID:            " << refObj.ID << "\n";
-		trackletsFile << "Size:          " << refHistory.size() << "\n";
-		trackletsFile << "Frame Count Time Stamp       x       y       w       h" << "\n";
-		for (int j = 0; j < refHistory.size(); j++)
-		{
-			trackletsFile << setw(11) << refHistory[j].number
-				<< setw(11) << refHistory[j].time
-				<< setw(8) << refHistory[j].normRect.x
-				<< setw(8) << refHistory[j].normRect.y
-				<< setw(8) << refHistory[j].normRect.width
-				<< setw(8) << refHistory[j].normRect.height << "\n";
-		}
-		trackletsFile << "\n";
+        trackletsFile << "Object Count:  " << objectCount << "\n";
+        trackletsFile << "ID:            " << refObj.ID << "\n";
+        trackletsFile << "Size:          " << refHistory.size() << "\n";
+        trackletsFile << "Frame Count Time Stamp       x       y       w       h" << "\n";
+        for (int j = 0; j < refHistory.size(); j++)
+        {
+            trackletsFile << setw(11) << refHistory[j].number
+                << setw(11) << refHistory[j].time
+                << setw(8) << refHistory[j].normRect.x
+                << setw(8) << refHistory[j].normRect.y
+                << setw(8) << refHistory[j].normRect.width
+                << setw(8) << refHistory[j].normRect.height << "\n";
+        }
+        trackletsFile << "\n";
     }
     //objectListFile.close();
     trackletsFile.close();
@@ -261,11 +261,11 @@ void ObjectInfoParser::final(void)
 {
     fstream file;
     //file.open(listName.c_str(), ios::ate | ios::out | ios::in);
-	//file << "End\n";
-	//file.close();
+    //file << "End\n";
+    //file.close();
     file.open(historyName.c_str(), ios::ate | ios::out | ios::in);
-	file << "End\n";
-	file.close();
+    file << "End\n";
+    file.close();
 }
 
 }
@@ -321,7 +321,7 @@ void procVideo(const TaskInfo& task, const ConfigInfo& config,
 
     double fps = cap.get(CV_CAP_PROP_FPS);
     int procEveryNFrame = (fps < 16 || fps > 30) ? 1 : int(fps / 10 + 0.5);
-	int totalFrameCount = cap.get(CV_CAP_PROP_FRAME_COUNT);
+    int totalFrameCount = cap.get(CV_CAP_PROP_FRAME_COUNT);
 
     int buildFrameCount = 0;
     int begIncCount = 0;
@@ -345,7 +345,7 @@ void procVideo(const TaskInfo& task, const ConfigInfo& config,
 
     zsfo::StampedImage input;
     input.time = (long long int)cap.get(CV_CAP_PROP_POS_MSEC);
-	input.number = (int)cap.get(CV_CAP_PROP_POS_FRAMES);
+    input.number = (int)cap.get(CV_CAP_PROP_POS_FRAMES);
     cap.read(input.image);
 
     zsfo::MovingObjectDetector movObjDet;
@@ -378,15 +378,15 @@ void procVideo(const TaskInfo& task, const ConfigInfo& config,
     double minRatioIntersectToBlob = 0.5;
     
     try
-	{
+    {
         movObjDet.init(input, normSize, updateBackInterval, historyWithImages,
             recordSnapshotMode, saveSnapshotMode, saveSnapshotInterval, numOfSnapshotSaved, 
             normScale, incPoints, excPoints, vector<Point>(),
             &minObjectArea, &minObjectWidth, &minObjectHeight, &charRegionCheck, charRegions,
             &checkTurnAround, &maxDistRectAndBlob, &minRatioIntersectToSelf, &minRatioIntersectToBlob);
-		infoParser.init(task.saveImagePath, "", "", "", task.saveHistoryPath, task.historyFileName);
-	}
-	catch (const exception& e)
+        infoParser.init(task.saveImagePath, "", "", "", task.saveHistoryPath, task.historyFileName);
+    }
+    catch (const exception& e)
     {
         THROW_EXCEPT(e.what());
     }
@@ -396,17 +396,17 @@ void procVideo(const TaskInfo& task, const ConfigInfo& config,
     for (int count = 1; count < procTotalCount; count++)
     {
         input.time = (long long int)cap.get(CV_CAP_PROP_POS_MSEC);
-	    input.number = (int)cap.get(CV_CAP_PROP_POS_FRAMES);
+        input.number = (int)cap.get(CV_CAP_PROP_POS_FRAMES);
         if (input.number >= totalFrameCount)
             break;
-		if (!cap.read(input.image)) 
-			continue;
+        if (!cap.read(input.image)) 
+            continue;
         zsfo::ObjectDetails output;
         vector<ObjectInfo> objects;
         if (count % procEveryNFrame == 0)
         {
             try
-		    {
+            {
                 if (count < buildFrameCount)
                     movObjDet.build(input);
                 else
@@ -423,7 +423,7 @@ void procVideo(const TaskInfo& task, const ConfigInfo& config,
         if (ptrCallBackFunc && (count % progressInterval == 0 || !objects.empty()))
             ptrCallBackFunc(float(count) / procTotalCount * 100, objects, ptrUserData);
 #if CMPL_SHOW_IMAGE        
-		waitKey(output.objects.empty() ? 5 : 5);
+        waitKey(output.objects.empty() ? 5 : 5);
 #endif
     }
 
@@ -487,7 +487,7 @@ void procVideo(const TaicangTaskInfo& task, const TaicangParamInfo& param,
 
     double fps = cap.get(CV_CAP_PROP_FPS);
     int procEveryNFrame = (fps < 16 || fps > 30) ? 1 : int(fps / 10 + 0.5);
-	int totalFrameCount = cap.get(CV_CAP_PROP_FRAME_COUNT);
+    int totalFrameCount = cap.get(CV_CAP_PROP_FRAME_COUNT);
 
     int buildFrameCount = 0;
     int begIncCount = 0;
@@ -515,7 +515,7 @@ void procVideo(const TaicangTaskInfo& task, const TaicangParamInfo& param,
 
     zsfo::StampedImage input;
     input.time = (long long int)cap.get(CV_CAP_PROP_POS_MSEC);
-	input.number = readCount;
+    input.number = readCount;
     if (!cap.read(input.image))
         THROW_EXCEPT("cannot read frame, frame count " + getString(begIncCount));
     readCount++;
@@ -555,15 +555,15 @@ void procVideo(const TaicangTaskInfo& task, const TaicangParamInfo& param,
     double minRatioIntersectToBlob = 0.5;
     
     try
-	{
+    {
         movObjDet.init(input, normSize, updateBackInterval, historyWithImages,
             recordSnapshotMode, saveSnapshotMode, saveSnapshotInterval, numOfSnapshotSaved, 
             normScale, incPoints, excPoints, vector<Point>(),
             &minObjectArea, &minObjectWidth, &minObjectHeight, &charRegionCheck, charRegions,
             &checkTurnAround, &maxDistRectAndBlob, &minRatioIntersectToSelf, &minRatioIntersectToBlob);
-		infoParser.init(task.saveImagePath, "", "", "", task.saveHistoryPath, task.historyFileName);
-	}
-	catch (const exception& e)
+        infoParser.init(task.saveImagePath, "", "", "", task.saveHistoryPath, task.historyFileName);
+    }
+    catch (const exception& e)
     {
         THROW_EXCEPT(e.what());
     }
@@ -573,18 +573,18 @@ void procVideo(const TaicangTaskInfo& task, const TaicangParamInfo& param,
     for (int count = 1; count < procTotalCount; count++)
     {
         input.time = (long long int)cap.get(CV_CAP_PROP_POS_MSEC);
-	    input.number = readCount;
+        input.number = readCount;
         if (input.number >= totalFrameCount)
             break;
-		if (!cap.read(input.image)) 
-			break;
+        if (!cap.read(input.image)) 
+            break;
         readCount++;
         zsfo::ObjectDetails output;
         vector<TaicangObjectInfo> objects;
         if (count % procEveryNFrame == 0)
         {
             try
-		    {
+            {
                 if (count < buildFrameCount)
                     movObjDet.build(input);
                 else
@@ -609,7 +609,7 @@ void procVideo(const TaicangTaskInfo& task, const TaicangParamInfo& param,
         if (ptrCallBackFunc && (count % progressInterval == 0 || !objects.empty()))
             ptrCallBackFunc(float(count) / procTotalCount * 100, objects, ptrUserData);
 #if CMPL_SHOW_IMAGE        
-		waitKey(output.objects.empty() ? 5 : 5);
+        waitKey(output.objects.empty() ? 5 : 5);
 #endif
     }
 

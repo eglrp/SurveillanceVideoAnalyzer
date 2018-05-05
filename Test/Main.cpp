@@ -17,48 +17,48 @@ using namespace cv;
 using namespace zsfo;
 using namespace ztool;
 
-int	main(int argc, char* argv[])
-{	
-	// 读取主函数的配置参数
-	char videoFilePath[1000];
-	char pathFilePath[1000];
-	bool needCutVideo;
-	bool isDebugMode;
-	bool saveScene;
-	bool saveSlice;
-	bool saveMask;
-	bool saveInfo;
-	bool saveHistory;
-	bool runShowImage;
-	int waitTime;
+int main(int argc, char* argv[])
+{   
+    // 读取主函数的配置参数
+    char videoFilePath[1000];
+    char pathFilePath[1000];
+    bool needCutVideo;
+    bool isDebugMode;
+    bool saveScene;
+    bool saveSlice;
+    bool saveMask;
+    bool saveInfo;
+    bool saveHistory;
+    bool runShowImage;
+    int waitTime;
 
-	char stringNotUsed[1000];
-	fstream argFile;
-	argFile.open("MainArg.txt", ios::in);
-	if (!argFile.is_open())
-	{
-		cout << "ERROR: cannot open file MainArg.txt" << "\n";
-		exit(1);
-	}
-	argFile >> stringNotUsed >> videoFilePath;
-	argFile >> stringNotUsed >> pathFilePath;
-	argFile >> stringNotUsed >> needCutVideo;
-	argFile >> stringNotUsed >> isDebugMode;
-	argFile >> stringNotUsed >> saveScene;
-	argFile >> stringNotUsed >> saveSlice;
-	argFile >> stringNotUsed >> saveMask;
-	argFile >> stringNotUsed >> saveInfo;
-	argFile >> stringNotUsed >> saveHistory;
-	argFile >> stringNotUsed >> runShowImage;
-	argFile >> stringNotUsed >> waitTime;
-	argFile.close();
+    char stringNotUsed[1000];
+    fstream argFile;
+    argFile.open("MainArg.txt", ios::in);
+    if (!argFile.is_open())
+    {
+        cout << "ERROR: cannot open file MainArg.txt" << "\n";
+        exit(1);
+    }
+    argFile >> stringNotUsed >> videoFilePath;
+    argFile >> stringNotUsed >> pathFilePath;
+    argFile >> stringNotUsed >> needCutVideo;
+    argFile >> stringNotUsed >> isDebugMode;
+    argFile >> stringNotUsed >> saveScene;
+    argFile >> stringNotUsed >> saveSlice;
+    argFile >> stringNotUsed >> saveMask;
+    argFile >> stringNotUsed >> saveInfo;
+    argFile >> stringNotUsed >> saveHistory;
+    argFile >> stringNotUsed >> runShowImage;
+    argFile >> stringNotUsed >> waitTime;
+    argFile.close();
 
-	// 创建保存程序运行结果文件的路径
-	createDirectory("result");
-	// 提取视频文件名，不包括路径
-	string videoFileName = videoFilePath;
-	string validVideoName;
-	cvtPathToFileName(videoFileName, validVideoName);
+    // 创建保存程序运行结果文件的路径
+    createDirectory("result");
+    // 提取视频文件名，不包括路径
+    string videoFileName = videoFilePath;
+    string validVideoName;
+    cvtPathToFileName(videoFileName, validVideoName);
     
     int procEveryNFrame = 1;
     Size procSize(320, 240);

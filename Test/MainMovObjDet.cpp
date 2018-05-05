@@ -16,9 +16,9 @@ using namespace cv;
 using namespace zsfo;
 using namespace ztool;
 
-int	main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
-	string videoFileName = "D:\\Files\\RTXFiles\\zhengxuping\\bb.avi"
+    string videoFileName = "D:\\Files\\RTXFiles\\zhengxuping\\bb.avi"
         /*"D:\\SHARED\\HaerbinVideo\\080011301522-20140919154529.asf"*/
         /*"D:/SHARED/XinjiangVideo/7S大湾北路金疆大厦卡口 20140730-112005--20140730-112205.mp4"*/;
     Size normSize(320, 240);
@@ -83,36 +83,36 @@ int	main(int argc, char* argv[])
                 mod.proc(input, output);
                 const vector<ObjectInfo>& objects = output.objects;
                 printf("frame count %d:\n", input.number);
-			    int objSize = objects.size();
-			    for (int j = 0; j < objSize; j++)
-			    {
-				    const ObjectInfo& refObj = objects[j];
-				    printf("object count %3d, (%3d, %3d, %3d, %3d) %s\n",
-					    j, refObj.currRect.x, refObj.currRect.y, refObj.currRect.width, refObj.currRect.height,
-					    refObj.isFinal ? "end tracking" : "");
+                int objSize = objects.size();
+                for (int j = 0; j < objSize; j++)
+                {
+                    const ObjectInfo& refObj = objects[j];
+                    printf("object count %3d, (%3d, %3d, %3d, %3d) %s\n",
+                        j, refObj.currRect.x, refObj.currRect.y, refObj.currRect.width, refObj.currRect.height,
+                        refObj.isFinal ? "end tracking" : "");
                     Rect normRect = mul(refObj.currRect, div(normSize, input.image.size()));
                     rectangle(normImage, normRect, Scalar(0, 255));
                     char idStr[32];
                     sprintf(idStr, "ID: %d", refObj.ID);
                     putText(normImage, idStr, normRect.tl(), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0, 255));
-			    }
-			    printf("\n");                
-			    for (int j = 0; j < objSize; j++)
-			    {
-				    const ObjectInfo& refObj = objects[j];				  
-				    if (refObj.isFinal && refObj.hasHistory)
-				    {
+                }
+                printf("\n");                
+                for (int j = 0; j < objSize; j++)
+                {
+                    const ObjectInfo& refObj = objects[j];                
+                    if (refObj.isFinal && refObj.hasHistory)
+                    {
                         /*printf("ID: %d\n", refObj.ID);
-					    printf("      time     count    x    y    w    h\n");
-					    int hisSize = refObj.history.size();
-					    for (int k = 0; k < hisSize; k++)
-					    {
-						    const ObjectRecord& refRec = refObj.history[k];
-						    printf("%10lld%10d%5d%5d%5d%5d\n", refRec.time, refRec.number, 
-							    refRec.origRect.x, refRec.origRect.y, refRec.origRect.width, refRec.origRect.height);
-					    }
-					    printf("\n");*/
-				    }
+                        printf("      time     count    x    y    w    h\n");
+                        int hisSize = refObj.history.size();
+                        for (int k = 0; k < hisSize; k++)
+                        {
+                            const ObjectRecord& refRec = refObj.history[k];
+                            printf("%10lld%10d%5d%5d%5d%5d\n", refRec.time, refRec.number, 
+                                refRec.origRect.x, refRec.origRect.y, refRec.origRect.width, refRec.origRect.height);
+                        }
+                        printf("\n");*/
+                    }
                     if (refObj.isFinal && refObj.hasSnapshotHistory)
                     {
                         char imageName[64];
@@ -125,7 +125,7 @@ int	main(int argc, char* argv[])
                         imwrite(imageName, refObj.snapshotHistory[0].slice);
                         longWait = true;
                     }
-			    }
+                }
             }
             imshow("state", normImage);
             //waitKey(longWait ? 0 : 10);

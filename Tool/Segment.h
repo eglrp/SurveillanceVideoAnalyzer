@@ -47,7 +47,7 @@ void findSegments(const std::vector<Type>& data, std::vector<Segment<Type> >& se
     segments.clear();
     if (data.empty()) return;
     Segment<Type> currSegment;
-	int dataLength = data.size();
+    int dataLength = data.size();
     int currBegin;
     currBegin = 0;
     for (int i = 0; i < dataLength - 1; i++)
@@ -102,7 +102,7 @@ void findSegments(const std::vector<DataType>& data, std::vector<Segment<ElemTyp
     segments.clear();
     if (data.empty()) return;
     Segment<ElemType> currSegment;
-	int dataLength = data.size();
+    int dataLength = data.size();
     int currBegin;
     currBegin = 0;
     for (int i = 0; i < dataLength - 1; i++)

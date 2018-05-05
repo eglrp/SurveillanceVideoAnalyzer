@@ -11,7 +11,7 @@ namespace zsfo
 //! 感兴趣区域设置
 struct Z_LIB_EXPORT RegionOfInterest
 {
-	//! 默认构造函数
+    //! 默认构造函数
     RegionOfInterest(void) {};
     //! 拷贝构造函数, 深拷贝 mask 成员变量
     RegionOfInterest(const RegionOfInterest& roi);
@@ -24,9 +24,9 @@ struct Z_LIB_EXPORT RegionOfInterest
         \param[in] defIncludedRegion 表示用后面的参数 imagePoints 包围的区域是感兴趣区域还是不感兴趣区域
         \param[in] imagePoints 多边形的顶点, 用来表示感兴趣区域或者不感兴趣区域, 也可以是线段, 但此时 imagePoints.size() 必须等于 1
      */
-	void init(const std::string& label, const cv::Size& imageSize, bool defIncludedRegion = true,
-		      const std::vector<std::vector<cv::Point> >& imagePoints = std::vector<std::vector<cv::Point> >());
-	//! 通过配置文件初始化
+    void init(const std::string& label, const cv::Size& imageSize, bool defIncludedRegion = true,
+              const std::vector<std::vector<cv::Point> >& imagePoints = std::vector<std::vector<cv::Point> >());
+    //! 通过配置文件初始化
     /*!
         \param[in] imageSize 画面的尺寸
         \param[in] path 配置文件路径
@@ -44,46 +44,46 @@ struct Z_LIB_EXPORT RegionOfInterest
         接下来是一系列 #roi 每行用 横坐标 纵坐标 横坐标 纵坐标 ... 的方式表示多边形区域的顶点
         每个多边形区域的点数必须大于 2, 即数字的数量必须大于 4
      */
-	void init(const cv::Size& imageSize, const std::string& path, const std::string& label);
-	//! 过滤掉与感兴趣区域不相交的矩形
+    void init(const cv::Size& imageSize, const std::string& path, const std::string& label);
+    //! 过滤掉与感兴趣区域不相交的矩形
     /*!
         \param[in, out] rects 需要处理的矩形和处理结果
      */
-	void filterNotIntersecting(std::vector<cv::Rect>& rects) const;
+    void filterNotIntersecting(std::vector<cv::Rect>& rects) const;
     //! 过滤掉与感兴趣区域不相交的矩形
     /*!
         \param[in, out] rects 需要处理的矩形和处理结果
         \param[in] ratio 落在感兴趣区域的面积占整个矩形的面积的比例小于这个值, 则过滤这个矩形
      */
-	void filterNotIntersecting(std::vector<cv::Rect>& rects, const double ratio) const;
-	//! 对 testRect 网格化, 检测网格化的点是否至少有一个点落在感兴趣区域内
+    void filterNotIntersecting(std::vector<cv::Rect>& rects, const double ratio) const;
+    //! 对 testRect 网格化, 检测网格化的点是否至少有一个点落在感兴趣区域内
     /*!
         \param[in, out] rects 需要处理的矩形和处理结果
      */
-	bool intersects(const cv::Rect& testRect) const;
-	//! 对 testRect 网格化, 检测网格化的点是落在感兴趣区域中的数量占所有点的数量的比例是否大于阈值
+    bool intersects(const cv::Rect& testRect) const;
+    //! 对 testRect 网格化, 检测网格化的点是落在感兴趣区域中的数量占所有点的数量的比例是否大于阈值
     /*!
         \param[in, out] rects 需要处理的矩形和处理结果
         \param[in] ragio 阈值
      */
-	bool intersects(const cv::Rect& testRect, const double ratio) const;
-	//! 感兴趣区域是否包含 testPoint
+    bool intersects(const cv::Rect& testRect, const double ratio) const;
+    //! 感兴趣区域是否包含 testPoint
     /*!
         \param[in, out] rects 需要处理的矩形和处理结果
      */
-	bool contains(const cv::Point& testPoint) const;
-	//! 画出感兴趣区域
+    bool contains(const cv::Point& testPoint) const;
+    //! 画出感兴趣区域
     /*!
         \param[in] image 在这张图上话感兴趣区域
         \param[in] color 用这个颜色话感兴趣区域的边缘
      */
-	void draw(cv::Mat& image, const cv::Scalar& color) const;
+    void draw(cv::Mat& image, const cv::Scalar& color) const;
 
-	bool isFullSize;       ///< 感兴趣区域是否几乎布满整个画面
-	int width;             ///< 画面的宽度
+    bool isFullSize;       ///< 感兴趣区域是否几乎布满整个画面
+    int width;             ///< 画面的宽度
     int height;            ///< 画面的高度
-	cv::Rect imageRect;    ///< 画面对应的矩形
-	cv::Mat mask;          ///< 感兴趣区域图, 类型为 CV_8UC1, 感兴趣区域内值等于 255, 其他区域值等于 0
+    cv::Rect imageRect;    ///< 画面对应的矩形
+    cv::Mat mask;          ///< 感兴趣区域图, 类型为 CV_8UC1, 感兴趣区域内值等于 255, 其他区域值等于 0
     bool defIncRegion;     ///< 多边形的顶点包围的是否为感兴趣区域
     std::vector<std::vector<cv::Point> > vertices;   ///< 包围感兴趣区域或者不感兴趣区域的多边形的顶点
 };
@@ -224,7 +224,7 @@ struct Z_LIB_EXPORT VirtualLoop
         \param[in] path 配置文件的路径
         \param[in] label 配置文件中标记初始化参数的标签
      */
-	void init(const std::string& path, const std::string& label);
+    void init(const std::string& path, const std::string& label);
     //! 初始化
     /*!
         \param[in] label 本虚拟线圈的标签, 打印参数时需要
@@ -239,22 +239,22 @@ struct Z_LIB_EXPORT VirtualLoop
     bool overTopBound(const cv::Point& testPoint) const;
     //! 判断检测点是否在线圈上部边界以上
     bool belowBottomBound(const cv::Point& testPoint) const;
-	//! 判断监测点是否在线圈左边界的左边
-	bool leftToLeftBound(const cv::Point& testPoint) const;
-	//! 判断监测点是否在线圈右边界的右边
-	bool rightToRightBound(const cv::Point& testPoint) const;
+    //! 判断监测点是否在线圈左边界的左边
+    bool leftToLeftBound(const cv::Point& testPoint) const;
+    //! 判断监测点是否在线圈右边界的右边
+    bool rightToRightBound(const cv::Point& testPoint) const;
     //! 判断检测点是靠近上边界还是下边界
     bool closerToTopThanToBottom(const cv::Point& testPoint) const;
     //! 判断检测点是靠近左边界还是右边界
     bool closerToLeftThanToRight(const cv::Point& testPoint) const;
-	//! 计算某个点到上下左右边界的图像距离
-	double distToLeftBound(const cv::Point& point) const;
-	double distToRightBound(const cv::Point& point) const;
-	double distToTopBound(const cv::Point& point) const;
-	double distToBottomBound(const cv::Point& point) const;
-	//! 画出虚拟线圈
-	void drawLoop(cv::Mat& image, const cv::Scalar& color) const;
-		
+    //! 计算某个点到上下左右边界的图像距离
+    double distToLeftBound(const cv::Point& point) const;
+    double distToRightBound(const cv::Point& point) const;
+    double distToTopBound(const cv::Point& point) const;
+    double distToBottomBound(const cv::Point& point) const;
+    //! 画出虚拟线圈
+    void drawLoop(cv::Mat& image, const cv::Scalar& color) const;
+        
     /*! 
         图像中虚拟线圈四条直线的方程
         对于左边界和右边界的直线，方程采用 x = k * y + b 的形式
@@ -271,9 +271,9 @@ struct Z_LIB_EXPORT VirtualLoop
 
 inline bool RegionOfInterest::contains(const cv::Point& testPoint) const
 {
-	if (!imageRect.contains(testPoint))
-		return false;
-	return mask.at<unsigned char>(testPoint) > 0;
+    if (!imageRect.contains(testPoint))
+        return false;
+    return mask.at<unsigned char>(testPoint) > 0;
 };
 
 inline bool VirtualLoop::contains(const cv::Point& testPoint) const
@@ -296,12 +296,12 @@ inline bool VirtualLoop::overTopBound(const cv::Point& testPoint) const
 
 inline bool VirtualLoop::leftToLeftBound(const cv::Point& testPoint) const
 {
-	return testPoint.x < leftK * testPoint.y + leftB;
+    return testPoint.x < leftK * testPoint.y + leftB;
 }
 
 inline bool VirtualLoop::rightToRightBound(const cv::Point& testPoint) const
 {
-	return testPoint.x > rightK * testPoint.y + rightB;
+    return testPoint.x > rightK * testPoint.y + rightB;
 }
 
 inline bool VirtualLoop::closerToTopThanToBottom(const cv::Point& testPoint) const
@@ -318,27 +318,27 @@ inline bool VirtualLoop::closerToLeftThanToRight(const cv::Point& testPoint) con
 
 inline double VirtualLoop::distToLeftBound(const cv::Point& point) const
 {
-	return fabs(leftK * point.y + leftB - point.x) / sqrt(1 + leftK * leftK);
+    return fabs(leftK * point.y + leftB - point.x) / sqrt(1 + leftK * leftK);
 }
 
 inline double VirtualLoop::distToRightBound(const cv::Point& point) const
 {
-	return fabs(rightK * point.y + rightB - point.x) / sqrt(1 + rightK * rightK);
+    return fabs(rightK * point.y + rightB - point.x) / sqrt(1 + rightK * rightK);
 }
 
 inline double VirtualLoop::distToTopBound(const cv::Point& point) const
 {
-	return fabs(topK * point.x + topB - point.y) / sqrt(1 + topK * topK);
+    return fabs(topK * point.x + topB - point.y) / sqrt(1 + topK * topK);
 }
 
 inline double VirtualLoop::distToBottomBound(const cv::Point& point) const
 {
-	return fabs(bottomK * point.x + bottomB - point.y) / sqrt(1 + bottomK * bottomK);
+    return fabs(bottomK * point.x + bottomB - point.y) / sqrt(1 + bottomK * bottomK);
 }
 
 inline void VirtualLoop::drawLoop(cv::Mat& image, const cv::Scalar& color) const
 {
-	cv::line(image, vertices[0], vertices[1], color, 2);
+    cv::line(image, vertices[0], vertices[1], color, 2);
     cv::line(image, vertices[1], vertices[2], color, 2);
     cv::line(image, vertices[2], vertices[3], color, 2);
     cv::line(image, vertices[3], vertices[0], color, 2);

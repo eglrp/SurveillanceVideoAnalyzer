@@ -6,7 +6,7 @@ namespace ztool
 {
 
 void splitString(const std::string& src, std::vector<std::string>& dst, 
-	const std::string& splitter = std::string(), bool discastSplitter = true);
+    const std::string& splitter = std::string(), bool discastSplitter = true);
 
 void cvtPathToFileName(const std::string& path, std::string& fileName);
 

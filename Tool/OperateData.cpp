@@ -10,13 +10,13 @@ namespace ztool
 Scalar calcAvgAbsDiff(const Mat& src1, const Mat& src2, const Rect& currRect)
 {
     if (src1.data == 0 || src2.data == 0)
-		THROW_EXCEPT("Mat::data = 0");
+        THROW_EXCEPT("Mat::data = 0");
 
-	if (src1.type() != CV_8UC3 || src2.type() != CV_8UC3)
-		THROW_EXCEPT("unsupported element type");
+    if (src1.type() != CV_8UC3 || src2.type() != CV_8UC3)
+        THROW_EXCEPT("unsupported element type");
 
-	if (src1.rows != src2.rows || src1.cols != src2.cols)
-		THROW_EXCEPT("src1 and src2 do not share the same size");
+    if (src1.rows != src2.rows || src1.cols != src2.cols)
+        THROW_EXCEPT("src1 and src2 do not share the same size");
 
     int accAbsDiffB = 0, accAbsDiffG = 0, accAbsDiffR = 0;
     int accSrc1B = 0, accSrc1G = 0, accSrc1R = 0;
@@ -46,14 +46,14 @@ Scalar calcAvgAbsDiff(const Mat& src1, const Mat& src2, const Rect& currRect)
 
 Scalar calcCenterCorrRatio(const Mat& src1, const Mat& src2, const Rect& currRect)
 {
-	if (src1.data == 0 || src2.data == 0)
-		THROW_EXCEPT("Mat::data = 0");
+    if (src1.data == 0 || src2.data == 0)
+        THROW_EXCEPT("Mat::data = 0");
 
-	if (src1.type() != CV_8UC3 || src2.type() != CV_8UC3)
-		THROW_EXCEPT("unsupported element type");
+    if (src1.type() != CV_8UC3 || src2.type() != CV_8UC3)
+        THROW_EXCEPT("unsupported element type");
 
-	if (src1.rows != src2.rows || src1.cols != src2.cols)
-		THROW_EXCEPT("src1 and src2 do not share the same size");
+    if (src1.rows != src2.rows || src1.cols != src2.cols)
+        THROW_EXCEPT("src1 and src2 do not share the same size");
 
     int mean1B = 0, mean1G = 0, mean1R = 0;
     int mean2B = 0, mean2G = 0, mean2R = 0;
@@ -125,14 +125,14 @@ Scalar calcCenterCorrRatio(const Mat& src1, const Mat& src2, const Rect& currRec
 
 Scalar calcCenterCorrRatio(const Mat& src1, const Mat& src2, const Rect& currRect, const Mat& maskImage)
 {
-	if(src1.data == 0 || src2.data == 0 || maskImage.data == 0)
-		THROW_EXCEPT("Mat::data = 0");
+    if(src1.data == 0 || src2.data == 0 || maskImage.data == 0)
+        THROW_EXCEPT("Mat::data = 0");
 
-	if (src1.type() != CV_8UC3 || src2.type() != CV_8UC3)
-		THROW_EXCEPT("unsupported element type");
+    if (src1.type() != CV_8UC3 || src2.type() != CV_8UC3)
+        THROW_EXCEPT("unsupported element type");
 
-	if (src1.rows != src2.rows || src1.cols != src2.cols)
-		THROW_EXCEPT("src1 and src2 do not share the same size");
+    if (src1.rows != src2.rows || src1.cols != src2.cols)
+        THROW_EXCEPT("src1 and src2 do not share the same size");
 
     int count = 0;
 
@@ -214,14 +214,14 @@ Scalar calcCenterCorrRatio(const Mat& src1, const Mat& src2, const Rect& currRec
 
 Scalar calcOriginCorrRatio(const Mat& src1, const Mat& src2, const Rect& currRect)
 {
-	if (src1.data == 0 || src2.data == 0)
-		THROW_EXCEPT("Mat::data = 0");
+    if (src1.data == 0 || src2.data == 0)
+        THROW_EXCEPT("Mat::data = 0");
 
-	if (src1.type() != CV_8UC3 || src2.type() != CV_8UC3)
-		THROW_EXCEPT("unsupported element type");
+    if (src1.type() != CV_8UC3 || src2.type() != CV_8UC3)
+        THROW_EXCEPT("unsupported element type");
 
-	if (src1.rows != src2.rows || src1.cols != src2.cols)
-		THROW_EXCEPT("src1 and src2 do not share the same size");
+    if (src1.rows != src2.rows || src1.cols != src2.cols)
+        THROW_EXCEPT("src1 and src2 do not share the same size");
 
     double covB = 0.0, covG = 0.0, covR = 0.0;
     double varSrc1B = 0.0, varSrc1G = 0.0, varSrc1R = 0.0;
@@ -257,7 +257,7 @@ Scalar calcOriginCorrRatio(const Mat& src1, const Mat& src2, const Rect& currRec
     }
 
     Scalar corrRatio;
-	corrRatio[0] = covB / sqrt(varSrc1B * varSrc2B + 0.0001);
+    corrRatio[0] = covB / sqrt(varSrc1B * varSrc2B + 0.0001);
     corrRatio[1] = covG / sqrt(varSrc1G * varSrc2G + 0.0001);
     corrRatio[2] = covR / sqrt(varSrc1R * varSrc2R + 0.0001);
     return corrRatio;
@@ -265,14 +265,14 @@ Scalar calcOriginCorrRatio(const Mat& src1, const Mat& src2, const Rect& currRec
 
 Scalar calcOriginCorrRatio(const Mat& src1, const Mat& src2, const Rect& currRect, const Mat& maskImage)
 {
-	if (src1.data == 0 || src2.data == 0 || maskImage.data == 0)
-		THROW_EXCEPT("Mat::data = 0");
+    if (src1.data == 0 || src2.data == 0 || maskImage.data == 0)
+        THROW_EXCEPT("Mat::data = 0");
 
-	if (src1.type() != CV_8UC3 || src2.type() != CV_8UC3)
-		THROW_EXCEPT("unsupported element type");
+    if (src1.type() != CV_8UC3 || src2.type() != CV_8UC3)
+        THROW_EXCEPT("unsupported element type");
 
-	if (src1.rows != src2.rows || src1.cols != src2.cols)
-		THROW_EXCEPT("src1 and src2 do not share the same size");
+    if (src1.rows != src2.rows || src1.cols != src2.cols)
+        THROW_EXCEPT("src1 and src2 do not share the same size");
 
     double covB = 0.0, covG = 0.0, covR = 0.0;
     double varSrc1B = 0.0, varSrc1G = 0.0, varSrc1R = 0.0;
@@ -311,7 +311,7 @@ Scalar calcOriginCorrRatio(const Mat& src1, const Mat& src2, const Rect& currRec
     }
 
     Scalar corrRatio;
-	corrRatio[0] = covB / sqrt(varSrc1B * varSrc2B + 0.0001);
+    corrRatio[0] = covB / sqrt(varSrc1B * varSrc2B + 0.0001);
     corrRatio[1] = covG / sqrt(varSrc1G * varSrc2G + 0.0001);
     corrRatio[2] = covR / sqrt(varSrc1R * varSrc2R + 0.0001);
     return corrRatio;
@@ -319,16 +319,16 @@ Scalar calcOriginCorrRatio(const Mat& src1, const Mat& src2, const Rect& currRec
 
 void calcElemWiseL1Norm(const Mat& src1, const Mat& src2, Mat& dst)
 {
-	if (src1.data == 0 || src2.data == 0)
-		THROW_EXCEPT("Mat::data = 0");
+    if (src1.data == 0 || src2.data == 0)
+        THROW_EXCEPT("Mat::data = 0");
 
-	if (src1.type() != CV_32FC1 || src2.type() != CV_32FC1)
-		THROW_EXCEPT("unsupported element type");
+    if (src1.type() != CV_32FC1 || src2.type() != CV_32FC1)
+        THROW_EXCEPT("unsupported element type");
 
-	if (src1.rows != src2.rows || src1.cols != src2.cols)
-		THROW_EXCEPT("src1 and src2 do not share the same size");
+    if (src1.rows != src2.rows || src1.cols != src2.cols)
+        THROW_EXCEPT("src1 and src2 do not share the same size");
 
-	//dst = abs(src1) + abs(src2);
+    //dst = abs(src1) + abs(src2);
     dst.create(src1.rows, src1.cols, CV_32FC1);
     for (int i = 0; i < dst.rows; i++)
     {
@@ -344,16 +344,16 @@ void calcElemWiseL1Norm(const Mat& src1, const Mat& src2, Mat& dst)
 
 void calcElemWiseL2Norm(const Mat& src1, const Mat& src2, Mat& dst)
 {
-	if (src1.data == 0 || src2.data == 0)
-		THROW_EXCEPT("Mat::data = 0");
+    if (src1.data == 0 || src2.data == 0)
+        THROW_EXCEPT("Mat::data = 0");
 
-	if (src1.type() != CV_32FC1 || src2.type() != CV_32FC1)
-		THROW_EXCEPT("unsupported element type");
+    if (src1.type() != CV_32FC1 || src2.type() != CV_32FC1)
+        THROW_EXCEPT("unsupported element type");
 
-	if (src1.rows != src2.rows || src1.cols != src2.cols)
-		THROW_EXCEPT("src1 and src2 do not share the same size");
+    if (src1.rows != src2.rows || src1.cols != src2.cols)
+        THROW_EXCEPT("src1 and src2 do not share the same size");
 
-	//Mat sqr1, sqr2;
+    //Mat sqr1, sqr2;
     //pow(src1, 2, sqr1);
     //pow(src2, 2, sqr2);
     //sqrt(sqr1 + sqr2, dst);
@@ -384,20 +384,20 @@ namespace ztool
 
 void calcThresholdedGradient(const Mat& src, Mat& dst, double thres)
 {
-	if(src.data == 0)
-		THROW_EXCEPT("Mat::data = 0");
+    if(src.data == 0)
+        THROW_EXCEPT("Mat::data = 0");
 
-	if (src.type() != CV_8UC1)
-		THROW_EXCEPT("unsupported element type");
+    if (src.type() != CV_8UC1)
+        THROW_EXCEPT("unsupported element type");
 
     Mat horiGrad = Mat::zeros(src.rows, src.cols, CV_32FC1);
     Mat vertGrad = Mat::zeros(src.rows, src.cols, CV_32FC1);
-	Mat grad = Mat::zeros(src.rows, src.cols, CV_32FC1);
+    Mat grad = Mat::zeros(src.rows, src.cols, CV_32FC1);
 
     filter2D(src, horiGrad, horiGrad.depth(), horiKernel);
     filter2D(src, vertGrad, vertGrad.depth(), vertKernel);
     calcElemWiseL1Norm(horiGrad, vertGrad, grad);
-	grad.convertTo(dst, CV_8UC1); 
+    grad.convertTo(dst, CV_8UC1); 
 
     //threshold(dst, dst, thres, 255, THRESH_BINARY);
     //dst.row(0) = 0;
@@ -436,21 +436,21 @@ void calcThresholdedGradient(const Mat& src, Mat& dst, double thres)
 
 void calcGradient(const Mat& src, Mat& dst, double scale)
 {
-	if (src.data == 0)
-		THROW_EXCEPT("Mat::data = 0");
+    if (src.data == 0)
+        THROW_EXCEPT("Mat::data = 0");
 
-	if (src.type() != CV_8UC1)
-		THROW_EXCEPT("unsupported element type");
-	
-	Mat horiGrad = Mat::zeros(src.rows, src.cols, CV_32FC1);
+    if (src.type() != CV_8UC1)
+        THROW_EXCEPT("unsupported element type");
+    
+    Mat horiGrad = Mat::zeros(src.rows, src.cols, CV_32FC1);
     Mat vertGrad = Mat::zeros(src.rows, src.cols, CV_32FC1);
-	Mat grad = Mat::zeros(src.rows, src.cols, CV_32FC1);
+    Mat grad = Mat::zeros(src.rows, src.cols, CV_32FC1);
 
     filter2D(src, horiGrad, horiGrad.depth(), horiKernel);
     filter2D(src, vertGrad, vertGrad.depth(), vertKernel);
     calcElemWiseL1Norm(horiGrad, vertGrad, grad);
-	if (scale != 1.0) grad *= scale;
-	grad.convertTo(dst, CV_8UC1); 
+    if (scale != 1.0) grad *= scale;
+    grad.convertTo(dst, CV_8UC1); 
 
     //dst.row(0) = 0;
     //dst.row(dst.rows - 1) = 0;

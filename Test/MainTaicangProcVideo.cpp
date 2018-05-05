@@ -16,30 +16,30 @@ using namespace ztool;
 
 void callBack(float progressPercentage, const vector<zpv::TaicangObjectInfo>& infos, void* ptrUserData)
 {    
-	if (infos.empty())
-	{
-		printf("process: %.4f%%\n\n", progressPercentage);
-		return;
-	}
+    if (infos.empty())
+    {
+        printf("process: %.4f%%\n\n", progressPercentage);
+        return;
+    }
 
-	printf("process: %.4f%%, has object(s)\n", progressPercentage);
-	int size = infos.size();
-	for (int i = 0; i < size; i++)
-	{
-		printf("  Obj ID = %d\n", infos[i].objectID);
-		printf("  time stamp = (%lld, %lld)\n", infos[i].timeBegAndEnd.first, infos[i].timeBegAndEnd.second);
+    printf("process: %.4f%%, has object(s)\n", progressPercentage);
+    int size = infos.size();
+    for (int i = 0; i < size; i++)
+    {
+        printf("  Obj ID = %d\n", infos[i].objectID);
+        printf("  time stamp = (%lld, %lld)\n", infos[i].timeBegAndEnd.first, infos[i].timeBegAndEnd.second);
         printf("  snapshot count = %d\n", infos[i].frameCount);
-		printf("  scene path = %s\n", infos[i].sceneName.c_str());
-		printf("  slice path = %s\n", infos[i].sliceName.c_str());
-		printf("  slice location = (%d, %d, %d, %d)\n", 
-			infos[i].sliceLocation.x, infos[i].sliceLocation.y,
-			infos[i].sliceLocation.width, infos[i].sliceLocation.height);
-		printf("\n");
+        printf("  scene path = %s\n", infos[i].sceneName.c_str());
+        printf("  slice path = %s\n", infos[i].sliceName.c_str());
+        printf("  slice location = (%d, %d, %d, %d)\n", 
+            infos[i].sliceLocation.x, infos[i].sliceLocation.y,
+            infos[i].sliceLocation.width, infos[i].sliceLocation.height);
+        printf("\n");
         char name[128];
         sprintf(name, "result %d", i);
         Mat image = imread(infos[i].sliceName);
         imshow(name, image);
-	}
+    }
     waitKey(0);
 }
 
@@ -55,7 +55,7 @@ int main(int argc, char** argv)
     /*"D:\\SHARED\\MiscellaneousVideo\\DCS-7010L_20140416160622.avi"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\案发前20秒(2).avi"*/
     "D:\\Files\\RTXFiles\\zhengxuping\\同盛12.avi"
-	/*"D:/SHARED/TaicangVideo/1/70.flv"*/
+    /*"D:/SHARED/TaicangVideo/1/70.flv"*/
     /*"D:/SHARED/TaicangVideo/227省道、北门街_0_2014-08-20_10-09-08.asf"*/
     /*"D:/SHARED/TaicangVideo/209_32058517001310010090_40_2014-08-07 08_42_35~2014-08-07 08_47_35_bak.avi"*/
     /*"D:\\SHARED\\MiscellaneousVideo\\video\\4M2D12-21-2C.avi"*/
@@ -70,10 +70,10 @@ int main(int argc, char** argv)
 
     string validVideoName;
     cvtPathToFileName(videoPath, validVideoName);
-	TaicangTaskInfo task;
+    TaicangTaskInfo task;
     TaicangParamInfo param;
-	task.taskID = "0XFFFF";
-	task.videoSegmentID = "0XABCD";
+    task.taskID = "0XFFFF";
+    task.videoSegmentID = "0XABCD";
     task.videoPath = videoPath;
     task.saveImagePath = "result/" + validVideoName;
     task.saveHistoryPath = "result/" + validVideoName;

@@ -297,74 +297,74 @@ bool BlobQuanHistory::checkStability(int timeInMilliSec) const
 
 //double BlobQuanHistory::calcImageSpeed(void) const
 //{
-//	int length = history.size();
-//	if (length < 2)
-//		return 0;
+//  int length = history.size();
+//  if (length < 2)
+//      return 0;
 //
-//	long long int begin = history[0].time;
-//	long long int end = history[length - 1].time;
-//	double timeElapsed = double(end - begin) / 1000;
-//	if (timeElapsed == 0)
-//		timeElapsed = 0.01;
+//  long long int begin = history[0].time;
+//  long long int end = history[length - 1].time;
+//  double timeElapsed = double(end - begin) / 1000;
+//  if (timeElapsed == 0)
+//      timeElapsed = 0.01;
 //
-//	double dist = 0;
-//	const static int step = 5;
-//	if (length <= step)
-//	{
-//		dist += sqrt(pow(double(history[0].bottom.x) - double(history[length - 1].bottom.x), 2) +
-//				     pow(double(history[0].bottom.y) - double(history[length - 1].bottom.y), 2));	
-//	}
-//	else
-//	{
-//		int i;
-//		for (i = 0; i < length - step; i += step)
-//		{
-//			dist += sqrt(pow(double(history[i].bottom.x) - double(history[i + step].bottom.x), 2) +
-//						 pow(double(history[i].bottom.y) - double(history[i + step].bottom.y), 2));
-//		}
-//		if (i < length - 1)
-//		{
-//			dist += sqrt(pow(double(history[i].bottom.x) - double(history[length - 1].bottom.x), 2) +
-//						 pow(double(history[i].bottom.y) - double(history[length - 1].bottom.y), 2));
-//		}
-//	}
-//	return dist / timeElapsed;
+//  double dist = 0;
+//  const static int step = 5;
+//  if (length <= step)
+//  {
+//      dist += sqrt(pow(double(history[0].bottom.x) - double(history[length - 1].bottom.x), 2) +
+//                   pow(double(history[0].bottom.y) - double(history[length - 1].bottom.y), 2));   
+//  }
+//  else
+//  {
+//      int i;
+//      for (i = 0; i < length - step; i += step)
+//      {
+//          dist += sqrt(pow(double(history[i].bottom.x) - double(history[i + step].bottom.x), 2) +
+//                       pow(double(history[i].bottom.y) - double(history[i + step].bottom.y), 2));
+//      }
+//      if (i < length - 1)
+//      {
+//          dist += sqrt(pow(double(history[i].bottom.x) - double(history[length - 1].bottom.x), 2) +
+//                       pow(double(history[i].bottom.y) - double(history[length - 1].bottom.y), 2));
+//      }
+//  }
+//  return dist / timeElapsed;
 //}
 //
 //double BlobQuanHistory::calcWorldSpeed(void) const
 //{
-//	int length = history.size();
-//	if (length < 2)
-//		return 0;
+//  int length = history.size();
+//  if (length < 2)
+//      return 0;
 //
-//	double accDist = 0;
-//	const static int step = 5;
-//	if (length <= step)
-//	{
-//		accDist += speedLoop->calcWorldDist(history[0].bottom, history[length - 1].bottom);
-//	}
-//	else
-//	{
-//		int i;
-//		for (i = 0; i < length - step; i += step)
-//		{
-//			accDist += speedLoop->calcWorldDist(history[i].bottom, history[i + step].bottom);
-//		}
-//		if (i < length - 1)
-//		{
-//			accDist += speedLoop->calcWorldDist(history[i].bottom, history[length - 1].bottom);
-//		}
-//	}
-//	accDist /= 100;
-//	double timeElapsed = double(history[length - 1].time - history[0].time) / 1000;
-//	if (timeElapsed == 0)
-//		timeElapsed = 0.01;
-//	return accDist / 100.0 / timeElapsed * 3.6;
+//  double accDist = 0;
+//  const static int step = 5;
+//  if (length <= step)
+//  {
+//      accDist += speedLoop->calcWorldDist(history[0].bottom, history[length - 1].bottom);
+//  }
+//  else
+//  {
+//      int i;
+//      for (i = 0; i < length - step; i += step)
+//      {
+//          accDist += speedLoop->calcWorldDist(history[i].bottom, history[i + step].bottom);
+//      }
+//      if (i < length - 1)
+//      {
+//          accDist += speedLoop->calcWorldDist(history[i].bottom, history[length - 1].bottom);
+//      }
+//  }
+//  accDist /= 100;
+//  double timeElapsed = double(history[length - 1].time - history[0].time) / 1000;
+//  if (timeElapsed == 0)
+//      timeElapsed = 0.01;
+//  return accDist / 100.0 / timeElapsed * 3.6;
 //}
 
 void BlobQuanHistory::linearRegres(Point& pointInLine, Point2d& dirVector, double& avgError) const
 {
-    double N = history.size();	
+    double N = history.size();  
     double sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0;
     for (int i = 0; i < N; i++)
     {
@@ -418,7 +418,7 @@ static bool checkDirTurnAround(vector<char>& dir)
             posiFstHalfCount += dir[i] > 0 ? 1 : 0;
         // 如果前半段的正值多
         if (posiFstHalfCount > 0.7 * dir.size() / 2)
-        {				
+        {               
             // 统计最后一小段的负值
             int negaTailCount = 0;
             for (int i = dir.size() - 1; i >= dir.size() * 0.7; i--)
@@ -437,7 +437,7 @@ static bool checkDirTurnAround(vector<char>& dir)
             negaFstHalfCount += dir[i] < 0 ? 1 : 0;
         // 如果前半段的负值多
         if (negaFstHalfCount > 0.7 * dir.size() / 2)
-        {				
+        {               
             // 统计最后一小段的正值
             int posiTailCount = 0;
             for (int i = dir.size() - 1; i >= dir.size() * 0.7; i--)
@@ -569,7 +569,7 @@ void BlobSnapshotRecord::makeRecord(OrigSceneProxy& scene, OrigForeProxy& fore,
 
     // 保存运动目标的截图
     if (saveMode & SaveSnapshotMode::SaveSlice)
-    {	    
+    {       
         //Mat tempImage = Mat(scene.getDeepCopy(), origRect);
         //tempImage.copyTo(blobImage);
         blobImage = Mat(scene.getDeepCopy(), origRect);
@@ -784,7 +784,7 @@ void BlobTriBoundSnapshotHistory::updateHistory(OrigSceneProxy& origFrame,
         if (recordLoop->rightToRightBound(lastRight) !=
             recordLoop->rightToRightBound(currRight))
         {
-            hasRightCrossLoopRight = true;				
+            hasRightCrossLoopRight = true;              
             // 进入线圈
             if (recordLoop->rightToRightBound(lastRight))
             {
@@ -823,7 +823,7 @@ void BlobTriBoundSnapshotHistory::updateHistory(OrigSceneProxy& origFrame,
         if (recordLoop->belowBottomBound(lastBottom) !=
             recordLoop->belowBottomBound(currBottom))
         {
-            hasBottomCrossLoopBottom = true;				
+            hasBottomCrossLoopBottom = true;                
             // 进入线圈
             if (recordLoop->belowBottomBound(lastBottom))
             {
@@ -1215,7 +1215,7 @@ void BlobBottomBoundSnapshotHistory::updateHistory(OrigSceneProxy& origFrame,
         if (recordLoop->belowBottomBound(lastBottom) !=
             recordLoop->belowBottomBound(currBottom))
         {
-            hasBottomCrossLoopBottom = true;				
+            hasBottomCrossLoopBottom = true;                
             // 进入线圈
             if (recordLoop->belowBottomBound(lastBottom))
             {
