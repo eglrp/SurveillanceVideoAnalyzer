@@ -1,0 +1,12 @@
+[ObserveLoop]
+#observe_loop_points_in_image    1 140 1 239 319 239 319 140
+#observe_loop_points_in_world    1 140 1 239 319 239 319 140
+
+[SpeedLoop]
+#speed_loop_points_in_image      16 140 16 210 313 210 316 140
+#speed_loop_points_in_world      0 0 0 239 319 239 319 0
+
+[CrossLine]
+#beg_point 100 150 
+#end_point 200 200
+#beg_side_point -1 -1

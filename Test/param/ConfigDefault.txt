@@ -1,0 +1,127 @@
+[MOD]
+#cross_mode                              3
+#save_scene                              1
+#save_slice                              1
+#save_mask                               1
+#save_interval                           2
+#num_of_saved                            4
+#normalized_frame_width                  320
+#normalized_frame_height                 240
+#update_background_interval              20
+
+[RegionOfInterest]
+#define_included_region 1
+#num_of_roi  0
+#roi 0 0 0 239 319 239 319 0
+#roi 100 100 50 200 175 175 200 100
+#roi 150 50 150 150 300 150 300 10
+#roi 200 50 200 200 300 100 300 10
+#roi 0 0 200 200
+#roi 0 0 319 0 319 239 0 239
+
+[ObserveLoop]
+#observe_loop_points_in_image    0 0 0 239 319 239 319 0
+#observe_loop_points_in_world    0 0 0 239 319 239 319 0
+
+[SpeedLoop]
+#speed_loop_points_in_image      5 5 5 235 315 235 315 5
+#speed_loop_points_in_world      0 0 0 239 319 239 319 0
+
+[CrossLine]
+#beg_point 0 0 
+#end_point 100 100
+#beg_side_point -1 -1
+
+[RegionOfInterest]
+#num_of_roi  1
+#roi 160 5 160 100
+#roi 20 20 20 220 300 220 300 20
+#roi 100 100 50 200 175 175 200 100
+#roi 150 50 150 150 300 150 300 10
+#roi 200 50 200 100 300 100 300 10
+#roi 0 0 319 0 319 239 0 239
+
+[VisualInfo]
+#gray_mean_night                 20 
+
+[BlobExtractor]
+(proc)
+#run_merge_objects_day_mode          1
+#run_refine_objects_day_mode         0
+
+(find_objects_day_mode)
+#run_avg_width_height_check          1
+#run_char_region_check               0
+#run_corr_ratio_check                0
+#object_area                         50
+#ratio_object_in_char_region         0.5
+#object_avg_width                    5
+#object_avg_height                   5
+#char_region_rect_x_y_w_h            55 195 90 15
+#rect_fore_back_corr_ratio_sum       2.7
+#rect_fore_back_corr_ratio_b_high    0.85
+#rect_fore_back_corr_ratio_g_high    0.85
+#rect_fore_back_corr_ratio_r_high    0.85
+#rect_fore_back_corr_ratio_b_low     0.8
+#rect_fore_back_corr_ratio_g_low     0.8
+#rect_fore_back_corr_ratio_r_low     0.8
+
+(merge_objects_day_mode)
+#run_merge_hori_objects              0
+#run_merge_vert_objects              0
+#run_merge_big_small_objects         1
+
+(merge_hori_objects)
+#height_ratio_intersect_to_curr      0.6
+#height_ratio_intersect_to_test      0.6
+#width_ratio_intersect_to_union      -0.1
+#ratio_width_to_height               2.5
+
+(merge_vert_objects)
+#width_ratio_intersect_to_curr       0.75
+#width_ratio_intersect_to_test       0.75
+#height_ratio_intersect_to_union     -0.1
+#ratio_height_to_width               1.75
+
+(merge_big_small_objects)
+#area_ratio_test_rect_to_curr_rect           0.5
+#area_ratio_intersect_rect_big_test_rect     0.8
+#area_ratio_intersect_rect_small_test_rect   0.7
+
+(refine_objects_day_mode)
+#run_refine_objects_by_shape         1
+#run_refine_objects_by_gradient      1
+#run_fit_rect_to_foreground          0
+
+(find_rect_bounds_by_gradient)
+#run_check_by_color                  1
+
+[BlobVisualHistory]
+(update_history)
+#run_show_image                      1
+#wait_time                           0
+
+[Blob]
+(outputinfo)
+#min_history_size_for_output         10
+#run_output_history                  1
+#run_output_visual                   1
+
+[BlobTracker]
+(match)
+#run_check_turn_around                     1
+#max_dist_rect_and_blob                    15
+#area_ratio_intersect_rect_to_self_rect    0.6
+#area_ratio_intersect_rect_to_blob_rect    0.6
+#max_history_size_for_dist_match           10
+#max_avg_error_for_dist_match              15
+#run_display_calc_results                  0
+#run_show_fit_line                         0
+
+[StaticBlob]
+(check_static)
+#min_static_time_in_minute           0.25
+
+[StaticBlobTracker]
+(update_blob_list)
+#min_miss_time_in_minite             0.25
